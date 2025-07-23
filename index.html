@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotionCraft | Client Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --dark: #1d1e2c;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1d1e2c;
+            --sidebar-width: 260px;
+            --header-height: 80px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            display: flex;
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(29, 30, 44, 0.95);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding: 25px 0;
+            transition: var(--transition);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .logo-icon i {
+            font-size: 1.6rem;
+        }
+
+        .logo h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff 0%, #b6c8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            margin-top: 35px;
+            padding: 0 15px;
+        }
+
+        .nav-links li {
+            list-style: none;
+            margin-bottom: 8px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(67, 97, 238, 0.3);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-links i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px 30px;
+            border-radius: 18px;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            background: linear-gradient(to right, var(--dark) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            padding: 30px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(67, 97, 238, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 320px;
+            position: relative;
+        }
+
+        /* Client Table */
+        .table-container {
+            border-radius: 18px;
+            overflow: hidden;
+            margin-top: 35px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e0e5ff;
+            border-radius: 12px;
+            width: 280px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(224, 229, 255, 0.6);
+        }
+
+        th, td {
+            padding: 18px 25px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: rgba(224, 229, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+
+        .status-in-progress {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+
+        .status-completed {
+            background: rgba(76, 201, 240, 0.2);
+            color: #00bcd4;
+            border: 1px solid rgba(0, 188, 212, 0.2);
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .siam { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); }
+        .jabir { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .hasib { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
+        .ms1 { background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%); }
+        .ms2 { background: linear-gradient(135deg, #ffd26f 0%, #ff7d7d 100%); }
+
+        .currency {
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .currency::before {
+            content: "৳";
+            margin-right: 3px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(224, 229, 255, 0.6);
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 85px;
+            }
+            .sidebar .logo h1, .nav-links span {
+                display: none;
+            }
+            .logo {
+                justify-content: center;
+                padding: 0 10px 25px;
+            }
+            .logo-icon {
+                margin-right: 0;
+            }
+            .nav-links a {
+                justify-content: center;
+                padding: 16px;
+            }
+            .nav-links i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            .main-content {
+                margin-left: 85px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .main-content {
+                padding: 20px 15px;
+                margin-left: 70px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .search-box input {
+                width: 100%;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .search-box {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+                z-index: 1000;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 25px;
+                left: 25px;
+                z-index: 900;
+                background: var(--primary);
+                color: white;
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+                cursor: pointer;
+            }
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            .btn i {
+                margin-right: 0;
+            }
+            .btn span {
+                display: none;
+            }
+        }
+
+        /* Toggle button for mobile */
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card, .table-container {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .table-container { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <h1>MotionCraft</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="#"><i class="fas fa-users"></i> <span>Clients</span></a></li>
+            <li><a href="#"><i class="fas fa-tasks"></i> <span>Projects</span></a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li><a href="#"><i class="fas fa-question-circle"></i> <span>Support</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header glass-card">
+            <h2>Client Management Dashboard</h2>
+            <div class="header-actions">
+                <button class="btn btn-outline">
+                    <i class="fas fa-download"></i> <span>Export Data</span>
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> <span>New Client</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="card glass-card">
+                <div class="card-header">
+                    <h3>Monthly Income Overview</h3>
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="chart-container">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card glass-card">
+                <div class="card-header">
+                    <h3>Project Status Distribution</h3>
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card glass-card">
+                <div class="card-header">
+                    <h3>Team Workload</h3>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="chart-container">
+                    <canvas id="teamChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Table -->
+        <div class="table-container glass-card">
+            <div class="table-header">
+                <h3>Client Projects</h3>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search clients, projects, or status...">
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Budget</th>
+                        <th>Team Member</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientTable">
+                    <tr>
+                        <td>TechVision Inc.</td>
+                        <td class="currency">1,25,000</td>
+                        <td>
+                            <div class="team-member">
+                                <div class="avatar siam">S</div>
+                                <span>Siam</span>
+                            </div>
+                        </td>
+                        <td>Aug 15, 2023</td>
+                        <td><span class="status status-in-progress">In Progress</span></td>
+                        <td>
+                            <div class="actions">
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                                <div class="action-btn"><i class="fas fa-trash"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Global Solutions</td>
+                        <td class="currency">82,000</td>
+                        <td>
+                            <div class="team-member">
+                                <div class="avatar jabir">J</div>
+                                <span>Jabir</span>
+                            </div>
+                        </td>
+                        <td>Sep 02, 2023</td>
+                        <td><span class="status status-pending">Pending</span></td>
+                        <td>
+                            <div class="actions">
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                                <div class="action-btn"><i class="fas fa-trash"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Innovate Labs</td>
+                        <td class="currency">1,50,000</td>
+                        <td>
+                            <div class="team-member">
+                                <div class="avatar hasib">H</div>
+                                <span>Hasib</span>
+                            </div>
+                        </td>
+                        <td>Jul 28, 2023</td>
+                        <td><span class="status status-completed">Completed</span></td>
+                        <td>
+                            <div class="actions">
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                                <div class="action-btn"><i class="fas fa-trash"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Future Dynamics</td>
+                        <td class="currency">97,500</td>
+                        <td>
+                            <div class="team-member">
+                                <div class="avatar ms1">M1</div>
+                                <span>MS1</span>
+                            </div>
+                        </td>
+                        <td>Aug 30, 2023</td>
+                        <td><span class="status status-in-progress">In Progress</span></td>
+                        <td>
+                            <div class="actions">
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                                <div class="action-btn"><i class="fas fa-trash"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nexus Enterprises</td>
+                        <td class="currency">1,43,000</td>
+                        <td>
+                            <div class="team-member">
+                                <div class="avatar ms2">M2</div>
+                                <span>MS2</span>
+                            </div>
+                        </td>
+                        <td>Sep 15, 2023</td>
+                        <td><span class="status status-pending">Pending</span></td>
+                        <td>
+                            <div class="actions">
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                                <div class="action-btn"><i class="fas fa-trash"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer glass-card">
+            <p>© 2023 MotionCraft Client Management System | All data is securely stored and updated in real-time</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#clientTable tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // Initialize charts after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Monthly Income Chart (Bar)
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            const incomeGradient = incomeCtx.createLinearGradient(0, 0, 0, 300);
+            incomeGradient.addColorStop(0, 'rgba(67, 97, 238, 0.8)');
+            incomeGradient.addColorStop(1, 'rgba(72, 149, 239, 0.3)');
+            
+            new Chart(incomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                    datasets: [{
+                        label: 'Income (BDT)',
+                        data: [1250000, 1420000, 1180000, 1650000, 1520000, 1890000, 2100000, 1950000],
+                        backgroundColor: incomeGradient,
+                        borderRadius: 8,
+                        borderWidth: 0,
+                        barPercentage: 0.6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '৳' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '৳' + (value/100000).toFixed(1) + 'L';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Project Status Chart (Doughnut)
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending'],
+                    datasets: [{
+                        data: [15, 22, 8],
+                        backgroundColor: [
+                            'rgba(76, 201, 240, 0.8)',
+                            'rgba(67, 97, 238, 0.8)',
+                            'rgba(255, 193, 7, 0.8)'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    size: 13
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' projects';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Team Workload Chart (Line)
+            const teamCtx = document.getElementById('teamChart').getContext('2d');
+            const teamGradient = teamCtx.createLinearGradient(0, 0, 0, 300);
+            teamGradient.addColorStop(0, 'rgba(67, 97, 238, 0.3)');
+            teamGradient.addColorStop(1, 'rgba(72, 149, 239, 0.05)');
+            
+            new Chart(teamCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Siam', 'Jabir', 'Hasib', 'MS1', 'MS2'],
+                    datasets: [{
+                        label: 'Current Workload',
+                        data: [85, 92, 78, 65, 88],
+                        fill: true,
+                        backgroundColor: teamGradient,
+                        borderColor: 'rgba(67, 97, 238, 0.8)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: 'rgba(67, 97, 238, 1)',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '% workload';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 50,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
