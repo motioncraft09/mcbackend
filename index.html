@@ -277,11 +277,6 @@
             color: var(--dark);
         }
 
-        .chart-actions {
-            display: flex;
-            gap: 10px;
-        }
-
         .chart-actions button {
             background: var(--light);
             border: none;
@@ -294,11 +289,6 @@
 
         .chart-actions button:hover {
             background: var(--light-gray);
-        }
-
-        .chart-actions button.active {
-            background: var(--primary);
-            color: white;
         }
 
         .chart-container {
@@ -513,28 +503,6 @@
             background: var(--light-gray);
         }
 
-        .server-status {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 8px;
-            padding: 10px 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            z-index: 1000;
-        }
-
-        .server-status .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--success);
-        }
-
         /* Responsive */
         @media (max-width: 1200px) {
             .charts-container, .tables-container {
@@ -578,11 +546,6 @@
             .content {
                 padding: 20px 15px;
             }
-            .server-status {
-                bottom: 10px;
-                right: 10px;
-                font-size: 0.8rem;
-            }
         }
     </style>
 </head>
@@ -608,7 +571,7 @@
         <!-- Header -->
         <div class="header">
             <div class="header-left">
-                <h2>Dashboard</h2>
+                <!-- Removed the heading as requested -->
             </div>
             <div class="header-right">
                 <div class="search-box">
@@ -618,10 +581,10 @@
                 <div class="user-actions">
                     <div class="notification">
                         <i class="far fa-bell"></i>
-                        <span class="notification-badge">0</span>
+                        <span class="notification-badge">3</span>
                     </div>
                     <div class="user-profile">
-                        <i class="fas fa-user-circle"></i>
+                        <i class="fas fa-user-circle"></i> <!-- Icon instead of photo -->
                     </div>
                 </div>
             </div>
@@ -636,7 +599,7 @@
                         <i class="fas fa-clock"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="pendingBalance">0 BDT</h3>
+                        <h3>0 BDT</h3>
                         <p>Pending Balance</p>
                     </div>
                 </div>
@@ -645,7 +608,7 @@
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="receivedBalance">0 BDT</h3>
+                        <h3>0 BDT</h3>
                         <p>Received Balance</p>
                     </div>
                 </div>
@@ -654,7 +617,7 @@
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="currentMonthIncome">0 BDT</h3>
+                        <h3>0 BDT</h3>
                         <p>This Month Income</p>
                     </div>
                 </div>
@@ -663,7 +626,7 @@
                         <i class="fas fa-history"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="prevMonthIncome">0 BDT</h3>
+                        <h3>0 BDT</h3>
                         <p>Previous Month Income</p>
                     </div>
                 </div>
@@ -675,8 +638,8 @@
                     <div class="chart-header">
                         <h3>Income Overview</h3>
                         <div class="chart-actions">
-                            <button class="active" id="monthlyBtn">Monthly</button>
-                            <button id="weeklyBtn">Weekly</button>
+                            <button>Monthly</button>
+                            <button>Weekly</button>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -820,7 +783,10 @@
                     <label for="memberProject">Assigned Project</label>
                     <select id="memberProject">
                         <option value="">Select project</option>
-                        <!-- Projects will be populated dynamically -->
+                        <option value="Website Redesign">Website Redesign</option>
+                        <option value="Mobile App Dev">Mobile App Development</option>
+                        <option value="Brand Identity">Brand Identity</option>
+                        <option value="E-commerce Platform">E-commerce Platform</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -851,383 +817,87 @@
         </div>
     </div>
 
-    <!-- Server Status Indicator -->
-    <div class="server-status">
-        <span class="indicator"></span>
-        <span>Connected to Cloud Server</span>
-    </div>
-
     <script>
-        // Server API simulation
-        const serverAPI = {
-            baseURL: "https://api.projectflow.com/v1",
-            
-            // Simulate API calls with delay
-            call: async function(endpoint, method = 'GET', data = null) {
-                // Show loading state
-                document.querySelector('.server-status').innerHTML = `
-                    <span class="indicator" style="background:var(--warning)"></span>
-                    <span>Saving to server...</span>
-                `;
-                
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 800));
-                
-                // In a real implementation, this would be a fetch request:
-                // const response = await fetch(`${this.baseURL}${endpoint}`, {
-                //   method: method,
-                //   headers: {'Content-Type': 'application/json'},
-                //   body: data ? JSON.stringify(data) : null
-                // });
-                // return await response.json();
-                
-                // For this demo, we'll simulate a successful response
-                const response = { success: true, message: "Data saved successfully" };
-                
-                // Update server status
-                document.querySelector('.server-status').innerHTML = `
-                    <span class="indicator"></span>
-                    <span>Data saved to server</span>
-                `;
-                
-                // Revert status after 3 seconds
-                setTimeout(() => {
-                    document.querySelector('.server-status').innerHTML = `
-                        <span class="indicator"></span>
-                        <span>Connected to Cloud Server</span>
-                    `;
-                }, 3000);
-                
-                return response;
-            }
-        };
-
-        // Data storage with server integration
-        const dataStore = {
-            projects: [],
-            teamMembers: [],
-            financials: {
-                pendingBalance: 0,
-                receivedBalance: 0,
-                currentMonthIncome: 0,
-                prevMonthIncome: 0,
-                incomeHistory: []
-            },
-            
-            init: function() {
-                // Load from localStorage if available
-                const savedData = localStorage.getItem('dashboardData');
-                if (savedData) {
-                    const parsed = JSON.parse(savedData);
-                    this.projects = parsed.projects || [];
-                    this.teamMembers = parsed.teamMembers || [];
-                    this.financials = parsed.financials || this.getZeroFinancials();
-                } else {
-                    // Start with zero values
-                    this.financials = this.getZeroFinancials();
-                }
-                
-                // Update UI with loaded data
-                this.updateUI();
-            },
-            
-            getZeroFinancials: function() {
-                return {
-                    pendingBalance: 0,
-                    receivedBalance: 0,
-                    currentMonthIncome: 0,
-                    prevMonthIncome: 0,
-                    incomeHistory: [
-                        { month: "2023-01", amount: 0 },
-                        { month: "2023-02", amount: 0 },
-                        { month: "2023-03", amount: 0 },
-                        { month: "2023-04", amount: 0 },
-                        { month: "2023-05", amount: 0 },
-                        { month: "2023-06", amount: 0 },
-                        { month: "2023-07", amount: 0 }
-                    ]
-                };
-            },
-            
-            saveToServer: async function() {
-                const data = {
-                    projects: this.projects,
-                    teamMembers: this.teamMembers,
-                    financials: this.financials
-                };
-                
-                // Save to localStorage for this demo
-                localStorage.setItem('dashboardData', JSON.stringify(data));
-                
-                // Simulate saving to server
-                try {
-                    const response = await serverAPI.call('/save-data', 'POST', data);
-                    console.log('Server response:', response);
-                    return true;
-                } catch (error) {
-                    console.error('Error saving to server:', error);
-                    return false;
-                }
-            },
-            
-            addProject: async function(project) {
-                project.id = Date.now(); // Unique ID
-                this.projects.push(project);
-                await this.saveToServer();
-                this.updateUI();
-            },
-            
-            addTeamMember: async function(member) {
-                member.id = Date.now(); // Unique ID
-                this.teamMembers.push(member);
-                await this.saveToServer();
-                this.updateUI();
-            },
-            
-            updateFinancials: function() {
-                // Update UI elements
-                document.getElementById('pendingBalance').textContent = this.financials.pendingBalance + " BDT";
-                document.getElementById('receivedBalance').textContent = this.financials.receivedBalance + " BDT";
-                document.getElementById('currentMonthIncome').textContent = this.financials.currentMonthIncome + " BDT";
-                document.getElementById('prevMonthIncome').textContent = this.financials.prevMonthIncome + " BDT";
-            },
-            
-            updateProjectsTable: function() {
-                const tableBody = document.getElementById('projectsTableBody');
-                tableBody.innerHTML = '';
-                
-                if (this.projects.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 30px; color: var(--gray)">
-                                <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
-                                No projects found. Create your first project!
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                this.projects.forEach(project => {
-                    const formattedDate = new Date(project.dueDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${project.client}</td>
-                        <td>${project.project}</td>
-                        <td>${project.editor}</td>
-                        <td>${formattedDate}</td>
-                        <td>${project.budget} BDT</td>
-                        <td><span class="status status-${project.status.toLowerCase().replace(' ', '-')}">${project.status}</span></td>
-                        <td>
-                            <button class="action-btn"><i class="fas fa-eye"></i></button>
-                            <button class="action-btn"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            },
-            
-            updateTeamTable: function() {
-                const tableBody = document.getElementById('teamTableBody');
-                tableBody.innerHTML = '';
-                
-                if (this.teamMembers.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 30px; color: var(--gray)">
-                                <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
-                                No team members added yet. Add your first team member!
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                this.teamMembers.forEach(member => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${member.name}</td>
-                        <td>${member.project}</td>
-                        <td><span class="status status-${member.workStatus.toLowerCase().replace(' ', '-')}">${member.workStatus}</span></td>
-                        <td><span class="status status-${member.paymentStatus.toLowerCase().replace(' ', '-')}">${member.paymentStatus}</span></td>
-                        <td>${member.dueAmount} BDT</td>
-                        <td>
-                            <button class="action-btn"><i class="fas fa-eye"></i></button>
-                            <button class="action-btn"><i class="fas fa-comment"></i></button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            },
-            
-            updateProjectDropdown: function() {
-                const dropdown = document.getElementById('memberProject');
-                // Clear existing options except the first one
-                while (dropdown.options.length > 1) {
-                    dropdown.remove(1);
-                }
-                
-                // Add current projects
-                this.projects.forEach(project => {
-                    const option = document.createElement('option');
-                    option.value = project.project;
-                    option.textContent = project.project;
-                    dropdown.appendChild(option);
-                });
-            },
-            
-            updateCharts: function() {
-                // Update income chart
-                const incomeCtx = document.getElementById('incomeChart');
-                if (window.incomeChart) {
-                    window.incomeChart.destroy();
-                }
-                
-                const labels = this.financials.incomeHistory.map(item => {
-                    const date = new Date(item.month + '-01');
-                    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                });
-                
-                const data = this.financials.incomeHistory.map(item => item.amount);
-                
-                window.incomeChart = new Chart(incomeCtx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Income (BDT)',
-                            data: data,
-                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
-                            borderColor: 'rgba(67, 97, 238, 1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            pointBackgroundColor: 'white',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return value + ' BDT';
-                                    }
-                                }
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Income Chart
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            const incomeChart = new Chart(incomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'This Year',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Previous Year',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                        borderColor: 'rgba(76, 201, 240, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
                             },
-                            x: {
-                                grid: {
-                                    display: false
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' BDT';
                                 }
                             }
                         },
-                        plugins: {
-                            legend: {
+                        x: {
+                            grid: {
                                 display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                titleColor: '#333',
-                                bodyColor: '#666',
-                                borderColor: '#eee',
-                                borderWidth: 1,
-                                padding: 12,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'Income: ' + context.parsed.y + ' BDT';
-                                    }
-                                }
                             }
                         }
-                    }
-                });
-                
-                // Update project status chart
-                const projectCtx = document.getElementById('projectChart');
-                if (window.projectChart) {
-                    window.projectChart.destroy();
-                }
-                
-                // Count project statuses
-                const statusCounts = {
-                    'Completed': 0,
-                    'In Progress': 0,
-                    'Pending': 0,
-                    'Overdue': 0
-                };
-                
-                this.projects.forEach(project => {
-                    statusCounts[project.status]++;
-                });
-                
-                window.projectChart = new Chart(projectCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
-                        datasets: [{
-                            data: [
-                                statusCounts['Completed'],
-                                statusCounts['In Progress'],
-                                statusCounts['Pending'],
-                                statusCounts['Overdue']
-                            ],
-                            backgroundColor: [
-                                'rgba(76, 201, 240, 0.8)',
-                                'rgba(67, 97, 238, 0.8)',
-                                'rgba(255, 158, 0, 0.8)',
-                                'rgba(229, 56, 59, 0.8)'
-                            ],
-                            borderWidth: 0
-                        }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.label + ': ' + context.parsed;
-                                    }
-                                }
-                            }
-                        },
-                        cutout: '70%'
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
                     }
-                });
-            },
-            
-            updateUI: function() {
-                this.updateFinancials();
-                this.updateProjectsTable();
-                this.updateTeamTable();
-                this.updateProjectDropdown();
-                this.updateCharts();
-            }
-        };
+                }
+            });
 
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize data store
-            dataStore.init();
-            
+            // Project Status Chart
+            const projectCtx = document.getElementById('projectChart').getContext('2d');
+            const projectChart = new Chart(projectCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(76, 201, 240, 0.8)',
+                            'rgba(67, 97, 238, 0.8)',
+                            'rgba(255, 158, 0, 0.8)',
+                            'rgba(229, 56, 59, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
             // Modal functionality
             const projectModal = document.getElementById('projectModal');
             const teamModal = document.getElementById('teamModal');
@@ -1236,15 +906,13 @@
             const addMemberBtn = document.getElementById('addMemberBtn');
             const createProjectBtn = document.getElementById('createProjectBtn');
             const addMemberSubmitBtn = document.getElementById('addMemberSubmitBtn');
-            
-            // Chart toggle buttons
-            const monthlyBtn = document.getElementById('monthlyBtn');
-            const weeklyBtn = document.getElementById('weeklyBtn');
-            
+            const projectsTableBody = document.getElementById('projectsTableBody');
+            const teamTableBody = document.getElementById('teamTableBody');
+
             // Open modals
             newProjectBtn.addEventListener('click', () => projectModal.style.display = 'flex');
             addMemberBtn.addEventListener('click', () => teamModal.style.display = 'flex');
-            
+
             // Close modals
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1252,15 +920,15 @@
                     teamModal.style.display = 'none';
                 });
             });
-            
+
             // Close modals when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === projectModal) projectModal.style.display = 'none';
                 if (e.target === teamModal) teamModal.style.display = 'none';
             });
-            
+
             // Create new project
-            createProjectBtn.addEventListener('click', async () => {
+            createProjectBtn.addEventListener('click', () => {
                 const clientName = document.getElementById('clientName').value;
                 const projectName = document.getElementById('projectName').value;
                 const editorName = document.getElementById('editorName').value;
@@ -1269,20 +937,32 @@
                 const status = document.getElementById('status').value;
                 
                 if (!clientName || !projectName || !editorName || !dueDate || !budget) {
-                    alert('Please fill in all required fields');
+                    alert('Please fill in all fields');
                     return;
                 }
                 
-                // Add project to data store
-                await dataStore.addProject({
-                    client: clientName,
-                    project: projectName,
-                    editor: editorName,
-                    dueDate: dueDate,
-                    budget: parseInt(budget),
-                    link: document.getElementById('projectLink').value,
-                    status: status
+                // Format date
+                const formattedDate = new Date(dueDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
                 });
+                
+                // Add to table
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${clientName}</td>
+                    <td>${projectName}</td>
+                    <td>${editorName}</td>
+                    <td>${formattedDate}</td>
+                    <td>${budget} BDT</td>
+                    <td><span class="status status-${status.toLowerCase().replace(' ', '-')}">${status}</span></td>
+                    <td>
+                        <button class="action-btn"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn"><i class="fas fa-edit"></i></button>
+                    </td>
+                `;
+                projectsTableBody.appendChild(row);
                 
                 // Close modal and reset form
                 projectModal.style.display = 'none';
@@ -1294,9 +974,9 @@
                 document.getElementById('projectLink').value = '';
                 document.getElementById('status').value = 'Pending';
             });
-            
+
             // Add new team member
-            addMemberSubmitBtn.addEventListener('click', async () => {
+            addMemberSubmitBtn.addEventListener('click', () => {
                 const memberName = document.getElementById('memberName').value;
                 const memberProject = document.getElementById('memberProject').value;
                 const workStatus = document.getElementById('workStatus').value;
@@ -1308,14 +988,20 @@
                     return;
                 }
                 
-                // Add to data store
-                await dataStore.addTeamMember({
-                    name: memberName,
-                    project: memberProject,
-                    workStatus: workStatus,
-                    paymentStatus: paymentStatus,
-                    dueAmount: parseInt(dueAmount)
-                });
+                // Add to table
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${memberName}</td>
+                    <td>${memberProject}</td>
+                    <td><span class="status status-${workStatus.toLowerCase().replace(' ', '-')}">${workStatus}</span></td>
+                    <td><span class="status status-${paymentStatus.toLowerCase().replace(' ', '-')}">${paymentStatus}</span></td>
+                    <td>${dueAmount} BDT</td>
+                    <td>
+                        <button class="action-btn"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn"><i class="fas fa-comment"></i></button>
+                    </td>
+                `;
+                teamTableBody.appendChild(row);
                 
                 // Close modal and reset form
                 teamModal.style.display = 'none';
@@ -1324,19 +1010,6 @@
                 document.getElementById('workStatus').value = 'Working';
                 document.getElementById('paymentStatus').value = 'Paid';
                 document.getElementById('dueAmount').value = '';
-            });
-            
-            // Chart view toggle
-            monthlyBtn.addEventListener('click', () => {
-                monthlyBtn.classList.add('active');
-                weeklyBtn.classList.remove('active');
-                // In a real app, this would fetch monthly data
-            });
-            
-            weeklyBtn.addEventListener('click', () => {
-                weeklyBtn.classList.add('active');
-                monthlyBtn.classList.remove('active');
-                // In a real app, this would fetch weekly data
             });
         });
     </script>
