@@ -9,6 +9,7 @@
     <style>
         :root {
             --primary: #4361ee;
+            --primary-dark: #3a56d4;
             --secondary: #3f37c9;
             --success: #4cc9f0;
             --warning: #f72585;
@@ -20,6 +21,7 @@
             --bdt: #006a4e;
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s ease;
+            --sidebar-width: 260px;
         }
 
         * {
@@ -33,94 +35,138 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: var(--dark);
             min-height: 100vh;
-            padding: 20px;
             line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            padding: 25px 0;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 100;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 15px;
+            padding: 0 25px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .logo i {
-            font-size: 32px;
+            font-size: 28px;
             color: var(--primary);
         }
 
         .logo h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: white;
         }
 
-        .tabs {
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+
+        .menu-item {
             display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
             flex-wrap: wrap;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
+            gap: 20px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
             margin-bottom: 30px;
         }
 
-        .tab {
-            flex: 1;
-            min-width: 150px;
-            padding: 18px 10px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-left: 4px solid var(--primary);
             transition: var(--transition);
-            position: relative;
-            color: var(--gray);
         }
 
-        .tab.active {
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
         }
 
-        .tab.active:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 4px 4px 0 0;
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
         }
 
-        .tab:hover:not(.active) {
-            background: rgba(67, 97, 238, 0.05);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
+        .stat-title {
+            font-size: 16px;
+            color: var(--gray);
         }
 
         .card {
@@ -132,7 +178,7 @@
         }
 
         .card-header {
-            padding: 20px;
+            padding: 20px 25px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -141,24 +187,23 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .card-header h2 {
+        .card-header h3 {
             font-size: 20px;
             font-weight: 600;
             color: var(--dark);
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             border: none;
-            font-size: 14px;
+            font-size: 15px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            white-space: nowrap;
         }
 
         .btn-primary {
@@ -167,7 +212,7 @@
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
+            background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
@@ -188,19 +233,19 @@
         }
 
         th {
-            padding: 15px;
+            padding: 16px 20px;
             text-align: left;
             font-weight: 600;
             color: var(--gray);
-            font-size: 13px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         td {
-            padding: 15px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: 15px;
             color: var(--dark);
         }
 
@@ -213,9 +258,9 @@
         }
 
         .status {
-            padding: 6px 12px;
+            padding: 8px 15px;
             border-radius: 50px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             display: inline-block;
         }
@@ -241,14 +286,14 @@
         }
 
         .action-btn {
-            padding: 7px 10px;
+            padding: 8px 12px;
             border-radius: 8px;
             background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
             border: none;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 13px;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -296,7 +341,7 @@
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 20px 25px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -308,7 +353,7 @@
         }
 
         .modal-header h3 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
         }
 
@@ -326,27 +371,26 @@
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 25px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark);
-            font-size: 14px;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 1px solid var(--border);
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 15px;
             transition: var(--transition);
         }
 
@@ -359,8 +403,8 @@
         .form-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-row .form-group {
@@ -370,12 +414,12 @@
         }
 
         .modal-footer {
-            padding: 20px;
+            padding: 20px 25px;
             background: rgba(248, 249, 250, 0.8);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 15px;
         }
 
         .btn-secondary {
@@ -389,9 +433,9 @@
         }
 
         .badge {
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 50px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
         }
 
@@ -408,70 +452,6 @@
         .badge-danger {
             background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
-        }
-
-        .team-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 0 15px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stat-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .icon-bg-primary {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-        }
-
-        .icon-bg-success {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .icon-bg-warning {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
-
-        .icon-bg-info {
-            background: rgba(73, 168, 255, 0.1);
-            color: #49a8ff;
-        }
-
-        .stat-value {
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .stat-title {
-            font-size: 14px;
-            color: var(--gray);
         }
 
         .currency {
@@ -505,7 +485,7 @@
 
         .confirmation-content {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 16px;
             text-align: center;
             max-width: 500px;
@@ -514,23 +494,22 @@
         }
 
         .confirmation-content h3 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--dark);
-            font-size: 18px;
+            font-size: 22px;
         }
 
         .confirmation-content p {
             color: var(--gray);
-            margin-bottom: 20px;
-            font-size: 14px;
+            margin-bottom: 25px;
+            font-size: 16px;
         }
 
         .confirmation-btns {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            margin-top: 25px;
         }
 
         .btn-cancel {
@@ -593,84 +572,36 @@
         }
 
         @media (max-width: 992px) {
-            .team-stats {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .logo h1 {
-                font-size: 20px;
+            .sidebar {
+                transform: translateX(-100%);
             }
             
-            .tabs {
-                flex-direction: column;
+            .sidebar.active {
+                transform: translateX(0);
             }
             
-            .tab {
-                min-width: 100%;
-            }
-            
-            .tab.active:after {
-                height: 4px;
-                width: 100%;
-                top: 0;
-                left: 0;
-                bottom: auto;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
+            .content {
+                margin-left: 0;
             }
             
             .mobile-menu-btn {
                 display: block;
             }
-            
-            .tabs {
-                position: absolute;
-                top: 90px;
-                left: 0;
-                width: 100%;
-                display: none;
-                z-index: 100;
-            }
-            
-            .tabs.active {
-                display: flex;
-            }
         }
 
-        @media (max-width: 576px) {
-            body {
-                padding: 15px;
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
             }
             
-            header {
-                padding: 15px 0;
-            }
-            
-            .logo h1 {
-                font-size: 18px;
-            }
-            
-            .stat-card {
-                padding: 15px;
-            }
-            
-            .modal-content {
-                max-height: 85vh;
+            .stats {
+                grid-template-columns: 1fr;
             }
             
             .form-row {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
             }
             
             .form-row .form-group {
@@ -680,41 +611,148 @@
             .confirmation-btns {
                 flex-direction: column;
             }
+        }
+
+        @media (max-width: 576px) {
+            .content {
+                padding: 20px 15px;
+            }
             
-            .btn {
-                width: 100%;
+            .card-header {
+                padding: 15px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 12px 15px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-video"></i>
-                <h1>Motioncraft Management System</h1>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fas fa-video"></i>
+            <h1>Motioncraft</h1>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-tab="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="user-info">
+            <div class="menu-item" data-tab="clients">
+                <i class="fas fa-users"></i>
+                <span>Client Projects</span>
+            </div>
+            <div class="menu-item" data-tab="team">
+                <i class="fas fa-user-friends"></i>
+                <span>Team Management</span>
+            </div>
+            <div class="menu-item" data-tab="reports">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports & Analytics</span>
+            </div>
+            <div class="menu-item" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <div class="header">
+            <div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="pageTitle">Dashboard</h2>
+            </div>
+            <div>
                 <button class="btn btn-primary" id="syncBtn">
                     <i class="fas fa-sync-alt"></i> Sync Data
                 </button>
             </div>
-        </header>
+        </div>
         
-        <div class="tabs" id="tabsContainer">
-            <div class="tab active" data-tab="clients">Clients & Projects</div>
-            <div class="tab" data-tab="team">Team Management</div>
-            <div class="tab" data-tab="reports">Reports & Analytics</div>
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard-tab">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Projects</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalProjects">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="activeProjects">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Team Members</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="teamMembers">6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pending Payments</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value"><span class="currency bdt-symbol" id="pendingPayments">25,000</span></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Projects</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th>Budget</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentProjects">
+                            <!-- Recent projects will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
         
         <!-- Clients & Projects Tab -->
-        <div class="tab-content active" id="clients-tab">
+        <div class="tab-content" id="clients-tab">
             <div class="card">
                 <div class="card-header">
-                    <h2>Client Projects</h2>
+                    <h3>Client Projects</h3>
                     <button class="btn btn-primary" id="addProjectBtn">
                         <i class="fas fa-plus"></i> Add New Project
                     </button>
@@ -744,48 +782,9 @@
         
         <!-- Team Management Tab -->
         <div class="tab-content" id="team-tab">
-            <div class="team-stats">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Team Members</div>
-                        <div class="stat-icon icon-bg-primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">5</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Active Projects</div>
-                        <div class="stat-icon icon-bg-success">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">8</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Pending Payments</div>
-                        <div class="stat-icon icon-bg-warning">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value"><span class="currency bdt-symbol">25,000</span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Completed Projects</div>
-                        <div class="stat-icon icon-bg-info">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">24</div>
-                </div>
-            </div>
-            
             <div class="card">
                 <div class="card-header">
-                    <h2>Team Members</h2>
+                    <h3>Team Members</h3>
                     <button class="btn btn-primary" id="addTeamMemberBtn">
                         <i class="fas fa-plus"></i> Add Team Member
                     </button>
@@ -815,17 +814,17 @@
         <div class="tab-content" id="reports-tab">
             <div class="card">
                 <div class="card-header">
-                    <h2>Reports & Analytics</h2>
+                    <h3>Reports & Analytics</h3>
                 </div>
                 <div class="card-body">
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <i class="fas fa-chart-line" style="font-size: 56px; color: var(--gray); margin-bottom: 20px;"></i>
-                        <h3 style="margin-bottom: 15px; font-size: 20px;">Comprehensive Reports</h3>
-                        <p style="color: var(--gray); max-width: 600px; margin: 0 auto; font-size: 14px;">
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-chart-line" style="font-size: 64px; color: var(--gray); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Comprehensive Reports</h3>
+                        <p style="color: var(--gray); max-width: 600px; margin: 0 auto;">
                             View detailed analytics, project progress reports, financial summaries, and team performance metrics. 
                             This section will provide valuable insights to optimize your workflow and business decisions.
                         </p>
-                        <button class="btn btn-primary" style="margin-top: 25px;">
+                        <button class="btn btn-primary" style="margin-top: 30px;">
                             <i class="fas fa-download"></i> Download Reports
                         </button>
                     </div>
@@ -904,7 +903,7 @@
                     
                     <div class="form-group">
                         <label for="projectNotes">Additional Notes</label>
-        <textarea class="form-control" id="projectNotes" rows="3" placeholder="Add project notes"></textarea>
+                        <textarea class="form-control" id="projectNotes" rows="3" placeholder="Add project notes"></textarea>
                     </div>
                 </form>
             </div>
@@ -982,7 +981,7 @@
     <div class="confirmation-modal" id="confirmationModal">
         <div class="confirmation-content">
             <h3>Are you sure you want to delete this item?</h3>
-            <p>This action cannot be undone. All data associated with this item will be permanently removed from the server.</p>
+            <p>This action cannot be undone. All data associated with this item will be permanently removed.</p>
             <div class="confirmation-btns">
                 <button class="btn btn-cancel" id="cancelDeleteBtn">Cancel</button>
                 <button class="btn btn-confirm" id="confirmDeleteBtn">Delete Permanently</button>
@@ -997,115 +996,116 @@
     </div>
     
     <script>
-        // Sample data for projects
-        const projects = [
-            {
-                id: 1,
-                clientName: "TechVision Inc.",
-                projectLink: "https://project-link.com/techvision",
-                budget: 25000,
-                dueDate: "2023-10-15",
-                assignedEditor: "Siam",
-                handlingTeam: "Mahbub",
-                dateAdded: "2023-09-10",
-                status: "in-progress"
-            },
-            {
-                id: 2,
-                clientName: "Global Retailers",
-                projectLink: "https://project-link.com/retailers",
-                budget: 42000,
-                dueDate: "2023-09-25",
-                assignedEditor: "Jabir",
-                handlingTeam: "Masud Bhai",
-                dateAdded: "2023-09-05",
-                status: "review"
-            },
-            {
-                id: 3,
-                clientName: "HealthPlus",
-                projectLink: "https://project-link.com/healthplus",
-                budget: 38000,
-                dueDate: "2023-10-05",
-                assignedEditor: "Rahid",
-                handlingTeam: "Mahbub",
-                dateAdded: "2023-08-28",
-                status: "completed"
-            },
-            {
-                id: 4,
-                clientName: "EduFuture",
-                projectLink: "https://project-link.com/edufuture",
-                budget: 55000,
-                dueDate: "2023-10-30",
-                assignedEditor: "Mahbub",
-                handlingTeam: "Masud Bhai",
-                dateAdded: "2023-09-15",
-                status: "not-started"
+        // Initialize data structure with localStorage
+        function initializeData() {
+            // Check if data exists in localStorage
+            if (!localStorage.getItem('motioncraftProjects')) {
+                // Initial project data
+                const initialProjects = [
+                    {
+                        id: Date.now() + 1,
+                        clientName: "TechVision Inc.",
+                        projectLink: "https://project-link.com/techvision",
+                        budget: 25000,
+                        dueDate: "2023-10-15",
+                        assignedEditor: "Siam",
+                        handlingTeam: "Mahbub",
+                        dateAdded: new Date().toISOString().split('T')[0],
+                        status: "in-progress"
+                    },
+                    {
+                        id: Date.now() + 2,
+                        clientName: "Global Retailers",
+                        projectLink: "https://project-link.com/retailers",
+                        budget: 42000,
+                        dueDate: "2023-09-25",
+                        assignedEditor: "Jabir",
+                        handlingTeam: "Masud Bhai",
+                        dateAdded: "2023-09-05",
+                        status: "review"
+                    },
+                    {
+                        id: Date.now() + 3,
+                        clientName: "HealthPlus",
+                        projectLink: "https://project-link.com/healthplus",
+                        budget: 38000,
+                        dueDate: "2023-10-05",
+                        assignedEditor: "Rahid",
+                        handlingTeam: "Mahbub",
+                        dateAdded: "2023-08-28",
+                        status: "completed"
+                    }
+                ];
+                localStorage.setItem('motioncraftProjects', JSON.stringify(initialProjects));
             }
-        ];
-
-        // Sample data for team members
-        const teamMembers = [
-            {
-                id: 1,
-                name: "Siam",
-                role: "Video Editor",
-                workingStatus: "active",
-                paidAmount: 12000,
-                dueAmount: 4000,
-                projectsHandling: 2
-            },
-            {
-                id: 2,
-                name: "Jabir",
-                role: "Motion Designer",
-                workingStatus: "active",
-                paidAmount: 9500,
-                dueAmount: 2500,
-                projectsHandling: 1
-            },
-            {
-                id: 3,
-                name: "Masud Bhai",
-                role: "Project Manager",
-                workingStatus: "active",
-                paidAmount: 18000,
-                dueAmount: 0,
-                projectsHandling: 3
-            },
-            {
-                id: 4,
-                name: "Rahid",
-                role: "Video Editor",
-                workingStatus: "leave",
-                paidAmount: 11000,
-                dueAmount: 1500,
-                projectsHandling: 1
-            },
-            {
-                id: 5,
-                name: "Mahbub",
-                role: "Team Lead",
-                workingStatus: "active",
-                paidAmount: 22000,
-                dueAmount: 0,
-                projectsHandling: 4
+            
+            if (!localStorage.getItem('motioncraftTeam')) {
+                // Initial team data
+                const initialTeam = [
+                    {
+                        id: Date.now() + 10,
+                        name: "Siam",
+                        role: "Video Editor",
+                        workingStatus: "active",
+                        paidAmount: 12000,
+                        dueAmount: 4000,
+                        projectsHandling: 2
+                    },
+                    {
+                        id: Date.now() + 11,
+                        name: "Jabir",
+                        role: "Motion Designer",
+                        workingStatus: "active",
+                        paidAmount: 9500,
+                        dueAmount: 2500,
+                        projectsHandling: 1
+                    },
+                    {
+                        id: Date.now() + 12,
+                        name: "Masud Bhai",
+                        role: "Project Manager",
+                        workingStatus: "active",
+                        paidAmount: 18000,
+                        dueAmount: 0,
+                        projectsHandling: 3
+                    }
+                ];
+                localStorage.setItem('motioncraftTeam', JSON.stringify(initialTeam));
             }
-        ];
-
+        }
+        
+        // Get projects from localStorage
+        function getProjects() {
+            return JSON.parse(localStorage.getItem('motioncraftProjects')) || [];
+        }
+        
+        // Get team members from localStorage
+        function getTeamMembers() {
+            return JSON.parse(localStorage.getItem('motioncraftTeam')) || [];
+        }
+        
+        // Save projects to localStorage
+        function saveProjects(projects) {
+            localStorage.setItem('motioncraftProjects', JSON.stringify(projects));
+        }
+        
+        // Save team members to localStorage
+        function saveTeamMembers(teamMembers) {
+            localStorage.setItem('motioncraftTeam', JSON.stringify(teamMembers));
+        }
+        
         // Format date as "dd MMM yyyy"
         function formatDate(dateString) {
             const date = new Date(dateString);
             const options = { day: '2-digit', month: 'short', year: 'numeric' };
             return date.toLocaleDateString('en-GB', options);
         }
-
+        
         // Format currency in BDT
         function formatCurrency(amount) {
             return `<span class="currency bdt-symbol">${amount.toLocaleString('en-BD')}</span>`;
         }
-
+        
         // Show notification
         function showNotification(message, isSuccess = true) {
             const notification = document.getElementById('notification');
@@ -1119,9 +1119,31 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-
+        
+        // Update statistics
+        function updateStats() {
+            const projects = getProjects();
+            const teamMembers = getTeamMembers();
+            
+            // Update project counts
+            document.getElementById('totalProjects').textContent = projects.length;
+            
+            const activeProjects = projects.filter(p => 
+                p.status === 'in-progress' || p.status === 'review'
+            ).length;
+            document.getElementById('activeProjects').textContent = activeProjects;
+            
+            // Update team member count
+            document.getElementById('teamMembers').textContent = teamMembers.length;
+            
+            // Update pending payments
+            const pendingPayments = teamMembers.reduce((sum, member) => sum + member.dueAmount, 0);
+            document.getElementById('pendingPayments').textContent = pendingPayments.toLocaleString('en-BD');
+        }
+        
         // Render projects table
         function renderProjects() {
+            const projects = getProjects();
             const tableBody = document.getElementById('projectsTableBody');
             tableBody.innerHTML = '';
             
@@ -1174,10 +1196,61 @@
                     showDeleteConfirmation('project', projectId);
                 });
             });
+            
+            // Update recent projects
+            renderRecentProjects();
         }
-
+        
+        // Render recent projects for dashboard
+        function renderRecentProjects() {
+            const projects = getProjects();
+            const recentProjects = document.getElementById('recentProjects');
+            recentProjects.innerHTML = '';
+            
+            // Sort by date added (newest first)
+            const sortedProjects = [...projects].sort((a, b) => 
+                new Date(b.dateAdded) - new Date(a.dateAdded)
+            ).slice(0, 5);
+            
+            sortedProjects.forEach(project => {
+                const row = document.createElement('tr');
+                
+                // Get status class and text
+                let statusClass, statusText;
+                switch(project.status) {
+                    case 'not-started':
+                        statusClass = 'status-not-started';
+                        statusText = 'Not Started';
+                        break;
+                    case 'in-progress':
+                        statusClass = 'status-in-progress';
+                        statusText = 'In Progress';
+                        break;
+                    case 'review':
+                        statusClass = 'status-review';
+                        statusText = 'In Review';
+                        break;
+                    case 'completed':
+                        statusClass = 'status-completed';
+                        statusText = 'Completed';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${project.clientName}</td>
+                    <td><a href="${project.projectLink}" target="_blank">${project.projectLink.substring(0, 20)}...</a></td>
+                    <td>${formatCurrency(project.budget)}</td>
+                    <td>${formatDate(project.dueDate)}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                `;
+                
+                recentProjects.appendChild(row);
+            });
+        }
+        
         // Render team members table
         function renderTeamMembers() {
+            const teamMembers = getTeamMembers();
             const tableBody = document.getElementById('teamTableBody');
             tableBody.innerHTML = '';
             
@@ -1225,7 +1298,7 @@
                 });
             });
         }
-
+        
         // Show delete confirmation modal
         function showDeleteConfirmation(type, id) {
             const modal = document.getElementById('confirmationModal');
@@ -1243,9 +1316,11 @@
             
             modal.style.display = 'flex';
         }
-
+        
         // Delete project function
         function deleteProject(id) {
+            let projects = getProjects();
+            
             // Find the index of the project
             const index = projects.findIndex(project => project.id == id);
             
@@ -1253,19 +1328,24 @@
                 // Remove project from array
                 projects.splice(index, 1);
                 
+                // Save to localStorage
+                saveProjects(projects);
+                
                 // Re-render projects table
                 renderProjects();
                 
+                // Update statistics
+                updateStats();
+                
                 // Show success message
                 showNotification('Project deleted successfully!');
-                
-                // In a real app, send DELETE request to server
-                // deleteFromServer('projects', id);
             }
         }
-
+        
         // Delete team member function
         function deleteTeamMember(id) {
+            let teamMembers = getTeamMembers();
+            
             // Find the index of the team member
             const index = teamMembers.findIndex(member => member.id == id);
             
@@ -1273,21 +1353,26 @@
                 // Remove team member from array
                 teamMembers.splice(index, 1);
                 
+                // Save to localStorage
+                saveTeamMembers(teamMembers);
+                
                 // Re-render team members table
                 renderTeamMembers();
                 
+                // Update statistics
+                updateStats();
+                
                 // Show success message
                 showNotification('Team member deleted successfully!');
-                
-                // In a real app, send DELETE request to server
-                // deleteFromServer('team', id);
             }
         }
-
+        
         // Add a new project
         function addProject() {
+            let projects = getProjects();
+            
             const project = {
-                id: projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1,
+                id: Date.now(),
                 clientName: document.getElementById('clientName').value,
                 projectLink: document.getElementById('projectLink').value,
                 budget: parseInt(document.getElementById('budget').value),
@@ -1301,6 +1386,9 @@
             // Add to projects array
             projects.push(project);
             
+            // Save to localStorage
+            saveProjects(projects);
+            
             // Re-render projects table
             renderProjects();
             
@@ -1310,14 +1398,16 @@
             // Show success message
             showNotification('Project added successfully!');
             
-            // In a real app, send POST request to server
-            // saveToServer('projects', project);
+            // Update statistics
+            updateStats();
         }
-
+        
         // Add a new team member
         function addTeamMember() {
+            let teamMembers = getTeamMembers();
+            
             const member = {
-                id: teamMembers.length > 0 ? Math.max(...teamMembers.map(m => m.id)) + 1 : 1,
+                id: Date.now(),
                 name: document.getElementById('memberName').value,
                 role: document.getElementById('memberRole').value,
                 workingStatus: document.getElementById('workingStatus').value,
@@ -1329,6 +1419,9 @@
             // Add to team members array
             teamMembers.push(member);
             
+            // Save to localStorage
+            saveTeamMembers(teamMembers);
+            
             // Re-render team members table
             renderTeamMembers();
             
@@ -1338,23 +1431,27 @@
             // Show success message
             showNotification('Team member added successfully!');
             
-            // In a real app, send POST request to server
-            // saveToServer('team', member);
+            // Update statistics
+            updateStats();
         }
-
+        
         // Initialize the app
         function init() {
+            // Initialize data
+            initializeData();
+            
             // Render initial data
             renderProjects();
             renderTeamMembers();
+            updateStats();
             
             // Tab switching functionality
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    // Add active class to clicked tab
-                    tab.classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
                     
                     // Hide all tab contents
                     document.querySelectorAll('.tab-content').forEach(content => {
@@ -1362,11 +1459,14 @@
                     });
                     
                     // Show the corresponding tab content
-                    const tabId = tab.getAttribute('data-tab');
+                    const tabId = this.getAttribute('data-tab');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
                     
+                    // Update page title
+                    document.getElementById('pageTitle').textContent = this.querySelector('span').textContent;
+                    
                     // Hide mobile menu after selection
-                    document.getElementById('tabsContainer').classList.remove('active');
+                    document.getElementById('sidebar').classList.remove('active');
                 });
             });
             
@@ -1379,7 +1479,6 @@
             const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
             const confirmationModal = document.getElementById('confirmationModal');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const tabsContainer = document.getElementById('tabsContainer');
             
             // Open project modal
             addProjectBtn.addEventListener('click', () => {
@@ -1398,6 +1497,7 @@
                 btn.addEventListener('click', () => {
                     projectModal.style.display = 'none';
                     teamModal.style.display = 'none';
+                    confirmationModal.style.display = 'none';
                 });
             });
             
@@ -1427,15 +1527,15 @@
             
             // Sync button
             document.getElementById('syncBtn').addEventListener('click', () => {
-                showNotification('Data synchronized with server!');
+                showNotification('Data synchronized successfully!');
             });
             
             // Mobile menu toggle
             mobileMenuBtn.addEventListener('click', () => {
-                tabsContainer.classList.toggle('active');
+                document.getElementById('sidebar').classList.toggle('active');
             });
         }
-
+        
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
     </script>
