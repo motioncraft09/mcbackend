@@ -3,333 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MotionCraft | Client Dashboard</title>
+    <title>Motioncraft Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #4895ef;
-            --success: #4cc9f0;
-            --dark: #1d1e2c;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --card-bg: #ffffff;
-            --sidebar-bg: #1d1e2c;
-            --sidebar-width: 260px;
-            --header-height: 80px;
-            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --danger: #e63946;
-            --warning: #ff9e00;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #4895ef;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --gray: #8d99ae;
+            --border: #e9ecef;
+            --bdt: #006a4e;
         }
 
         body {
-            background: linear-gradient(135deg, #f0f5ff 0%, #e6eeff 100%);
-            display: flex;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: var(--dark);
-            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Glassmorphism effect */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            overflow: hidden;
-            transition: var(--transition);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: rgba(29, 30, 44, 0.95);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            padding: 25px 0;
-            transition: var(--transition);
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            padding: 0 25px 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 15px;
         }
 
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-        }
-
-        .logo-icon i {
-            font-size: 1.6rem;
+        .logo i {
+            font-size: 32px;
+            color: var(--primary);
         }
 
         .logo h1 {
-            font-size: 1.7rem;
+            font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(to right, #fff 0%, #b6c8ff 100%);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-links {
-            margin-top: 35px;
-            padding: 0 15px;
-        }
-
-        .nav-links li {
-            list-style: none;
-            margin-bottom: 8px;
-        }
-
-        .nav-links a {
+        .tabs {
             display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.7);
+            background: white;
             border-radius: 12px;
-            transition: var(--transition);
-            font-weight: 500;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
         }
 
-        .nav-links a:hover, .nav-links a.active {
-            background: rgba(67, 97, 238, 0.3);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .nav-links i {
-            margin-right: 15px;
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
+        .tab {
             flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 30px;
-            transition: var(--transition);
+            padding: 18px 20px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            color: var(--gray);
         }
 
-        .header {
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding: 20px 30px;
-            border-radius: 18px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .header h2 {
-            font-size: 2rem;
-            font-weight: 800;
+        .card-header h2 {
+            font-size: 22px;
+            font-weight: 600;
             color: var(--dark);
-            background: linear-gradient(to right, var(--dark) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
         }
 
         .btn {
             padding: 12px 24px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
+            border-radius: 10px;
             font-weight: 600;
-            display: flex;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 15px;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-            font-size: 0.95rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn:active {
-            transform: translateY(2px);
+            gap: 8px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
             background: var(--primary);
             color: white;
         }
 
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c1121f;
-            box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
-        }
-
-        /* Dashboard Cards */
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-            margin-bottom: 35px;
-        }
-
-        .card {
-            padding: 30px;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(67, 97, 238, 0.15);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .card-header h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .card-header i {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Charts */
-        .chart-container {
-            height: 320px;
-            position: relative;
-        }
-
-        /* Metrics */
-        .metrics-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .metric-card {
-            padding: 20px;
-            text-align: center;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .metric-label {
-            color: var(--gray);
-            font-weight: 600;
-        }
-
-        /* Client Table */
-        .table-container {
-            border-radius: 18px;
-            overflow: hidden;
-            margin-top: 35px;
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 30px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .table-header h3 {
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding: 12px 20px 12px 45px;
-            border: 2px solid #e0e5ff;
-            border-radius: 12px;
-            width: 280px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.7);
-            transition: var(--transition);
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-            font-size: 1.1rem;
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
 
         table {
@@ -338,213 +168,137 @@
         }
 
         thead {
-            background: rgba(224, 229, 255, 0.6);
-        }
-
-        th, td {
-            padding: 18px 25px;
-            text-align: left;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(67, 97, 238, 0.05);
         }
 
         th {
-            font-weight: 700;
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
             color: var(--dark);
-            font-size: 1rem;
         }
 
         tbody tr {
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
 
         tbody tr:hover {
-            background: rgba(224, 229, 255, 0.3);
-            transform: translateX(5px);
+            background: rgba(67, 97, 238, 0.03);
         }
 
         .status {
-            padding: 8px 16px;
+            padding: 8px 15px;
             border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             display: inline-block;
-            min-width: 120px;
-            text-align: center;
         }
 
-        .status-pending {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ff9800;
-            border: 1px solid rgba(255, 152, 0, 0.2);
+        .status-not-started {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
         }
 
         .status-in-progress {
-            background: rgba(67, 97, 238, 0.2);
-            color: var(--primary);
-            border: 1px solid rgba(67, 97, 238, 0.2);
+            background: rgba(73, 168, 255, 0.1);
+            color: #49a8ff;
+        }
+
+        .status-review {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
         }
 
         .status-completed {
-            background: rgba(76, 201, 240, 0.2);
-            color: #00bcd4;
-            border: 1px solid rgba(0, 188, 212, 0.2);
-        }
-
-        .status-overdue {
-            background: rgba(230, 57, 70, 0.2);
-            color: var(--danger);
-            border: 1px solid rgba(230, 57, 70, 0.2);
-        }
-
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .siam { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); }
-        .jabir { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .hasib { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
-        .ms1 { background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%); }
-        .ms2 { background: linear-gradient(135deg, #ffd26f 0%, #ff7d7d 100%); }
-
-        .currency {
-            font-weight: 700;
-            color: #2e7d32;
-        }
-
-        .currency::before {
-            content: "৳";
-            margin-right: 3px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
         }
 
         .action-btn {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(224, 229, 255, 0.6);
-            color: var(--dark);
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border: none;
             cursor: pointer;
-            transition: var(--transition);
-            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .edit-btn:hover {
             background: var(--primary);
             color: white;
         }
 
+        .delete-btn {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
         .delete-btn:hover {
-            background: var(--danger);
+            background: #dc3545;
             color: white;
         }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 25px;
-            margin-top: 40px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        /* Modal */
         .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
         }
 
         .modal-content {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-            width: 90%;
+            width: 100%;
             max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: translateY(-50px);
-            transition: transform 0.3s ease;
-        }
-
-        .modal.active .modal-content {
-            transform: translateY(0);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
             padding: 20px 25px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .modal-header h3 {
-            font-size: 1.5rem;
+            font-size: 20px;
             font-weight: 600;
         }
 
-        .close-btn {
+        .close-modal {
             background: none;
             border: none;
-            color: white;
-            font-size: 1.5rem;
+            font-size: 24px;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
+            color: var(--gray);
+            transition: all 0.3s ease;
         }
 
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .close-modal:hover {
+            color: var(--dark);
         }
 
         .modal-body {
@@ -558,668 +312,963 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--dark);
         }
 
-        .form-group input,
-        .form-group select {
+        .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e5ff;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
+        .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
-        .form-actions {
+        .form-row {
             display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: rgba(248, 249, 250, 0.8);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
             gap: 15px;
-            margin-top: 20px;
         }
 
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 12px;
-            background: var(--primary);
+        .btn-secondary {
+            background: #6c757d;
             color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .badge-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .badge-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .team-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .icon-bg-primary {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .icon-bg-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .icon-bg-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .icon-bg-info {
+            background: rgba(73, 168, 255, 0.1);
+            color: #49a8ff;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-title {
+            font-size: 16px;
+            color: var(--gray);
+        }
+
+        .currency {
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-            z-index: 2000;
+            color: var(--bdt);
         }
 
-        .notification.show {
-            transform: translateX(0);
+        .bdt-symbol:before {
+            content: '৳';
+            margin-right: 3px;
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .sidebar {
-                width: 85px;
-            }
-            .sidebar .logo h1, .nav-links span {
-                display: none;
-            }
-            .logo {
-                justify-content: center;
-                padding: 0 10px 25px;
-            }
-            .logo-icon {
-                margin-right: 0;
-            }
-            .nav-links a {
-                justify-content: center;
-                padding: 16px;
-            }
-            .nav-links i {
-                margin-right: 0;
-                font-size: 1.4rem;
-            }
-            .main-content {
-                margin-left: 85px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .metrics-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            .main-content {
-                padding: 20px 15px;
-                margin-left: 70px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-            }
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .search-box input {
-                width: 100%;
-            }
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            .table-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            .search-box {
-                width: 100%;
-            }
-            .metrics-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 260px;
-                z-index: 1000;
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .menu-toggle {
-                display: block;
-                position: fixed;
-                top: 25px;
-                left: 25px;
-                z-index: 900;
-                background: var(--primary);
-                color: white;
-                width: 45px;
-                height: 45px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.4rem;
-                box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-                cursor: pointer;
-            }
-            .btn {
-                padding: 10px 15px;
-                font-size: 0.85rem;
-            }
-            .btn i {
-                margin-right: 0;
-            }
-            .btn span {
-                display: none;
-            }
-            .modal-content {
-                width: 95%;
-            }
-        }
-
-        /* Toggle button for mobile */
-        .menu-toggle {
-            display: none;
-        }
-
-        /* Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .card, .table-container {
-            animation: fadeIn 0.6s ease-out forwards;
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .confirmation-content h3 {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .confirmation-btns {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .team-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab.active:after {
+                height: 4px;
+                width: 100%;
+                top: 0;
+                left: 0;
+                bottom: auto;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .confirmation-btns {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <div class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </div>
-
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        Client added successfully!
-    </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-play-circle"></i>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-video"></i>
+                <h1>Motioncraft Management System</h1>
             </div>
-            <h1>MotionCraft</h1>
-        </div>
-        <ul class="nav-links">
-            <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="#"><i class="fas fa-users"></i> <span>Clients</span></a></li>
-            <li><a href="#"><i class="fas fa-tasks"></i> <span>Projects</span></a></li>
-            <li><a href="#"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
-            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header glass-card">
-            <h2>Client Management Dashboard</h2>
-            <div class="header-actions">
-                <button class="btn btn-outline" id="exportBtn">
-                    <i class="fas fa-download"></i> <span>Export Data</span>
-                </button>
-                <button class="btn btn-primary" id="addClientBtn">
-                    <i class="fas fa-plus"></i> <span>New Client</span>
+            <div class="user-info">
+                <button class="btn btn-primary" id="syncBtn">
+                    <i class="fas fa-sync-alt"></i> Sync with Server
                 </button>
             </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="clients">Clients & Projects</div>
+            <div class="tab" data-tab="team">Team Management</div>
+            <div class="tab" data-tab="reports">Reports & Analytics</div>
         </div>
-
-        <!-- Income Metrics -->
-        <div class="metrics-container">
-            <div class="metric-card glass-card">
-                <div class="metric-value">৳0</div>
-                <div class="metric-label">Previous Month Income</div>
-            </div>
-            <div class="metric-card glass-card">
-                <div class="metric-value">৳0</div>
-                <div class="metric-label">Current Month Income</div>
-            </div>
-            <div class="metric-card glass-card">
-                <div class="metric-value" id="activeProjectsCount">0</div>
-                <div class="metric-label">Active Projects</div>
-            </div>
-        </div>
-
-        <!-- Income Chart -->
-        <div class="dashboard-cards">
-            <div class="card glass-card">
+        
+        <!-- Clients & Projects Tab -->
+        <div class="tab-content active" id="clients-tab">
+            <div class="card">
                 <div class="card-header">
-                    <h3>Monthly Income Overview</h3>
-                    <i class="fas fa-chart-bar"></i>
+                    <h2>Client Projects</h2>
+                    <button class="btn btn-primary" id="addProjectBtn">
+                        <i class="fas fa-plus"></i> Add New Project
+                    </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="incomeChart"></canvas>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Project Link</th>
+                                <th>Budget</th>
+                                <th>Due Date</th>
+                                <th>Assigned Editor</th>
+                                <th>Handling Team</th>
+                                <th>Date Added</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectsTableBody">
+                            <!-- Projects will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-        <!-- Client Table -->
-        <div class="table-container glass-card">
-            <div class="table-header">
-                <h3>Active Client Projects</h3>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search clients, projects, or status...">
+        
+        <!-- Team Management Tab -->
+        <div class="tab-content" id="team-tab">
+            <div class="team-stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Team Members</div>
+                        <div class="stat-icon icon-bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-icon icon-bg-success">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pending Payments</div>
+                        <div class="stat-icon icon-bg-warning">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value"><span class="currency bdt-symbol">25,000</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Completed Projects</div>
+                        <div class="stat-icon icon-bg-info">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">24</div>
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client Name</th>
-                        <th>Budget (BDT)</th>
-                        <th>Team Member</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="clientTable">
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
-                            <h3>No clients found</h3>
-                            <p>Click "New Client" to add your first client</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Team Members</h2>
+                    <button class="btn btn-primary" id="addTeamMemberBtn">
+                        <i class="fas fa-plus"></i> Add Team Member
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Working Status</th>
+                                <th>Paid Amount</th>
+                                <th>Due Amount</th>
+                                <th>Projects Handling</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamTableBody">
+                            <!-- Team members will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-
-        <div class="footer glass-card">
-            <p>© 2023 MotionCraft Client Management System | All data is securely stored and updated in real-time</p>
+        
+        <!-- Reports Tab -->
+        <div class="tab-content" id="reports-tab">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Reports & Analytics</h2>
+                </div>
+                <div class="card-body">
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-chart-line" style="font-size: 64px; color: var(--gray); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Comprehensive Reports</h3>
+                        <p style="color: var(--gray); max-width: 600px; margin: 0 auto;">
+                            View detailed analytics, project progress reports, financial summaries, and team performance metrics. 
+                            This section will provide valuable insights to optimize your workflow and business decisions.
+                        </p>
+                        <button class="btn btn-primary" style="margin-top: 30px;">
+                            <i class="fas fa-download"></i> Download Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Add/Edit Client Modal -->
-    <div class="modal" id="clientModal">
+    
+    <!-- Add Project Modal -->
+    <div class="modal" id="projectModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add New Client</h3>
-                <button class="close-btn" id="closeModal">&times;</button>
+                <h3>Add New Project</h3>
+                <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="clientForm">
-                    <input type="hidden" id="editIndex" value="-1">
-                    <div class="form-group">
-                        <label for="clientName">Client Name</label>
-                        <input type="text" id="clientName" required>
+                <form id="projectForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientName">Client Name</label>
+                            <input type="text" class="form-control" id="clientName" placeholder="Enter client name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectLink">Project Link</label>
+                            <input type="url" class="form-control" id="projectLink" placeholder="Enter project link" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="budget">Budget (BDT)</label>
-                        <input type="number" id="budget" min="0" step="1000" required>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget">Budget (BDT)</label>
+                            <input type="number" class="form-control" id="budget" placeholder="Enter budget" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dueDate">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="teamMember">Team Member</label>
-                        <select id="teamMember" required>
-                            <option value="">Select Team Member</option>
-                            <option value="siam">Siam</option>
-                            <option value="jabir">Jabir</option>
-                            <option value="hasib">Hasib</option>
-                            <option value="ms1">MS1</option>
-                            <option value="ms2">MS2</option>
-                        </select>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="assignedEditor">Assigned Editor</label>
+                            <select class="form-control" id="assignedEditor" required>
+                                <option value="">Select editor</option>
+                                <option value="siam">Siam</option>
+                                <option value="jabir">Jabir</option>
+                                <option value="rahid">Rahid</option>
+                                <option value="mahbub">Mahbub</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="handlingTeam">Handling Team Member</label>
+                            <select class="form-control" id="handlingTeam" required>
+                                <option value="">Select team member</option>
+                                <option value="masud">Masud Bhai</option>
+                                <option value="mahbub">Mahbub</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="dueDate">Due Date</label>
-                        <input type="date" id="dueDate" required>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectDate">Project Date</label>
+                            <input type="date" class="form-control" id="projectDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectStatus">Project Status</label>
+                            <select class="form-control" id="projectStatus" required>
+                                <option value="not-started">Not Started</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="review">In Review</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" required>
-                            <option value="">Select Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="overdue">Overdue</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Client</button>
+                        <label for="projectNotes">Additional Notes</label>
+                        <textarea class="form-control" id="projectNotes" rows="3" placeholder="Add project notes"></textarea>
                     </div>
                 </form>
             </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Cancel</button>
+                <button class="btn btn-primary" id="saveProjectBtn">Save Project</button>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Add Team Member Modal -->
+    <div class="modal" id="teamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Team Member</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="teamForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memberName">Full Name</label>
+                            <input type="text" class="form-control" id="memberName" placeholder="Enter full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberRole">Role</label>
+                            <input type="text" class="form-control" id="memberRole" placeholder="Enter role" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="workingStatus">Working Status</label>
+                            <select class="form-control" id="workingStatus" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="leave">On Leave</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentStatus">Payment Status</label>
+                            <select class="form-control" id="paymentStatus" required>
+                                <option value="paid">Fully Paid</option>
+                                <option value="partial">Partially Paid</option>
+                                <option value="due">Payment Due</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paidAmount">Paid Amount (BDT)</label>
+                            <input type="number" class="form-control" id="paidAmount" placeholder="Enter paid amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dueAmount">Due Amount (BDT)</label>
+                            <input type="number" class="form-control" id="dueAmount" placeholder="Enter due amount" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memberNotes">Additional Information</label>
+                        <textarea class="form-control" id="memberNotes" rows="3" placeholder="Add notes about team member"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Cancel</button>
+                <button class="btn btn-primary" id="saveTeamMemberBtn">Save Team Member</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="confirmation-content">
+            <h3>Are you sure you want to delete this item?</h3>
+            <p>This action cannot be undone. All data associated with this item will be permanently removed from the server.</p>
+            <div class="confirmation-btns">
+                <button class="btn btn-cancel" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn btn-confirm" id="confirmDeleteBtn">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        // Start with empty clients array
-        let clients = JSON.parse(localStorage.getItem('motioncraft_clients')) || [];
-
-        // Save to localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('motioncraft_clients', JSON.stringify(clients));
-        }
-        
-        // Update active projects count
-        function updateActiveProjects() {
-            const activeProjects = clients.filter(client => 
-                client.status === 'in-progress' || client.status === 'pending'
-            ).length;
-            document.getElementById('activeProjectsCount').textContent = activeProjects;
-        }
-
-        // DOM Elements
-        const clientTable = document.getElementById('clientTable');
-        const clientModal = document.getElementById('clientModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const clientForm = document.getElementById('clientForm');
-        const editIndex = document.getElementById('editIndex');
-        const addClientBtn = document.getElementById('addClientBtn');
-        const closeModal = document.getElementById('closeModal');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const searchInput = document.getElementById('searchInput');
-        const exportBtn = document.getElementById('exportBtn');
-        const notification = document.getElementById('notification');
-
-        // Toggle sidebar on mobile
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
-
-        // Open modal for adding new client
-        addClientBtn.addEventListener('click', () => {
-            openModal('add');
-        });
-
-        // Close modal
-        closeModal.addEventListener('click', closeClientModal);
-        cancelBtn.addEventListener('click', closeClientModal);
-
-        // Handle form submission
-        clientForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            saveClient();
-        });
-
-        // Search functionality
-        searchInput.addEventListener('input', function() {
-            const searchValue = this.value.toLowerCase();
-            renderClientTable(clients.filter(client => 
-                client.name.toLowerCase().includes(searchValue) || 
-                client.teamMember.toLowerCase().includes(searchValue) || 
-                client.status.toLowerCase().includes(searchValue)
-            ));
-        });
-
-        // Export functionality
-        exportBtn.addEventListener('click', function() {
-            if(clients.length === 0) {
-                showNotification("No data to export!");
-                return;
+        // Sample data for projects
+        const projects = [
+            {
+                id: 1,
+                clientName: "TechVision Inc.",
+                projectLink: "https://project-link.com/techvision",
+                budget: 25000,
+                dueDate: "2023-10-15",
+                assignedEditor: "Siam",
+                handlingTeam: "Mahbub",
+                dateAdded: "2023-09-10",
+                status: "in-progress"
+            },
+            {
+                id: 2,
+                clientName: "Global Retailers",
+                projectLink: "https://project-link.com/retailers",
+                budget: 42000,
+                dueDate: "2023-09-25",
+                assignedEditor: "Jabir",
+                handlingTeam: "Masud Bhai",
+                dateAdded: "2023-09-05",
+                status: "review"
+            },
+            {
+                id: 3,
+                clientName: "HealthPlus",
+                projectLink: "https://project-link.com/healthplus",
+                budget: 38000,
+                dueDate: "2023-10-05",
+                assignedEditor: "Rahid",
+                handlingTeam: "Mahbub",
+                dateAdded: "2023-08-28",
+                status: "completed"
+            },
+            {
+                id: 4,
+                clientName: "EduFuture",
+                projectLink: "https://project-link.com/edufuture",
+                budget: 55000,
+                dueDate: "2023-10-30",
+                assignedEditor: "Mahbub",
+                handlingTeam: "Masud Bhai",
+                dateAdded: "2023-09-15",
+                status: "not-started"
             }
-            
-            // Create CSV content
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Client Name,Budget (BDT),Team Member,Due Date,Status\n";
-            
-            clients.forEach(client => {
-                const row = [
-                    `"${client.name}"`,
-                    client.budget,
-                    client.teamMember,
-                    client.dueDate,
-                    client.status
-                ].join(',');
-                csvContent += row + "\n";
-            });
-            
-            // Create download link
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "motioncraft_clients.csv");
-            document.body.appendChild(link);
-            
-            // Trigger download
-            link.click();
-            document.body.removeChild(link);
-            
-            // Show notification
-            showNotification("Data exported successfully!");
-        });
+        ];
 
-        // Show notification
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Initialize the application
-        function init() {
-            renderClientTable(clients);
-            updateActiveProjects();
-            createIncomeChart();
-        }
-
-        // Render client table
-        function renderClientTable(data = clients) {
-            clientTable.innerHTML = '';
-            
-            if (data.length === 0) {
-                clientTable.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
-                            <h3>No clients found</h3>
-                            <p>Click "New Client" to add your first client</p>
-                        </td>
-                    </tr>
-                `;
-                return;
+        // Sample data for team members
+        const teamMembers = [
+            {
+                id: 1,
+                name: "Siam",
+                role: "Video Editor",
+                workingStatus: "active",
+                paidAmount: 12000,
+                dueAmount: 4000,
+                projectsHandling: 2
+            },
+            {
+                id: 2,
+                name: "Jabir",
+                role: "Motion Designer",
+                workingStatus: "active",
+                paidAmount: 9500,
+                dueAmount: 2500,
+                projectsHandling: 1
+            },
+            {
+                id: 3,
+                name: "Masud Bhai",
+                role: "Project Manager",
+                workingStatus: "active",
+                paidAmount: 18000,
+                dueAmount: 0,
+                projectsHandling: 3
+            },
+            {
+                id: 4,
+                name: "Rahid",
+                role: "Video Editor",
+                workingStatus: "leave",
+                paidAmount: 11000,
+                dueAmount: 1500,
+                projectsHandling: 1
+            },
+            {
+                id: 5,
+                name: "Mahbub",
+                role: "Team Lead",
+                workingStatus: "active",
+                paidAmount: 22000,
+                dueAmount: 0,
+                projectsHandling: 4
             }
+        ];
+
+        // Format date as "dd MMM yyyy"
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options);
+        }
+
+        // Format currency in BDT
+        function formatCurrency(amount) {
+            return `<span class="currency bdt-symbol">${amount.toLocaleString('en-BD')}</span>`;
+        }
+
+        // Render projects table
+        function renderProjects() {
+            const tableBody = document.getElementById('projectsTableBody');
+            tableBody.innerHTML = '';
             
-            data.forEach((client, index) => {
+            projects.forEach(project => {
                 const row = document.createElement('tr');
                 
-                // Format date
-                const dueDate = new Date(client.dueDate);
-                const formattedDate = dueDate.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-                
-                // Format currency
-                const formattedBudget = client.budget.toLocaleString('en-US');
-                
-                // Status class
-                const statusClass = `status-${client.status.replace(' ', '-')}`;
-                
-                // Status text
-                let statusText = client.status;
-                if (statusText === 'in-progress') statusText = 'In Progress';
-                else statusText = statusText.charAt(0).toUpperCase() + statusText.slice(1);
+                // Get status class and text
+                let statusClass, statusText;
+                switch(project.status) {
+                    case 'not-started':
+                        statusClass = 'status-not-started';
+                        statusText = 'Not Started';
+                        break;
+                    case 'in-progress':
+                        statusClass = 'status-in-progress';
+                        statusText = 'In Progress';
+                        break;
+                    case 'review':
+                        statusClass = 'status-review';
+                        statusText = 'In Review';
+                        break;
+                    case 'completed':
+                        statusClass = 'status-completed';
+                        statusText = 'Completed';
+                        break;
+                }
                 
                 row.innerHTML = `
-                    <td>${client.name}</td>
-                    <td class="currency">${formattedBudget}</td>
-                    <td>
-                        <div class="team-member">
-                            <div class="avatar ${client.teamMember}">${client.teamMember.charAt(0).toUpperCase()}</div>
-                            <span>${client.teamMember.charAt(0).toUpperCase() + client.teamMember.slice(1)}</span>
-                        </div>
-                    </td>
-                    <td>${formattedDate}</td>
+                    <td>${project.clientName}</td>
+                    <td><a href="${project.projectLink}" target="_blank" class="action-btn"><i class="fas fa-link"></i> View</a></td>
+                    <td>${formatCurrency(project.budget)}</td>
+                    <td>${formatDate(project.dueDate)}</td>
+                    <td>${project.assignedEditor}</td>
+                    <td>${project.handlingTeam}</td>
+                    <td>${formatDate(project.dateAdded)}</td>
                     <td><span class="status ${statusClass}">${statusText}</span></td>
                     <td>
-                        <div class="actions">
-                            <div class="action-btn edit-btn" data-index="${index}">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="action-btn delete-btn" data-index="${index}">
-                                <i class="fas fa-trash"></i>
-                            </div>
-                        </div>
+                        <button class="action-btn edit-project" data-id="${project.id}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn delete-project" data-id="${project.id}"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 
-                clientTable.appendChild(row);
-            });
-            
-            // Add event listeners to edit buttons
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    openModal('edit', parseInt(index));
-                });
+                tableBody.appendChild(row);
             });
             
             // Add event listeners to delete buttons
-            document.querySelectorAll('.delete-btn').forEach(btn => {
+            document.querySelectorAll('.delete-project').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    deleteClient(parseInt(index));
+                    const projectId = this.getAttribute('data-id');
+                    showDeleteConfirmation('project', projectId);
                 });
             });
         }
 
-        // Open modal for adding or editing
-        function openModal(mode, index = -1) {
-            if (mode === 'add') {
-                modalTitle.textContent = 'Add New Client';
-                clientForm.reset();
-                editIndex.value = '-1';
-            } else if (mode === 'edit' && index >= 0) {
-                modalTitle.textContent = 'Edit Client';
-                const client = clients[index];
+        // Render team members table
+        function renderTeamMembers() {
+            const tableBody = document.getElementById('teamTableBody');
+            tableBody.innerHTML = '';
+            
+            teamMembers.forEach(member => {
+                const row = document.createElement('tr');
                 
-                document.getElementById('clientName').value = client.name;
-                document.getElementById('budget').value = client.budget;
-                document.getElementById('teamMember').value = client.teamMember;
-                document.getElementById('dueDate').value = client.dueDate;
-                document.getElementById('status').value = client.status;
-                editIndex.value = index;
-            }
-            
-            clientModal.classList.add('active');
-        }
-
-        // Close modal
-        function closeClientModal() {
-            clientModal.classList.remove('active');
-        }
-
-        // Save client (add or update)
-        function saveClient() {
-            const client = {
-                name: document.getElementById('clientName').value,
-                budget: parseInt(document.getElementById('budget').value),
-                teamMember: document.getElementById('teamMember').value,
-                dueDate: document.getElementById('dueDate').value,
-                status: document.getElementById('status').value
-            };
-            
-            const index = parseInt(editIndex.value);
-            
-            if (index === -1) {
-                // Add new client
-                clients.push(client);
-                showNotification("Client added successfully!");
-            } else {
-                // Update existing client
-                clients[index] = client;
-                showNotification("Client updated successfully!");
-            }
-            
-            saveToLocalStorage();
-            renderClientTable(clients);
-            updateActiveProjects();
-            closeClientModal();
-        }
-
-        // Delete client
-        function deleteClient(index) {
-            if (confirm('Are you sure you want to delete this client?')) {
-                const clientName = clients[index].name;
-                clients.splice(index, 1);
-                saveToLocalStorage();
-                renderClientTable(clients);
-                updateActiveProjects();
-                showNotification(`Client "${clientName}" deleted successfully!`);
-            }
-        }
-
-        // Create income chart with zeros
-        function createIncomeChart() {
-            // Monthly Income Chart (Bar)
-            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
-            const incomeGradient = incomeCtx.createLinearGradient(0, 0, 0, 300);
-            incomeGradient.addColorStop(0, 'rgba(67, 97, 238, 0.8)');
-            incomeGradient.addColorStop(1, 'rgba(72, 149, 239, 0.3)');
-            
-            // Start with zeros
-            const monthlyIncome = [0, 0, 0, 0, 0, 0, 0, 0];
-            
-            new Chart(incomeCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-                    datasets: [{
-                        label: 'Income (BDT)',
-                        data: monthlyIncome,
-                        backgroundColor: incomeGradient,
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        barPercentage: 0.6,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return '৳' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return '৳' + value;
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
+                // Get badge class based on working status
+                let badgeClass, badgeText;
+                switch(member.workingStatus) {
+                    case 'active':
+                        badgeClass = 'badge-success';
+                        badgeText = 'Active';
+                        break;
+                    case 'inactive':
+                        badgeClass = 'badge-danger';
+                        badgeText = 'Inactive';
+                        break;
+                    case 'leave':
+                        badgeClass = 'badge-warning';
+                        badgeText = 'On Leave';
+                        break;
                 }
+                
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.role}</td>
+                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                    <td>${formatCurrency(member.paidAmount)}</td>
+                    <td>${formatCurrency(member.dueAmount)}</td>
+                    <td>${member.projectsHandling} Projects</td>
+                    <td>
+                        <button class="action-btn edit-member" data-id="${member.id}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn delete-member" data-id="${member.id}"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-member').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-id');
+                    showDeleteConfirmation('team', memberId);
+                });
             });
         }
 
-        // Initialize the application
+        // Show delete confirmation modal
+        function showDeleteConfirmation(type, id) {
+            const modal = document.getElementById('confirmationModal');
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            
+            // Set up the confirmation button based on the type
+            confirmBtn.onclick = function() {
+                if (type === 'project') {
+                    deleteProject(id);
+                } else if (type === 'team') {
+                    deleteTeamMember(id);
+                }
+                modal.style.display = 'none';
+            };
+            
+            modal.style.display = 'flex';
+        }
+
+        // Delete project function
+        function deleteProject(id) {
+            // Find the index of the project
+            const index = projects.findIndex(project => project.id == id);
+            
+            if (index !== -1) {
+                // Remove project from array
+                projects.splice(index, 1);
+                
+                // Re-render projects table
+                renderProjects();
+                
+                // Show success message
+                alert('Project deleted successfully!');
+                
+                // In a real app, send DELETE request to server
+                // deleteFromServer('projects', id);
+            }
+        }
+
+        // Delete team member function
+        function deleteTeamMember(id) {
+            // Find the index of the team member
+            const index = teamMembers.findIndex(member => member.id == id);
+            
+            if (index !== -1) {
+                // Remove team member from array
+                teamMembers.splice(index, 1);
+                
+                // Re-render team members table
+                renderTeamMembers();
+                
+                // Show success message
+                alert('Team member deleted successfully!');
+                
+                // In a real app, send DELETE request to server
+                // deleteFromServer('team', id);
+            }
+        }
+
+        // Add a new project
+        function addProject() {
+            const project = {
+                id: projects.length + 1,
+                clientName: document.getElementById('clientName').value,
+                projectLink: document.getElementById('projectLink').value,
+                budget: parseInt(document.getElementById('budget').value),
+                dueDate: document.getElementById('dueDate').value,
+                assignedEditor: document.getElementById('assignedEditor').value,
+                handlingTeam: document.getElementById('handlingTeam').value,
+                dateAdded: new Date().toISOString().split('T')[0],
+                status: document.getElementById('projectStatus').value
+            };
+            
+            // Add to projects array
+            projects.push(project);
+            
+            // Re-render projects table
+            renderProjects();
+            
+            // Close modal
+            document.querySelector('.close-modal').click();
+            
+            // Show success message
+            alert('Project added successfully!');
+            
+            // In a real app, send POST request to server
+            // saveToServer('projects', project);
+        }
+
+        // Add a new team member
+        function addTeamMember() {
+            const member = {
+                id: teamMembers.length + 1,
+                name: document.getElementById('memberName').value,
+                role: document.getElementById('memberRole').value,
+                workingStatus: document.getElementById('workingStatus').value,
+                paidAmount: parseInt(document.getElementById('paidAmount').value),
+                dueAmount: parseInt(document.getElementById('dueAmount').value),
+                projectsHandling: 0 // Start with 0 projects
+            };
+            
+            // Add to team members array
+            teamMembers.push(member);
+            
+            // Re-render team members table
+            renderTeamMembers();
+            
+            // Close modal
+            document.querySelector('.close-modal').click();
+            
+            // Show success message
+            alert('Team member added successfully!');
+            
+            // In a real app, send POST request to server
+            // saveToServer('team', member);
+        }
+
+        // Initialize the app
+        function init() {
+            // Render initial data
+            renderProjects();
+            renderTeamMembers();
+            
+            // Tab switching functionality
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding tab content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Modal functionality
+            const projectModal = document.getElementById('projectModal');
+            const teamModal = document.getElementById('teamModal');
+            const addProjectBtn = document.getElementById('addProjectBtn');
+            const addTeamMemberBtn = document.getElementById('addTeamMemberBtn');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            const confirmationModal = document.getElementById('confirmationModal');
+            
+            // Open project modal
+            addProjectBtn.addEventListener('click', () => {
+                document.getElementById('projectForm').reset();
+                projectModal.style.display = 'flex';
+            });
+            
+            // Open team modal
+            addTeamMemberBtn.addEventListener('click', () => {
+                document.getElementById('teamForm').reset();
+                teamModal.style.display = 'flex';
+            });
+            
+            // Close modals
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    projectModal.style.display = 'none';
+                    teamModal.style.display = 'none';
+                });
+            });
+            
+            // Close confirmation modal
+            cancelDeleteBtn.addEventListener('click', () => {
+                confirmationModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === projectModal) {
+                    projectModal.style.display = 'none';
+                }
+                if (e.target === teamModal) {
+                    teamModal.style.display = 'none';
+                }
+                if (e.target === confirmationModal) {
+                    confirmationModal.style.display = 'none';
+                }
+            });
+            
+            // Save project button
+            document.getElementById('saveProjectBtn').addEventListener('click', addProject);
+            
+            // Save team member button
+            document.getElementById('saveTeamMemberBtn').addEventListener('click', addTeamMember);
+            
+            // Sync button
+            document.getElementById('syncBtn').addEventListener('click', () => {
+                alert('Data synchronized with server!');
+            });
+        }
+
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
