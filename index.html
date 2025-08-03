@@ -425,19 +425,19 @@
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-label">Active Projects</div>
-                    <div class="stat-value" id="active-projects">12</div>
+                    <div class="stat-value" id="active-projects">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Team Members</div>
-                    <div class="stat-value" id="team-members">5</div>
+                    <div class="stat-value" id="team-members">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Pending Tasks</div>
-                    <div class="stat-value" id="pending-tasks">8</div>
+                    <div class="stat-value" id="pending-tasks">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Completed</div>
-                    <div class="stat-value" id="completed-projects">24</div>
+                    <div class="stat-value" id="completed-projects">0</div>
                 </div>
             </div>
 
@@ -603,51 +603,9 @@
     </footer>
 
     <script>
-        // Team members data
-        let teamMembers = JSON.parse(localStorage.getItem('motioncraftTeam')) || [
-            { id: 1, name: "Siam", handling: "Client Communication", status: "active", paid: 25000, due: 5000, projects: 4 },
-            { id: 2, name: "Jabir", handling: "Video Editing", status: "active", paid: 32000, due: 8000, projects: 6 },
-            { id: 3, name: "Masud Bhai", handling: "Project Management", status: "active", paid: 40000, due: 10000, projects: 8 },
-            { id: 4, name: "Rahid", handling: "Motion Graphics", status: "on-leave", paid: 28000, due: 2000, projects: 5 },
-            { id: 5, name: "Mahbub", handling: "Color Grading", status: "active", paid: 35000, due: 5000, projects: 7 }
-        ];
-
-        // Clients data
-        let clients = JSON.parse(localStorage.getItem('motioncraftClients')) || [
-            {
-                id: 1,
-                name: "Tech Solutions Ltd",
-                projectLink: "https://project.com/tech-solutions",
-                budget: 25000,
-                dueDate: "2023-11-15",
-                editor: "siam",
-                handler: "masud",
-                date: "2023-10-01",
-                status: "in-progress"
-            },
-            {
-                id: 2,
-                name: "Creative Studio",
-                projectLink: "https://project.com/creative-studio",
-                budget: 42000,
-                dueDate: "2023-11-30",
-                editor: "jabir",
-                handler: "masud",
-                date: "2023-10-05",
-                status: "not-started"
-            },
-            {
-                id: 3,
-                name: "Global Enterprises",
-                projectLink: "https://project.com/global-enterprises",
-                budget: 58000,
-                dueDate: "2023-12-10",
-                editor: "mahbub",
-                handler: "siam",
-                date: "2023-10-10",
-                status: "completed"
-            }
-        ];
+        // Initialize data arrays
+        let teamMembers = [];
+        let clients = [];
 
         // DOM Elements
         const tabButtons = document.querySelectorAll('.tab-btn');
@@ -663,6 +621,66 @@
         const clientsList = document.getElementById('clients-list');
         const teamList = document.getElementById('team-list');
         
+        // Load data from localStorage
+        function loadData() {
+            // Load team members
+            const storedTeam = localStorage.getItem('motioncraftTeam');
+            teamMembers = storedTeam ? JSON.parse(storedTeam) : [
+                { id: 1, name: "Siam", handling: "Client Communication", status: "active", paid: 25000, due: 5000, projects: 4 },
+                { id: 2, name: "Jabir", handling: "Video Editing", status: "active", paid: 32000, due: 8000, projects: 6 },
+                { id: 3, name: "Masud Bhai", handling: "Project Management", status: "active", paid: 40000, due: 10000, projects: 8 },
+                { id: 4, name: "Rahid", handling: "Motion Graphics", status: "on-leave", paid: 28000, due: 2000, projects: 5 },
+                { id: 5, name: "Mahbub", handling: "Color Grading", status: "active", paid: 35000, due: 5000, projects: 7 }
+            ];
+
+            // Load clients
+            const storedClients = localStorage.getItem('motioncraftClients');
+            clients = storedClients ? JSON.parse(storedClients) : [
+                {
+                    id: 1,
+                    name: "Tech Solutions Ltd",
+                    projectLink: "https://project.com/tech-solutions",
+                    budget: 25000,
+                    dueDate: "2023-11-15",
+                    editor: "siam",
+                    handler: "masud",
+                    date: "2023-10-01",
+                    status: "in-progress"
+                },
+                {
+                    id: 2,
+                    name: "Creative Studio",
+                    projectLink: "https://project.com/creative-studio",
+                    budget: 42000,
+                    dueDate: "2023-11-30",
+                    editor: "jabir",
+                    handler: "masud",
+                    date: "2023-10-05",
+                    status: "not-started"
+                },
+                {
+                    id: 3,
+                    name: "Global Enterprises",
+                    projectLink: "https://project.com/global-enterprises",
+                    budget: 58000,
+                    dueDate: "2023-12-10",
+                    editor: "mahbub",
+                    handler: "siam",
+                    date: "2023-10-10",
+                    status: "completed"
+                }
+            ];
+        }
+
+        // Save data to storage
+        function saveClientsToStorage() {
+            localStorage.setItem('motioncraftClients', JSON.stringify(clients));
+        }
+
+        function saveTeamToStorage() {
+            localStorage.setItem('motioncraftTeam', JSON.stringify(teamMembers));
+        }
+
         // Tab Navigation
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -970,23 +988,25 @@
 
         // Update statistics
         function updateStats() {
-            document.getElementById('active-projects').textContent = clients.filter(c => c.status === 'in-progress').length;
-            document.getElementById('team-members').textContent = teamMembers.length;
-            document.getElementById('pending-tasks').textContent = clients.filter(c => c.status !== 'completed').length;
-            document.getElementById('completed-projects').textContent = clients.filter(c => c.status === 'completed').length;
-        }
-
-        // Save data to storage
-        function saveClientsToStorage() {
-            localStorage.setItem('motioncraftClients', JSON.stringify(clients));
-        }
-
-        function saveTeamToStorage() {
-            localStorage.setItem('motioncraftTeam', JSON.stringify(teamMembers));
+            document.getElementById('active-projects').textContent = 
+                clients.filter(c => c.status === 'in-progress').length;
+            
+            document.getElementById('team-members').textContent = 
+                teamMembers.length;
+            
+            document.getElementById('pending-tasks').textContent = 
+                clients.filter(c => c.status !== 'completed').length;
+            
+            document.getElementById('completed-projects').textContent = 
+                clients.filter(c => c.status === 'completed').length;
         }
 
         // Initialize the application
         function init() {
+            // Load data first
+            loadData();
+            
+            // Then render UI
             renderClients();
             renderTeam();
             updateStats();
