@@ -6,6 +6,7 @@
     <title>Motioncraft Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -65,6 +66,15 @@
             transition: all 0.2s ease;
             border-radius: 12px;
             background: white;
+        }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
         }
 
         .status-fresh { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
@@ -178,6 +188,33 @@
             width: 100%;
         }
 
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .kanban-container {
@@ -274,6 +311,30 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            display: none;
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.info {
+            background: #3b82f6;
         }
     </style>
 </head>
@@ -384,7 +445,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Total Orders</p>
-                                <h3 class="text-2xl font-bold text-gray-800">24</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" id="totalOrders">24</h3>
                             </div>
                         </div>
                     </div>
@@ -396,7 +457,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">This Month Orders</p>
-                                <h3 class="text-2xl font-bold text-gray-800">8</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" id="monthOrders">8</h3>
                             </div>
                         </div>
                     </div>
@@ -408,7 +469,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Paid Amount</p>
-                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt">85,000</h3>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="paidAmount">85,000</h3>
                             </div>
                         </div>
                     </div>
@@ -420,7 +481,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Pending Amount</p>
-                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt">45,000</h3>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="pendingAmount">45,000</h3>
                             </div>
                         </div>
                     </div>
@@ -430,41 +491,51 @@
                     <div class="card glass p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Total Income</h3>
-                            <span class="text-green-600 font-medium currency-bdt">85,000</span>
+                            <span class="text-green-600 font-medium currency-bdt" id="totalIncome">85,000</span>
                         </div>
                         <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                            <p class="text-gray-500">Income Chart</p>
+                            <canvas id="incomeChart"></canvas>
                         </div>
                     </div>
 
                     <div class="card glass p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Expenses</h3>
-                            <span class="text-red-600 font-medium currency-bdt">15,000</span>
+                            <span class="text-red-600 font-medium currency-bdt" id="totalExpense">15,000</span>
                         </div>
                         <div class="mb-4">
                             <label class="block text-sm text-gray-600 mb-2">Add Expense</label>
                             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                                <input type="number" placeholder="Amount" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
-                                <input type="text" placeholder="Description" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
-                                <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Add</button>
+                                <input type="number" id="expenseAmount" placeholder="Amount" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
+                                <input type="text" id="expenseDescription" placeholder="Description" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
+                                <button id="addExpense" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Add</button>
                             </div>
                         </div>
                         <div class="h-40 overflow-y-auto">
-                            <ul class="space-y-2">
+                            <ul id="expenseList" class="space-y-2">
                                 <li class="flex justify-between items-center py-2 border-b border-gray-100">
                                     <div>
                                         <p class="text-sm text-gray-800">Software Subscription</p>
                                         <p class="text-xs text-gray-500">2023-11-15</p>
                                     </div>
-                                    <span class="text-red-600 font-medium currency-bdt">5,000</span>
+                                    <div class="flex items-center">
+                                        <span class="text-red-600 font-medium currency-bdt">5,000</span>
+                                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="1">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </li>
                                 <li class="flex justify-between items-center py-2 border-b border-gray-100">
                                     <div>
                                         <p class="text-sm text-gray-800">Marketing</p>
                                         <p class="text-xs text-gray-500">2023-11-10</p>
                                     </div>
-                                    <span class="text-red-600 font-medium currency-bdt">10,000</span>
+                                    <div class="flex items-center">
+                                        <span class="text-red-600 font-medium currency-bdt">10,000</span>
+                                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -473,7 +544,7 @@
 
                 <div class="card glass p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-                    <div class="space-y-4">
+                    <div class="space-y-4" id="recentActivity">
                         <div class="activity-item">
                             <p class="text-sm text-gray-800">Order MC-024 status changed from editing to final_delivery</p>
                             <p class="text-xs text-gray-500">2023-11-20 14:30</p>
@@ -494,16 +565,16 @@
             <section id="kanban" class="section hidden fade-in">
                 <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
                     <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Project Kanban Board</h2>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <button id="addOrderBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                         <i class="fas fa-plus mr-2"></i> Add Order
                     </button>
                 </div>
 
                 <div class="kanban-container">
-                    <div class="kanban-column status-fresh p-4">
+                    <div class="kanban-column status-fresh p-4" data-status="fresh">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Fresh</h3>
-                        <div class="space-y-4">
-                            <div class="kanban-card card glass p-4">
+                        <div class="space-y-4" id="fresh-column">
+                            <div class="kanban-card card glass p-4" data-order="MC-025" draggable="true">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="font-semibold text-gray-800">MC-025</span>
                                     <span class="text-sm font-medium text-red-600 currency-bdt">12,000</span>
@@ -518,10 +589,10 @@
                         </div>
                     </div>
 
-                    <div class="kanban-column status-scripting p-4">
+                    <div class="kanban-column status-scripting p-4" data-status="scripting">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Scripting</h3>
-                        <div class="space-y-4">
-                            <div class="kanban-card card glass p-4">
+                        <div class="space-y-4" id="scripting-column">
+                            <div class="kanban-card card glass p-4" data-order="MC-023" draggable="true">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="font-semibold text-gray-800">MC-023</span>
                                     <span class="text-sm font-medium text-red-600 currency-bdt">18,000</span>
@@ -536,10 +607,10 @@
                         </div>
                     </div>
 
-                    <div class="kanban-column status-editing p-4">
+                    <div class="kanban-column status-editing p-4" data-status="editing">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Editing</h3>
-                        <div class="space-y-4">
-                            <div class="kanban-card card glass p-4">
+                        <div class="space-y-4" id="editing-column">
+                            <div class="kanban-card card glass p-4" data-order="MC-021" draggable="true">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="font-semibold text-gray-800">MC-021</span>
                                     <span class="text-sm font-medium text-green-600 currency-bdt">25,000</span>
@@ -554,10 +625,10 @@
                         </div>
                     </div>
 
-                    <div class="kanban-column status-correction p-4">
+                    <div class="kanban-column status-correction p-4" data-status="correction">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Correction</h3>
-                        <div class="space-y-4">
-                            <div class="kanban-card card glass p-4">
+                        <div class="space-y-4" id="correction-column">
+                            <div class="kanban-card card glass p-4" data-order="MC-019" draggable="true">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="font-semibold text-gray-800">MC-019</span>
                                     <span class="text-sm font-medium text-green-600 currency-bdt">15,000</span>
@@ -572,15 +643,17 @@
                         </div>
                     </div>
 
-                    <div class="kanban-column status-final_delivery p-4">
+                    <div class="kanban-column status-final_delivery p-4" data-status="final_delivery">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Final Delivery</h3>
-                        <!-- Empty column -->
+                        <div class="space-y-4" id="final_delivery-column">
+                            <!-- Empty column -->
+                        </div>
                     </div>
 
-                    <div class="kanban-column status-completed p-4">
+                    <div class="kanban-column status-completed p-4" data-status="completed">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Completed</h3>
-                        <div class="space-y-4">
-                            <div class="kanban-card card glass p-4">
+                        <div class="space-y-4" id="completed-column">
+                            <div class="kanban-card card glass p-4" data-order="MC-018" draggable="true">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="font-semibold text-gray-800">MC-018</span>
                                     <span class="text-sm font-medium text-green-600 currency-bdt">20,000</span>
@@ -601,7 +674,7 @@
             <section id="orders" class="section hidden fade-in">
                 <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
                     <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Orders Management</h2>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <button id="addOrderBtn2" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                         <i class="fas fa-plus mr-2"></i> Add Order
                     </button>
                 </div>
@@ -611,7 +684,7 @@
                         <div class="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
                             <div class="w-full md:w-auto">
                                 <label class="block text-sm text-gray-600 mb-1">Filter by Editor</label>
-                                <select class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <select id="editorFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                     <option value="">All Editors</option>
                                     <option value="1">Alex Johnson</option>
                                     <option value="2">Maria Garcia</option>
@@ -620,7 +693,7 @@
                             </div>
                             <div class="w-full md:w-auto">
                                 <label class="block text-sm text-gray-600 mb-1">Filter by Status</label>
-                                <select class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <select id="statusFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                     <option value="">All Statuses</option>
                                     <option value="fresh">Fresh</option>
                                     <option value="scripting">Scripting</option>
@@ -632,7 +705,7 @@
                             </div>
                             <div class="w-full md:w-auto">
                                 <label class="block text-sm text-gray-600 mb-1">Payment Status</label>
-                                <select class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <select id="paymentFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                     <option value="">All</option>
                                     <option value="yes">Paid</option>
                                     <option value="no">Unpaid</option>
@@ -642,7 +715,7 @@
                         <div class="w-full md:w-64">
                             <div class="relative">
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                <input type="text" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white">
+                                <input type="text" id="orderSearch" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white">
                             </div>
                         </div>
                     </div>
@@ -663,55 +736,8 @@
                                     <th class="text-left py-3 px-4 text-gray-600 font-medium">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b border-gray-200">
-                                    <td class="py-3 px-4 text-gray-800">MC-025</td>
-                                    <td class="py-3 px-4 text-gray-800">Tech Solutions Inc.</td>
-                                    <td class="py-3 px-4 text-gray-800">Product Demo Video</td>
-                                    <td class="py-3 px-4">
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Fresh</span>
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-800">Unassigned</td>
-                                    <td class="py-3 px-4 text-gray-800 currency-bdt">12,000</td>
-                                    <td class="py-3 px-4 text-gray-800">2023-11-27</td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex space-x-2">
-                                            <button class="text-blue-600 hover:text-blue-800">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-green-600 hover:text-green-800">
-                                                <i class="fab fa-whatsapp"></i>
-                                            </button>
-                                            <button class="text-red-600 hover:text-red-800">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="py-3 px-4 text-gray-800">MC-023</td>
-                                    <td class="py-3 px-4 text-gray-800">Global Education</td>
-                                    <td class="py-3 px-4 text-gray-800">Corporate Training</td>
-                                    <td class="py-3 px-4">
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Scripting</span>
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-800">Alex Johnson</td>
-                                    <td class="py-3 px-4 text-gray-800 currency-bdt">18,000</td>
-                                    <td class="py-3 px-4 text-gray-800">2023-11-23</td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex space-x-2">
-                                            <button class="text-blue-600 hover:text-blue-800">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-green-600 hover:text-green-800">
-                                                <i class="fab fa-whatsapp"></i>
-                                            </button>
-                                            <button class="text-red-600 hover:text-red-800">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tbody id="ordersTableBody">
+                                <!-- Orders will be populated dynamically -->
                             </tbody>
                         </table>
                     </div>
@@ -722,104 +748,13 @@
             <section id="team" class="section hidden fade-in">
                 <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
                     <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Team Management</h2>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <button id="addMemberBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                         <i class="fas fa-plus mr-2"></i> Add Member
                     </button>
                 </div>
 
-                <div class="team-grid mb-8">
-                    <div class="card glass p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">A</div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Alex Johnson</h3>
-                                <p class="text-sm text-gray-600">Senior Video Editor</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <p class="text-sm text-gray-600">Projects</p>
-                                <p class="text-lg font-semibold text-gray-800">2</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Earnings</p>
-                                <p class="text-lg font-semibold text-gray-800 currency-bdt">32,000</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <a href="#" class="text-green-600 hover:text-green-800">
-                                <i class="fab fa-whatsapp text-xl"></i>
-                            </a>
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card glass p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">M</div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Maria Garcia</h3>
-                                <p class="text-sm text-gray-600">Video Editor</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <p class="text-sm text-gray-600">Projects</p>
-                                <p class="text-lg font-semibold text-gray-800">2</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Earnings</p>
-                                <p class="text-lg font-semibold text-gray-800 currency-bdt">24,000</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <a href="#" class="text-green-600 hover:text-green-800">
-                                <i class="fab fa-whatsapp text-xl"></i>
-                            </a>
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card glass p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">D</div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800">David Kim</h3>
-                                <p class="text-sm text-gray-600">Motion Graphics Designer</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <p class="text-sm text-gray-600">Projects</p>
-                                <p class="text-lg font-semibold text-gray-800">1</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Earnings</p>
-                                <p class="text-lg font-semibold text-gray-800 currency-bdt">18,000</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <a href="#" class="text-green-600 hover:text-green-800">
-                                <i class="fab fa-whatsapp text-xl"></i>
-                            </a>
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
+                <div class="team-grid mb-8" id="teamContainer">
+                    <!-- Team members will be populated dynamically -->
                 </div>
 
                 <div class="card glass p-6">
@@ -827,24 +762,18 @@
                     <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
                         <div class="flex-1">
                             <label class="block text-sm text-gray-600 mb-1">Reassign projects from:</label>
-                            <select class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                            <select id="reassignFrom" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                 <option value="">Select member</option>
-                                <option value="1">Alex Johnson</option>
-                                <option value="2">Maria Garcia</option>
-                                <option value="3">David Kim</option>
                             </select>
                         </div>
                         <div class="flex-1">
                             <label class="block text-sm text-gray-600 mb-1">Reassign projects to:</label>
-                            <select class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                            <select id="reassignTo" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                 <option value="">Select member</option>
-                                <option value="1">Alex Johnson</option>
-                                <option value="2">Maria Garcia</option>
-                                <option value="3">David Kim</option>
                             </select>
                         </div>
                         <div class="mt-4 md:mt-6">
-                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            <button id="reassignBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                                 Reassign Projects
                             </button>
                         </div>
@@ -852,7 +781,7 @@
                 </div>
             </section>
 
-            <!-- Other Sections Placeholder -->
+            <!-- Other Sections -->
             <section id="finance" class="section hidden fade-in">
                 <div class="card glass p-6">
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">Finance Section</h2>
@@ -883,72 +812,878 @@
         </div>
     </div>
 
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800">Add New Order</h3>
+            </div>
+            <div class="p-6">
+                <form id="orderForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Order Number</label>
+                            <input type="text" id="orderNumber" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Client Name</label>
+                            <input type="text" id="clientName" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Client WhatsApp</label>
+                            <input type="text" id="clientWhatsApp" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Project Title</label>
+                            <input type="text" id="projectTitle" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Status</label>
+                            <select id="orderStatus" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="fresh">Fresh</option>
+                                <option value="scripting">Scripting</option>
+                                <option value="editing">Editing</option>
+                                <option value="correction">Correction</option>
+                                <option value="final_delivery">Final Delivery</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Assigned Editor</label>
+                            <select id="assignedEditor" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="">Unassigned</option>
+                                <option value="1">Alex Johnson</option>
+                                <option value="2">Maria Garcia</option>
+                                <option value="3">David Kim</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Price</label>
+                            <input type="number" id="orderPrice" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Paid</label>
+                            <select id="orderPaid" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-1">Notes</label>
+                        <textarea id="orderNotes" class="w-full p-2 rounded-lg border border-gray-200 bg-white h-24"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelOrder" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Save Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800">Add Team Member</h3>
+            </div>
+            <div class="p-6">
+                <form id="teamForm">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Name</label>
+                            <input type="text" id="memberName" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Role</label>
+                            <input type="text" id="memberRole" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">WhatsApp</label>
+                            <input type="text" id="memberWhatsApp" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" id="cancelTeam" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Save Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="flex items-center">
+            <i id="toastIcon" class="fas fa-info-circle mr-3"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu functionality
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const overlay = document.querySelector('.overlay');
-            const sidebar = document.querySelector('.sidebar');
-            
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('active');
-                    overlay.classList.toggle('active');
-                });
-            }
-            
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                });
-            }
-            
-            // Navigation between sections
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.section');
-            const sectionTitle = document.getElementById('sectionTitle');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+        // Application State
+        const state = {
+            orders: [
+                {
+                    id: 1,
+                    order_no: 'MC-025',
+                    client_name: 'Tech Solutions Inc.',
+                    client_whatsapp: '+1234567890',
+                    project_title: 'Product Demo Video',
+                    status: 'fresh',
+                    assigned_editor: '',
+                    price: 12000,
+                    paid: 'no',
+                    due_date: '2023-11-27',
+                    notes: 'Need high-quality product demonstration'
+                },
+                {
+                    id: 2,
+                    order_no: 'MC-023',
+                    client_name: 'Global Education',
+                    client_whatsapp: '+1234567891',
+                    project_title: 'Corporate Training',
+                    status: 'scripting',
+                    assigned_editor: '1',
+                    price: 18000,
+                    paid: 'no',
+                    due_date: '2023-11-23',
+                    notes: 'Training videos for new employees'
+                },
+                {
+                    id: 3,
+                    order_no: 'MC-021',
+                    client_name: 'Fashion House Ltd',
+                    client_whatsapp: '+1234567892',
+                    project_title: 'Brand Campaign',
+                    status: 'editing',
+                    assigned_editor: '2',
+                    price: 25000,
+                    paid: 'yes',
+                    due_date: '2023-11-25',
+                    notes: 'Spring collection campaign videos'
+                },
+                {
+                    id: 4,
+                    order_no: 'MC-019',
+                    client_name: 'Startup XYZ',
+                    client_whatsapp: '+1234567893',
+                    project_title: 'Social Media Ads',
+                    status: 'correction',
+                    assigned_editor: '3',
+                    price: 15000,
+                    paid: 'yes',
+                    due_date: '2023-11-19',
+                    notes: 'Client requested color corrections'
+                },
+                {
+                    id: 5,
+                    order_no: 'MC-018',
+                    client_name: 'Conference Org',
+                    client_whatsapp: '+1234567894',
+                    project_title: 'Event Highlights',
+                    status: 'completed',
+                    assigned_editor: '1',
+                    price: 20000,
+                    paid: 'yes',
+                    due_date: '2023-11-15',
+                    notes: 'Annual conference highlights video'
+                }
+            ],
+            team: [
+                {
+                    id: 1,
+                    name: 'Alex Johnson',
+                    role: 'Senior Video Editor',
+                    whatsapp: '+1234567895',
+                    projects_count: 2,
+                    monthly_earnings: 32000
+                },
+                {
+                    id: 2,
+                    name: 'Maria Garcia',
+                    role: 'Video Editor',
+                    whatsapp: '+1234567896',
+                    projects_count: 2,
+                    monthly_earnings: 24000
+                },
+                {
+                    id: 3,
+                    name: 'David Kim',
+                    role: 'Motion Graphics Designer',
+                    whatsapp: '+1234567897',
+                    projects_count: 1,
+                    monthly_earnings: 18000
+                }
+            ],
+            expenses: [
+                { id: 1, description: 'Software Subscription', amount: 5000, date: '2023-11-15' },
+                { id: 2, description: 'Marketing', amount: 10000, date: '2023-11-10' }
+            ],
+            activity: [
+                { id: 1, message: 'Order MC-024 status changed from editing to final_delivery', timestamp: '2023-11-20 14:30' },
+                { id: 2, message: 'New order MC-025 created', timestamp: '2023-11-20 11:15' },
+                { id: 3, message: 'Payment received for order MC-022', timestamp: '2023-11-19 16:45' }
+            ]
+        };
+
+        // DOM Elements
+        const elements = {
+            // Navigation
+            mobileMenuBtn: document.querySelector('.mobile-menu-btn'),
+            overlay: document.querySelector('.overlay'),
+            sidebar: document.querySelector('.sidebar'),
+            navLinks: document.querySelectorAll('.nav-link'),
+            sections: document.querySelectorAll('.section'),
+            sectionTitle: document.getElementById('sectionTitle'),
+
+            // Modals
+            orderModal: document.getElementById('orderModal'),
+            teamModal: document.getElementById('teamModal'),
+            orderForm: document.getElementById('orderForm'),
+            teamForm: document.getElementById('teamForm'),
+            cancelOrder: document.getElementById('cancelOrder'),
+            cancelTeam: document.getElementById('cancelTeam'),
+
+            // Buttons
+            addOrderBtn: document.getElementById('addOrderBtn'),
+            addOrderBtn2: document.getElementById('addOrderBtn2'),
+            addMemberBtn: document.getElementById('addMemberBtn'),
+            addExpense: document.getElementById('addExpense'),
+            reassignBtn: document.getElementById('reassignBtn'),
+
+            // Filters
+            editorFilter: document.getElementById('editorFilter'),
+            statusFilter: document.getElementById('statusFilter'),
+            paymentFilter: document.getElementById('paymentFilter'),
+            orderSearch: document.getElementById('orderSearch'),
+
+            // Toast
+            toast: document.getElementById('toast'),
+            toastIcon: document.getElementById('toastIcon'),
+            toastMessage: document.getElementById('toastMessage')
+        };
+
+        // Initialize Application
+        function init() {
+            setupEventListeners();
+            renderOrdersTable();
+            renderTeamMembers();
+            setupDragAndDrop();
+            initCharts();
+            updateStats();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Mobile menu
+            elements.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            elements.overlay.addEventListener('click', toggleMobileMenu);
+
+            // Navigation
+            elements.navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
                     e.preventDefault();
+                    showSection(link.dataset.section);
+                    updateActiveNav(link);
+                });
+            });
+
+            // Order modals
+            elements.addOrderBtn.addEventListener('click', () => openOrderModal());
+            elements.addOrderBtn2.addEventListener('click', () => openOrderModal());
+            elements.cancelOrder.addEventListener('click', () => closeOrderModal());
+            elements.orderForm.addEventListener('submit', saveOrder);
+
+            // Team modal
+            elements.addMemberBtn.addEventListener('click', () => openTeamModal());
+            elements.cancelTeam.addEventListener('click', () => closeTeamModal());
+            elements.teamForm.addEventListener('submit', saveTeamMember);
+
+            // Expenses
+            elements.addExpense.addEventListener('click', addNewExpense);
+
+            // Reassign projects
+            elements.reassignBtn.addEventListener('click', reassignProjects);
+
+            // Filters
+            elements.editorFilter.addEventListener('change', filterOrders);
+            elements.statusFilter.addEventListener('change', filterOrders);
+            elements.paymentFilter.addEventListener('change', filterOrders);
+            elements.orderSearch.addEventListener('input', filterOrders);
+
+            // Expense deletion (event delegation)
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-expense')) {
+                    const expenseId = e.target.closest('.delete-expense').dataset.id;
+                    deleteExpense(expenseId);
+                }
+            });
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            elements.sidebar.classList.toggle('active');
+            elements.overlay.classList.toggle('active');
+        }
+
+        // Navigation
+        function showSection(sectionName) {
+            elements.sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionName).classList.add('active');
+            elements.sectionTitle.textContent = document.querySelector(`[data-section="${sectionName}"] span`).textContent;
+            
+            // Close mobile menu
+            toggleMobileMenu();
+        }
+
+        function updateActiveNav(activeLink) {
+            elements.navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            activeLink.classList.add('active');
+        }
+
+        // Order Management
+        function openOrderModal() {
+            elements.orderModal.classList.add('active');
+        }
+
+        function closeOrderModal() {
+            elements.orderModal.classList.remove('active');
+            elements.orderForm.reset();
+        }
+
+        function saveOrder(e) {
+            e.preventDefault();
+            
+            const newOrder = {
+                id: state.orders.length + 1,
+                order_no: document.getElementById('orderNumber').value,
+                client_name: document.getElementById('clientName').value,
+                client_whatsapp: document.getElementById('clientWhatsApp').value,
+                project_title: document.getElementById('projectTitle').value,
+                status: document.getElementById('orderStatus').value,
+                assigned_editor: document.getElementById('assignedEditor').value,
+                price: parseInt(document.getElementById('orderPrice').value) || 0,
+                paid: document.getElementById('orderPaid').value,
+                notes: document.getElementById('orderNotes').value,
+                due_date: new Date().toISOString().split('T')[0]
+            };
+
+            state.orders.push(newOrder);
+            renderOrdersTable();
+            updateKanbanBoard();
+            updateStats();
+            closeOrderModal();
+            showToast('Order created successfully!', 'success');
+            
+            // Add activity
+            state.activity.unshift({
+                id: state.activity.length + 1,
+                message: `New order ${newOrder.order_no} created`,
+                timestamp: new Date().toLocaleString()
+            });
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+
+            state.orders.forEach(order => {
+                const editor = state.team.find(member => member.id == order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800 currency-bdt">${order.price.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 view-order" data-id="${order.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-whatsapp="${order.client_whatsapp}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add event listeners for action buttons
+            document.querySelectorAll('.delete-order').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.closest('.delete-order').dataset.id;
+                    deleteOrder(orderId);
+                });
+            });
+
+            document.querySelectorAll('.whatsapp-order').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const whatsapp = e.target.closest('.whatsapp-order').dataset.whatsapp;
+                    openWhatsApp(whatsapp);
+                });
+            });
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                fresh: 'bg-blue-100 text-blue-800',
+                scripting: 'bg-yellow-100 text-yellow-800',
+                editing: 'bg-purple-100 text-purple-800',
+                correction: 'bg-red-100 text-red-800',
+                final_delivery: 'bg-green-100 text-green-800',
+                completed: 'bg-indigo-100 text-indigo-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                state.orders = state.orders.filter(order => order.id != orderId);
+                renderOrdersTable();
+                updateKanbanBoard();
+                updateStats();
+                showToast('Order deleted successfully!', 'success');
+            }
+        }
+
+        function openWhatsApp(phone) {
+            window.open(`https://wa.me/${phone}`, '_blank');
+        }
+
+        // Team Management
+        function openTeamModal() {
+            elements.teamModal.classList.add('active');
+        }
+
+        function closeTeamModal() {
+            elements.teamModal.classList.remove('active');
+            elements.teamForm.reset();
+        }
+
+        function saveTeamMember(e) {
+            e.preventDefault();
+            
+            const newMember = {
+                id: state.team.length + 1,
+                name: document.getElementById('memberName').value,
+                role: document.getElementById('memberRole').value,
+                whatsapp: document.getElementById('memberWhatsApp').value,
+                projects_count: 0,
+                monthly_earnings: 0
+            };
+
+            state.team.push(newMember);
+            renderTeamMembers();
+            closeTeamModal();
+            showToast('Team member added successfully!', 'success');
+        }
+
+        function renderTeamMembers() {
+            const container = document.getElementById('teamContainer');
+            container.innerHTML = '';
+
+            state.team.forEach(member => {
+                const memberOrders = state.orders.filter(order => order.assigned_editor == member.id);
+                
+                const card = document.createElement('div');
+                card.className = 'card glass p-6';
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                            ${member.name.charAt(0)}
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800">${member.name}</h3>
+                            <p class="text-sm text-gray-600">${member.role}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Projects</p>
+                            <p class="text-lg font-semibold text-gray-800">${memberOrders.length}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Earnings</p>
+                            <p class="text-lg font-semibold text-gray-800 currency-bdt">${member.monthly_earnings.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <a href="https://wa.me/${member.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                        </a>
+                        <button class="text-blue-600 hover:text-blue-800 edit-member" data-id="${member.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 delete-member" data-id="${member.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Update reassign dropdowns
+            updateReassignDropdowns();
+        }
+
+        function updateReassignDropdowns() {
+            const fromSelect = document.getElementById('reassignFrom');
+            const toSelect = document.getElementById('reassignTo');
+            
+            fromSelect.innerHTML = '<option value="">Select member</option>';
+            toSelect.innerHTML = '<option value="">Select member</option>';
+            
+            state.team.forEach(member => {
+                fromSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+                toSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+            });
+        }
+
+        function reassignProjects() {
+            const fromId = document.getElementById('reassignFrom').value;
+            const toId = document.getElementById('reassignTo').value;
+            
+            if (!fromId || !toId) {
+                showToast('Please select both team members', 'error');
+                return;
+            }
+            
+            if (fromId === toId) {
+                showToast('Please select different team members', 'error');
+                return;
+            }
+            
+            let reassignedCount = 0;
+            state.orders.forEach(order => {
+                if (order.assigned_editor == fromId) {
+                    order.assigned_editor = toId;
+                    reassignedCount++;
+                }
+            });
+            
+            renderOrdersTable();
+            updateKanbanBoard();
+            showToast(`Reassigned ${reassignedCount} projects successfully!`, 'success');
+        }
+
+        // Kanban Board
+        function setupDragAndDrop() {
+            const cards = document.querySelectorAll('.kanban-card');
+            const columns = document.querySelectorAll('.kanban-column');
+            
+            cards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.order);
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const orderNumber = e.dataTransfer.getData('text/plain');
+            const newStatus = e.target.closest('.kanban-column').dataset.status;
+            
+            // Update order status
+            const order = state.orders.find(o => o.order_no === orderNumber);
+            if (order) {
+                order.status = newStatus;
+                updateKanbanBoard();
+                showToast(`Order ${orderNumber} moved to ${newStatus}`, 'success');
+            }
+        }
+
+        function updateKanbanBoard() {
+            const columns = ['fresh', 'scripting', 'editing', 'correction', 'final_delivery', 'completed'];
+            
+            columns.forEach(status => {
+                const column = document.getElementById(`${status}-column`);
+                column.innerHTML = '';
+                
+                const statusOrders = state.orders.filter(order => order.status === status);
+                statusOrders.forEach(order => {
+                    const editor = state.team.find(member => member.id == order.assigned_editor);
+                    const editorName = editor ? editor.name : 'Unassigned';
                     
-                    // Remove active class from all links and sections
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    sections.forEach(s => s.classList.remove('active'));
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card card glass p-4';
+                    card.draggable = true;
+                    card.dataset.order = order.order_no;
                     
-                    // Add active class to clicked link
-                    this.classList.add('active');
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-semibold text-gray-800">${order.order_no}</span>
+                            <span class="text-sm font-medium ${order.paid === 'yes' ? 'text-green-600' : 'text-red-600'} currency-bdt">
+                                ${order.price.toLocaleString()}
+                            </span>
+                        </div>
+                        <h4 class="font-medium text-gray-800 mb-1">${order.project_title}</h4>
+                        <p class="text-sm text-gray-600 mb-2">${order.client_name}</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">${editorName}</span>
+                            <span class="text-green-600">${getDueDays(order.due_date)}</span>
+                        </div>
+                    `;
                     
-                    // Show corresponding section
-                    const sectionId = this.getAttribute('data-section');
-                    const targetSection = document.getElementById(sectionId);
-                    if (targetSection) {
-                        targetSection.classList.add('active');
-                        
-                        // Update section title
-                        if (sectionTitle) {
-                            sectionTitle.textContent = this.querySelector('span').textContent;
-                        }
-                    }
-                    
-                    // Close mobile menu if open
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
+                    column.appendChild(card);
                 });
             });
             
-            // Set current date for month picker
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const currentMonth = `${year}-${month}`;
+            // Re-setup drag and drop for new cards
+            setupDragAndDrop();
+        }
+
+        function getDueDays(dueDate) {
+            const today = new Date();
+            const due = new Date(dueDate);
+            const diffTime = due - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             
-            const monthPicker = document.getElementById('monthPicker');
-            if (monthPicker) {
-                monthPicker.value = currentMonth;
+            if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
+            if (diffDays === 0) return 'Today';
+            return `${diffDays}d`;
+        }
+
+        // Expenses
+        function addNewExpense() {
+            const amount = document.getElementById('expenseAmount').value;
+            const description = document.getElementById('expenseDescription').value;
+            
+            if (!amount || !description) {
+                showToast('Please fill all fields', 'error');
+                return;
             }
-        });
+            
+            const newExpense = {
+                id: state.expenses.length + 1,
+                description: description,
+                amount: parseInt(amount),
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            state.expenses.push(newExpense);
+            updateExpenseList();
+            updateStats();
+            
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseDescription').value = '';
+            
+            showToast('Expense added successfully!', 'success');
+        }
+
+        function deleteExpense(expenseId) {
+            state.expenses = state.expenses.filter(expense => expense.id != expenseId);
+            updateExpenseList();
+            updateStats();
+            showToast('Expense deleted successfully!', 'success');
+        }
+
+        function updateExpenseList() {
+            const list = document.getElementById('expenseList');
+            list.innerHTML = '';
+            
+            state.expenses.forEach(expense => {
+                const item = document.createElement('li');
+                item.className = 'flex justify-between items-center py-2 border-b border-gray-100';
+                item.innerHTML = `
+                    <div>
+                        <p class="text-sm text-gray-800">${expense.description}</p>
+                        <p class="text-xs text-gray-500">${expense.date}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-red-600 font-medium currency-bdt">${expense.amount.toLocaleString()}</span>
+                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="${expense.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Stats and Charts
+        function updateStats() {
+            // Update order counts
+            document.getElementById('totalOrders').textContent = state.orders.length;
+            
+            const thisMonth = new Date().getMonth();
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.due_date);
+                return orderDate.getMonth() === thisMonth;
+            });
+            document.getElementById('monthOrders').textContent = monthOrders.length;
+            
+            // Update financials
+            const paidAmount = state.orders
+                .filter(order => order.paid === 'yes')
+                .reduce((sum, order) => sum + order.price, 0);
+            document.getElementById('paidAmount').textContent = paidAmount.toLocaleString();
+            
+            const pendingAmount = state.orders
+                .filter(order => order.paid === 'no')
+                .reduce((sum, order) => sum + order.price, 0);
+            document.getElementById('pendingAmount').textContent = pendingAmount.toLocaleString();
+            
+            const totalExpenses = state.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            document.getElementById('totalExpense').textContent = totalExpenses.toLocaleString();
+            
+            const totalIncome = paidAmount - totalExpenses;
+            document.getElementById('totalIncome').textContent = totalIncome.toLocaleString();
+        }
+
+        function initCharts() {
+            // Income Chart
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            new Chart(incomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Monthly Income',
+                        data: [65000, 59000, 80000, 81000, 56000, 85000],
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Order Filtering
+        function filterOrders() {
+            const editor = elements.editorFilter.value;
+            const status = elements.statusFilter.value;
+            const payment = elements.paymentFilter.value;
+            const search = elements.orderSearch.value.toLowerCase();
+            
+            const filteredOrders = state.orders.filter(order => {
+                const matchesEditor = !editor || order.assigned_editor == editor;
+                const matchesStatus = !status || order.status === status;
+                const matchesPayment = !payment || order.paid === payment;
+                const matchesSearch = !search || 
+                    order.order_no.toLowerCase().includes(search) ||
+                    order.client_name.toLowerCase().includes(search) ||
+                    order.project_title.toLowerCase().includes(search);
+                
+                return matchesEditor && matchesStatus && matchesPayment && matchesSearch;
+            });
+            
+            renderFilteredOrders(filteredOrders);
+        }
+
+        function renderFilteredOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            orders.forEach(order => {
+                const editor = state.team.find(member => member.id == order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800 currency-bdt">${order.price.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 view-order" data-id="${order.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-whatsapp="${order.client_whatsapp}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            elements.toast.className = `toast ${type}`;
+            elements.toastMessage.textContent = message;
+            
+            // Set icon based on type
+            const icon = elements.toastIcon;
+            icon.className = type === 'success' ? 'fas fa-check-circle mr-3' :
+                            type === 'error' ? 'fas fa-exclamation-circle mr-3' :
+                            'fas fa-info-circle mr-3';
+            
+            elements.toast.style.display = 'block';
+            
+            setTimeout(() => {
+                elements.toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
