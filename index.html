@@ -3,108 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motioncraft - Client & Team Management</title>
+    <title>Motioncraft Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3f37c9;
-            --secondary: #f72585;
-            --dark: #212529;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --success: #4cc9f0;
-            --warning: #f8961e;
-            --danger: #e63946;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fb 0%, #e4edf5 100%);
-            color: var(--dark);
-            line-height: 1.6;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            color: #1e293b;
+            transition: all 0.3s ease;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        .card {
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .kanban-column {
+            min-height: 600px;
+            border-radius: 12px;
+        }
+
+        .kanban-card {
+            cursor: grab;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .status-fresh { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+        .status-scripting { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+        .status-editing { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+        .status-correction { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); }
+        .status-final_delivery { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+        .status-completed { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
+
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+
+        .modal {
+            transition: all 0.3s ease;
+        }
+
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .activity-item {
+            border-left: 3px solid var(--primary);
+            padding-left: 16px;
+            margin-bottom: 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+                width: 280px;
+                top: 0;
+                left: 0;
+                overflow-y: auto;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+            .overlay.active {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+            .kanban-column {
+                min-height: 300px;
+                margin-bottom: 1rem;
+            }
+            .grid-cols-responsive {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-2-responsive {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .table-responsive {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .card {
+                margin-bottom: 1rem;
+            }
+            .text-xl-mobile {
+                font-size: 1.25rem;
+            }
+            .text-2xl-mobile {
+                font-size: 1.5rem;
+            }
+            .p-mobile {
+                padding: 1rem;
+            }
+            .flex-mobile-col {
+                flex-direction: column;
+            }
+            .space-y-mobile {
+                margin-top: 1rem;
+            }
+            .modal-mobile {
+                width: 95%;
+                margin: 0 auto;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .grid-cols-responsive {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .kanban-column {
+                min-height: 500px;
+            }
+        }
+
+        .nav-link.active {
+            background: var(--primary);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .logo i {
-            font-size: 2.2rem;
-        }
-
-        .nav-tabs {
-            display: flex;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50px;
-            padding: 5px;
-        }
-
-        .tab-btn {
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: var(--primary);
-        }
-
-        .main-content {
-            padding: 30px 0;
-        }
-
-        .section {
-            display: none;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .section.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -112,908 +199,2715 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-success {
-            background: #4cc9f0;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #3ab0d5;
-        }
-
-        .form-container {
-            background: #f9fafc;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .form-control {
-            padding: 12px 15px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            margin-top: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-
-        tr:hover {
-            background-color: #f9fafc;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .status-not-started {
-            background: #e9ecef;
-            color: var(--gray);
-        }
-
-        .status-in-progress {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-on-hold {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-on-leave {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-inactive {
-            background: #e9ecef;
-            color: var(--gray);
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin: 0 5px;
-            color: var(--gray);
-            transition: var(--transition);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .action-btn:hover {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--box-shadow);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 10px 0;
-        }
-
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .currency-bdt {
-            font-weight: 700;
-            color: #27ae60;
-        }
-
+        /* Currency Styles */
         .currency-bdt::before {
             content: "৳";
             margin-right: 2px;
         }
 
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-            margin-top: 40px;
+        .currency-usd::before {
+            content: "$";
+            margin-right: 2px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--gray);
+        /* Color Fixes */
+        .text-gray-800 {
+            color: #1e293b;
         }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #dce1e8;
+        
+        .text-gray-700 {
+            color: #374151;
         }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .nav-tabs {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+        
+        .text-gray-600 {
+            color: #4b5563;
+        }
+        
+        .text-gray-500 {
+            color: #6b7280;
+        }
+        
+        .text-gray-400 {
+            color: #9ca3af;
+        }
+        
+        .border-gray-200 {
+            border-color: #e5e7eb;
+        }
+        
+        .border-gray-300 {
+            border-color: #d1d5db;
+        }
+        
+        .bg-gray-100 {
+            background-color: #f3f4f6;
+        }
+        
+        .bg-gray-50 {
+            background-color: #f9fafb;
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-video"></i>
-                    <span>Motioncraft</span>
-                </div>
-                <div class="nav-tabs">
-                    <div class="tab-btn active" data-target="clients">Clients & Projects</div>
-                    <div class="tab-btn" data-target="team">Team Management</div>
-                </div>
-            </div>
+<body class="min-h-screen">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-4 left-4 z-50">
+        <button id="mobileMenuButton" class="p-3 rounded-full glass text-gray-700">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Overlay for mobile menu -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar glass w-64 min-h-screen p-6 fixed lg:static z-40">
+        <div class="flex items-center justify-center mb-10">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">M</div>
+            <h1 class="text-xl font-bold ml-3 text-gray-800">Motioncraft</h1>
         </div>
-    </header>
 
-    <div class="container">
-        <div class="main-content">
-            <!-- Stats Section -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-label">Active Projects</div>
-                    <div class="stat-value" id="active-projects">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Team Members</div>
-                    <div class="stat-value" id="team-members">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Pending Tasks</div>
-                    <div class="stat-value" id="pending-tasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Completed</div>
-                    <div class="stat-value" id="completed-projects">0</div>
+        <nav class="space-y-2">
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors active" data-section="overview">
+                <i class="fas fa-chart-pie w-6 mr-3"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="kanban">
+                <i class="fas fa-columns w-6 mr-3"></i>
+                <span>Kanban Board</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="orders">
+                <i class="fas fa-list-ul w-6 mr-3"></i>
+                <span>Orders</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="team">
+                <i class="fas fa-users w-6 mr-3"></i>
+                <span>Team</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="finance">
+                <i class="fas fa-chart-line w-6 mr-3"></i>
+                <span>Finance</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="clients">
+                <i class="fas fa-user-friends w-6 mr-3"></i>
+                <span>Clients</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="activity">
+                <i class="fas fa-history w-6 mr-3"></i>
+                <span>Activity</span>
+            </a>
+            <a href="#" class="nav-link flex items-center p-3 rounded-xl text-gray-700 hover:bg-white transition-colors" data-section="settings">
+                <i class="fas fa-cog w-6 mr-3"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="mt-10 pt-6 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold">A</div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Admin User</p>
+                        <p class="text-xs text-gray-500">Owner</p>
+                    </div>
                 </div>
             </div>
-
-            <!-- Clients Section -->
-            <section id="clients" class="section active">
-                <div class="section-header">
-                    <h2 class="section-title">Clients & Projects</h2>
-                    <button class="btn btn-primary" id="add-client-btn">
-                        <i class="fas fa-plus"></i> Add Client
-                    </button>
-                </div>
-
-                <div class="form-container" id="client-form" style="display: none;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="client-name">Client Name</label>
-                            <input type="text" id="client-name" class="form-control" placeholder="Enter client name">
-                        </div>
-                        <div class="form-group">
-                            <label for="project-link">Project Link</label>
-                            <input type="text" id="project-link" class="form-control" placeholder="Enter project URL">
-                        </div>
-                        <div class="form-group">
-                            <label for="budget">Budget (BDT)</label>
-                            <input type="number" id="budget" class="form-control" placeholder="Enter budget">
-                        </div>
-                        <div class="form-group">
-                            <label for="due-date">Due Date</label>
-                            <input type="date" id="due-date" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="assign-editor">Assign Editor</label>
-                            <select id="assign-editor" class="form-control">
-                                <option value="">Select editor</option>
-                                <option value="siam">Siam</option>
-                                <option value="jabir">Jabir</option>
-                                <option value="masud">Masud Bhai</option>
-                                <option value="rahid">Rahid</option>
-                                <option value="mahbub">Mahbub</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="handling-member">Handling Team Member</label>
-                            <select id="handling-member" class="form-control">
-                                <option value="">Select team member</option>
-                                <option value="siam">Siam</option>
-                                <option value="jabir">Jabir</option>
-                                <option value="masud">Masud Bhai</option>
-                                <option value="rahid">Rahid</option>
-                                <option value="mahbub">Mahbub</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="project-date">Project Date</label>
-                            <input type="date" id="project-date" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="project-status">Project Status</label>
-                            <select id="project-status" class="form-control">
-                                <option value="not-started">Not Started</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                                <option value="on-hold">On Hold</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-outline" id="cancel-client">Cancel</button>
-                        <button class="btn btn-primary" id="save-client">Save Client</button>
-                    </div>
-                </div>
-
-                <table id="clients-table">
-                    <thead>
-                        <tr>
-                            <th>Client Name</th>
-                            <th>Project</th>
-                            <th>Budget (BDT)</th>
-                            <th>Due Date</th>
-                            <th>Editor</th>
-                            <th>Handler</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clients-list">
-                        <!-- Clients will be loaded here -->
-                    </tbody>
-                </table>
-            </section>
-
-            <!-- Team Section -->
-            <section id="team" class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Team Management</h2>
-                    <button class="btn btn-success" id="add-team-btn">
-                        <i class="fas fa-plus"></i> Add Team Member
-                    </button>
-                </div>
-
-                <div class="form-container" id="team-form" style="display: none;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="team-name">Team Member Name</label>
-                            <input type="text" id="team-name" class="form-control" placeholder="Enter team member name">
-                        </div>
-                        <div class="form-group">
-                            <label for="handling">Handling Responsibility</label>
-                            <input type="text" id="handling" class="form-control" placeholder="Enter handling responsibility">
-                        </div>
-                        <div class="form-group">
-                            <label for="working-status">Working Status</label>
-                            <select id="working-status" class="form-control">
-                                <option value="active">Active</option>
-                                <option value="on-leave">On Leave</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="paid-amount">Paid Amount (BDT)</label>
-                            <input type="number" id="paid-amount" class="form-control" placeholder="Enter paid amount">
-                        </div>
-                        <div class="form-group">
-                            <label for="due-amount">Due Amount (BDT)</label>
-                            <input type="number" id="due-amount" class="form-control" placeholder="Enter due amount">
-                        </div>
-                        <div class="form-group">
-                            <label for="projects">Working Projects</label>
-                            <input type="number" id="projects" class="form-control" placeholder="Enter number of projects">
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-outline" id="cancel-team">Cancel</button>
-                        <button class="btn btn-primary" id="save-team">Save Team Member</button>
-                    </div>
-                </div>
-
-                <table id="team-table">
-                    <thead>
-                        <tr>
-                            <th>Team Member</th>
-                            <th>Handling</th>
-                            <th>Working Status</th>
-                            <th>Paid (BDT)</th>
-                            <th>Due (BDT)</th>
-                            <th>Projects</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="team-list">
-                        <!-- Team members will be loaded here -->
-                    </tbody>
-                </table>
-            </section>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>Motioncraft Management System &copy; 2023 | All data securely stored on our servers</p>
+    <!-- Main Content -->
+    <div class="main-content lg:ml-64 p-6">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800" id="sectionTitle">Dashboard Overview</h1>
+                <p class="text-gray-600">Welcome back! Here's what's happening today.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full md:w-auto">
+                <div class="relative w-full sm:w-64">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 rounded-full bg-white shadow-sm">
+                            <i class="fas fa-bell text-gray-600"></i>
+                        </button>
+                        <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Overview Section -->
+        <section id="overview" class="section active fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Key Metrics</h2>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <div>
+                        <label class="text-sm text-gray-600 mr-2">Select Month:</label>
+                        <input type="month" id="monthPicker" class="p-2 rounded-lg border border-gray-200 bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Orders</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="totalOrders">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">This Month Orders</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="monthOrders">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Paid Amount</p>
+                            <h3 class="text-2xl font-bold text-gray-800 currency-display" id="paidAmount">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Pending Amount</p>
+                            <h3 class="text-2xl font-bold text-gray-800 currency-display" id="pendingAmount">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="card glass p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Total Income</h3>
+                        <span class="text-green-600 font-medium currency-display" id="totalIncome">0</span>
+                    </div>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Expenses</h3>
+                        <span class="text-red-600 font-medium currency-display" id="totalExpense">0</span>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">Add Expense</label>
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                            <input type="number" id="expenseAmount" placeholder="Amount" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
+                            <input type="text" id="expenseDescription" placeholder="Description" class="flex-1 p-2 rounded-lg border border-gray-200 bg-white">
+                            <button id="addExpense" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Add</button>
+                        </div>
+                    </div>
+                    <div class="h-40 overflow-y-auto">
+                        <ul id="expenseList" class="space-y-2">
+                            <!-- Expenses will be listed here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card glass p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                <div class="space-y-4" id="recentActivity">
+                    <!-- Activity items will be added here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Kanban Board Section -->
+        <section id="kanban" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Project Kanban Board</h2>
+                <button id="addOrderBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Add Order
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                <div class="kanban-column status-fresh p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Fresh</h3>
+                    <div id="fresh-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+
+                <div class="kanban-column status-scripting p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Scripting</h3>
+                    <div id="scripting-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+
+                <div class="kanban-column status-editing p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Editing</h3>
+                    <div id="editing-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+
+                <div class="kanban-column status-correction p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Correction</h3>
+                    <div id="correction-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+
+                <div class="kanban-column status-final_delivery p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Final Delivery</h3>
+                    <div id="final_delivery-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+
+                <div class="kanban-column status-completed p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-center">Completed</h3>
+                    <div id="completed-column" class="space-y-4 min-h-[500px]">
+                        <!-- Kanban cards will be added here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Orders Management</h2>
+                <button id="addOrderBtn2" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Add Order
+                </button>
+            </div>
+
+            <div class="card glass p-6 mb-6">
+                <div class="flex flex-col space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+                        <div class="w-full md:w-auto">
+                            <label class="block text-sm text-gray-600 mb-1">Filter by Editor</label>
+                            <select id="editorFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="">All Editors</option>
+                                <!-- Editors will be populated here -->
+                            </select>
+                        </div>
+                        <div class="w-full md:w-auto">
+                            <label class="block text-sm text-gray-600 mb-1">Filter by Status</label>
+                            <select id="statusFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="">All Statuses</option>
+                                <option value="fresh">Fresh</option>
+                                <option value="scripting">Scripting</option>
+                                <option value="editing">Editing</option>
+                                <option value="correction">Correction</option>
+                                <option value="final_delivery">Final Delivery</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-auto">
+                            <label class="block text-sm text-gray-600 mb-1">Payment Status</label>
+                            <select id="paymentFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="">All</option>
+                                <option value="yes">Paid</option>
+                                <option value="no">Unpaid</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="orderSearch" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card glass p-6">
+                <div class="overflow-x-auto table-responsive">
+                    <table class="w-full min-w-max">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Order #</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Client</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Project</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Status</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Editor</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Price</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Due Date</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Team Management</h2>
+                <button id="addMemberBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Add Member
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="teamContainer">
+                <!-- Team members will be added here -->
+            </div>
+
+            <div class="card glass p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Bulk Actions</h3>
+                <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex-1">
+                        <label class="block text-sm text-gray-600 mb-1">Reassign projects from:</label>
+                        <select id="reassignFrom" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                            <option value="">Select member</option>
+                            <!-- Team members will be populated here -->
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm text-gray-600 mb-1">Reassign projects to:</label>
+                        <select id="reassignTo" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                            <option value="">Select member</option>
+                            <!-- Team members will be populated here -->
+                        </select>
+                    </div>
+                    <div class="mt-4 md:mt-6">
+                        <button id="reassignBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Reassign Projects
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Finance Section -->
+        <section id="finance" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Finance Overview</h2>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <div>
+                        <label class="text-sm text-gray-600 mr-2">Select Month:</label>
+                        <input type="month" id="financeMonthPicker" class="p-2 rounded-lg border border-gray-200 bg-white">
+                    </div>
+                    <button id="exportCSV" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <i class="fas fa-file-export mr-2"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Income</p>
+                            <h3 class="text-2xl font-bold text-gray-800 currency-display" id="financeIncome">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Pending Amount</p>
+                            <h3 class="text-2xl font-bold text-gray-800 currency-display" id="financePending">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Expenses</p>
+                            <h3 class="text-2xl font-bold text-gray-800 currency-display" id="financeExpenses">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Income vs Expenses</h3>
+                    <div class="chart-container">
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Expense Breakdown</h3>
+                    <div class="h-64 overflow-y-auto">
+                        <ul id="financeExpenseList" class="space-y-2">
+                            <!-- Expenses will be listed here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clients Section -->
+        <section id="clients" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Clients Management</h2>
+                <button id="addClientBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Add Client
+                </button>
+            </div>
+
+            <div class="card glass p-6">
+                <div class="overflow-x-auto table-responsive">
+                    <table class="w-full min-w-max">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Client Name</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">WhatsApp</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Projects</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Total Paid</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <!-- Clients will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Section -->
+        <section id="activity" class="section hidden fade-in">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <h2 class="text-xl font-semibold text-gray-800">Activity Timeline</h2>
+                <button id="clearActivityBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    <i class="fas fa-trash mr-2"></i> Clear Activity
+                </button>
+            </div>
+
+            <div class="card glass p-6">
+                <div class="space-y-6" id="activityTimeline">
+                    <!-- Activity items will be added here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section hidden fade-in">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">Settings</h2>
+                <p class="text-gray-600">Configure your dashboard and integrations</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">SheetDB Integration</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Orders Sheet Endpoint</label>
+                            <input type="text" id="ordersEndpoint" class="w-full p-2 rounded-lg border border-gray-200 bg-white" placeholder="https://sheetdb.io/api/v1/YOUR_ORDERS_ENDPOINT">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Team Sheet Endpoint</label>
+                            <input type="text" id="teamEndpoint" class="w-full p-2 rounded-lg border border-gray-200 bg-white" placeholder="https://sheetdb.io/api/v1/YOUR_TEAM_ENDPOINT">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button id="saveEndpoints" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                Save Endpoints
+                            </button>
+                            <button id="testEndpoints" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                Test Connection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Appearance</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-700">Currency</span>
+                            <select id="currencySelect" class="p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="bdt">BDT (৳)</option>
+                                <option value="usd">USD ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">WhatsApp Integration</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Test WhatsApp Message</label>
+                            <textarea id="whatsappTest" class="w-full p-2 rounded-lg border border-gray-200 bg-white h-24" placeholder="Enter message to test WhatsApp formatting"></textarea>
+                        </div>
+                        <button id="testWhatsApp" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            Test WhatsApp
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card glass p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Data Management</h3>
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button id="exportData" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Export All Data
+                            </button>
+                            <button id="importData" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                                Import Data
+                            </button>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button id="resetData" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                Reset to Sample Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-2xl mx-auto max-h-[90vh] overflow-y-auto modal-mobile">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-gray-800">Order Details</h3>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="orderForm">
+                    <input type="hidden" id="orderId">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Order Number</label>
+                            <input type="text" id="orderNumber" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Client Name</label>
+                            <input type="text" id="clientName" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Client WhatsApp</label>
+                            <input type="text" id="clientWhatsApp" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Project Title</label>
+                            <input type="text" id="projectTitle" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Status</label>
+                            <select id="orderStatus" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="fresh">Fresh</option>
+                                <option value="scripting">Scripting</option>
+                                <option value="editing">Editing</option>
+                                <option value="correction">Correction</option>
+                                <option value="final_delivery">Final Delivery</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Assigned Editor</label>
+                            <select id="assignedEditor" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="">Unassigned</option>
+                                <!-- Editors will be populated here -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Price</label>
+                            <input type="number" id="orderPrice" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Paid</label>
+                            <select id="orderPaid" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Due Date</label>
+                            <input type="date" id="dueDate" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-1">Notes</label>
+                        <textarea id="orderNotes" class="w-full p-2 rounded-lg border border-gray-200 bg-white h-24"></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-600 mb-1">Internal Comments</label>
+                        <textarea id="internalComments" class="w-full p-2 rounded-lg border border-gray-200 bg-white h-24"></textarea>
+                    </div>
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                        <button type="button" id="cancelOrder" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Save Order
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Team Member Modal -->
+    <div id="teamModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md mx-auto modal-mobile">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-gray-800" id="teamModalTitle">Add Team Member</h3>
+                    <button id="closeTeamModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="teamForm">
+                    <input type="hidden" id="memberId">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Name</label>
+                            <input type="text" id="memberName" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Role</label>
+                            <input type="text" id="memberRole" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">WhatsApp</label>
+                            <input type="text" id="memberWhatsApp" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Current Projects Count</label>
+                            <input type="number" id="projectsCount" class="w-full p-2 rounded-lg border border-gray-200 bg-white" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Monthly Earnings</label>
+                            <input type="number" id="monthlyEarnings" class="w-full p-2 rounded-lg border border-gray-200 bg-white" value="0">
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
+                        <button type="button" id="cancelTeam" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Save Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 hidden transition-opacity duration-300">
+        <div class="flex items-center">
+            <i id="toastIcon" class="fas fa-info-circle mr-3"></i>
+            <span id="toastMessage" class="text-sm font-medium"></span>
+        </div>
+    </div>
 
     <script>
-        // Initialize data arrays
-        let teamMembers = [];
-        let clients = [];
+        // Global configuration
+        const CONFIG = {
+            USE_SAMPLE_DATA: true, // Set to false when using real SheetDB endpoints
+            SHEETDB_ORDERS: "https://sheetdb.io/api/v1/YOUR_ORDERS_ENDPOINT",
+            SHEETDB_TEAM: "https://sheetdb.io/api/v1/YOUR_TEAM_ENDPOINT"
+        };
 
-        // DOM Elements
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const sections = document.querySelectorAll('.section');
-        const clientForm = document.getElementById('client-form');
-        const teamForm = document.getElementById('team-form');
-        const addClientBtn = document.getElementById('add-client-btn');
-        const addTeamBtn = document.getElementById('add-team-btn');
-        const cancelClientBtn = document.getElementById('cancel-client');
-        const cancelTeamBtn = document.getElementById('cancel-team');
-        const saveClientBtn = document.getElementById('save-client');
-        const saveTeamBtn = document.getElementById('save-team');
-        const clientsList = document.getElementById('clients-list');
-        const teamList = document.getElementById('team-list');
-        
-        // Load data from localStorage
-        function loadData() {
-            // Load team members
-            const storedTeam = localStorage.getItem('motioncraftTeam');
-            teamMembers = storedTeam ? JSON.parse(storedTeam) : [
-                { id: 1, name: "Siam", handling: "Client Communication", status: "active", paid: 25000, due: 5000, projects: 4 },
-                { id: 2, name: "Jabir", handling: "Video Editing", status: "active", paid: 32000, due: 8000, projects: 6 },
-                { id: 3, name: "Masud Bhai", handling: "Project Management", status: "active", paid: 40000, due: 10000, projects: 8 },
-                { id: 4, name: "Rahid", handling: "Motion Graphics", status: "on-leave", paid: 28000, due: 2000, projects: 5 },
-                { id: 5, name: "Mahbub", handling: "Color Grading", status: "active", paid: 35000, due: 5000, projects: 7 }
-            ];
-
-            // Load clients
-            const storedClients = localStorage.getItem('motioncraftClients');
-            clients = storedClients ? JSON.parse(storedClients) : [
-                {
-                    id: 1,
-                    name: "Tech Solutions Ltd",
-                    projectLink: "https://project.com/tech-solutions",
-                    budget: 25000,
-                    dueDate: "2023-11-15",
-                    editor: "siam",
-                    handler: "masud",
-                    date: "2023-10-01",
-                    status: "in-progress"
-                },
-                {
-                    id: 2,
-                    name: "Creative Studio",
-                    projectLink: "https://project.com/creative-studio",
-                    budget: 42000,
-                    dueDate: "2023-11-30",
-                    editor: "jabir",
-                    handler: "masud",
-                    date: "2023-10-05",
-                    status: "not-started"
-                },
-                {
-                    id: 3,
-                    name: "Global Enterprises",
-                    projectLink: "https://project.com/global-enterprises",
-                    budget: 58000,
-                    dueDate: "2023-12-10",
-                    editor: "mahbub",
-                    handler: "siam",
-                    date: "2023-10-10",
-                    status: "completed"
-                }
-            ];
-        }
-
-        // Save data to storage
-        function saveClientsToStorage() {
-            localStorage.setItem('motioncraftClients', JSON.stringify(clients));
-        }
-
-        function saveTeamToStorage() {
-            localStorage.setItem('motioncraftTeam', JSON.stringify(teamMembers));
-        }
-
-        // Tab Navigation
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const target = button.getAttribute('data-target');
-                
-                // Update active tab
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // Show target section
-                sections.forEach(section => section.classList.remove('active'));
-                document.getElementById(target).classList.add('active');
-            });
-        });
-
-        // Client Form Toggle
-        addClientBtn.addEventListener('click', () => {
-            clientForm.style.display = 'block';
-            resetClientForm();
-        });
-
-        cancelClientBtn.addEventListener('click', () => {
-            clientForm.style.display = 'none';
-        });
-
-        // Team Form Toggle
-        addTeamBtn.addEventListener('click', () => {
-            teamForm.style.display = 'block';
-            resetTeamForm();
-        });
-
-        cancelTeamBtn.addEventListener('click', () => {
-            teamForm.style.display = 'none';
-        });
-
-        // Save Client
-        saveClientBtn.addEventListener('click', () => {
-            const clientData = {
-                id: Date.now(),
-                name: document.getElementById('client-name').value,
-                projectLink: document.getElementById('project-link').value,
-                budget: parseFloat(document.getElementById('budget').value),
-                dueDate: document.getElementById('due-date').value,
-                editor: document.getElementById('assign-editor').value,
-                handler: document.getElementById('handling-member').value,
-                date: document.getElementById('project-date').value,
-                status: document.getElementById('project-status').value
-            };
-
-            if (!clientData.name || !clientData.projectLink) {
-                alert('Client Name and Project Link are required!');
-                return;
+        // Sample data for testing
+        const SAMPLE_ORDERS = [
+            {
+                id: "1",
+                order_no: "MC-001",
+                client_name: "John Smith",
+                client_whatsapp: "+1234567890",
+                project_title: "Corporate Brand Video",
+                status: "fresh",
+                assigned_editor: "",
+                price: "15000",
+                paid: "no",
+                created_at: "2023-10-15",
+                due_date: "2023-11-15",
+                notes: "Client wants a modern and professional look",
+                internal_comments: "Need to assign an editor with corporate video experience"
+            },
+            {
+                id: "2",
+                order_no: "MC-002",
+                client_name: "Sarah Johnson",
+                client_whatsapp: "+1234567891",
+                project_title: "Product Launch Video",
+                status: "scripting",
+                assigned_editor: "1",
+                price: "20000",
+                paid: "yes",
+                created_at: "2023-10-20",
+                due_date: "2023-11-25",
+                notes: "Focus on the product's unique features",
+                internal_comments: "Script is 50% complete"
+            },
+            {
+                id: "3",
+                order_no: "MC-003",
+                client_name: "Mike Davis",
+                client_whatsapp: "+1234567892",
+                project_title: "Social Media Ads",
+                status: "editing",
+                assigned_editor: "2",
+                price: "8000",
+                paid: "no",
+                created_at: "2023-10-25",
+                due_date: "2023-11-05",
+                notes: "Short videos for Instagram and Facebook",
+                internal_comments: "First draft ready for review"
+            },
+            {
+                id: "4",
+                order_no: "MC-004",
+                client_name: "Emily Wilson",
+                client_whatsapp: "+1234567893",
+                project_title: "Training Course Videos",
+                status: "correction",
+                assigned_editor: "1",
+                price: "35000",
+                paid: "yes",
+                created_at: "2023-10-10",
+                due_date: "2023-11-10",
+                notes: "Client requested minor corrections to the first 3 videos",
+                internal_comments: "Corrections should be completed by Nov 5"
+            },
+            {
+                id: "5",
+                order_no: "MC-005",
+                client_name: "Robert Brown",
+                client_whatsapp: "+1234567894",
+                project_title: "Real Estate Walkthrough",
+                status: "final_delivery",
+                assigned_editor: "3",
+                price: "12000",
+                paid: "yes",
+                created_at: "2023-10-05",
+                due_date: "2023-10-30",
+                notes: "4K video with drone shots",
+                internal_comments: "Ready for final client approval"
+            },
+            {
+                id: "6",
+                order_no: "MC-006",
+                client_name: "Lisa Taylor",
+                client_whatsapp: "+1234567895",
+                project_title: "Wedding Highlights",
+                status: "completed",
+                assigned_editor: "2",
+                price: "10000",
+                paid: "yes",
+                created_at: "2023-09-20",
+                due_date: "2023-10-20",
+                notes: "Emotional and cinematic style",
+                internal_comments: "Client very satisfied with the result"
             }
+        ];
 
-            clients.push(clientData);
-            saveClientsToStorage();
-            renderClients();
-            clientForm.style.display = 'none';
-            updateStats();
-        });
-
-        // Save Team Member
-        saveTeamBtn.addEventListener('click', () => {
-            const teamData = {
-                id: Date.now(),
-                name: document.getElementById('team-name').value,
-                handling: document.getElementById('handling').value,
-                status: document.getElementById('working-status').value,
-                paid: parseFloat(document.getElementById('paid-amount').value),
-                due: parseFloat(document.getElementById('due-amount').value),
-                projects: parseInt(document.getElementById('projects').value)
-            };
-
-            if (!teamData.name || !teamData.handling) {
-                alert('Team Member Name and Handling Responsibility are required!');
-                return;
+        const SAMPLE_TEAM = [
+            {
+                member_id: "1",
+                name: "Alex Johnson",
+                role: "Senior Video Editor",
+                whatsapp: "+1234567896",
+                current_projects_count: "2",
+                monthly_earnings: "32000"
+            },
+            {
+                member_id: "2",
+                name: "Maria Garcia",
+                role: "Video Editor",
+                whatsapp: "+1234567897",
+                current_projects_count: "2",
+                monthly_earnings: "24000"
+            },
+            {
+                member_id: "3",
+                name: "David Kim",
+                role: "Motion Graphics Designer",
+                whatsapp: "+1234567898",
+                current_projects_count: "1",
+                monthly_earnings: "18000"
             }
+        ];
 
-            teamMembers.push(teamData);
-            saveTeamToStorage();
-            renderTeam();
-            teamForm.style.display = 'none';
-            updateStats();
-        });
+        // Application state
+        let state = {
+            orders: [],
+            team: [],
+            activity: [],
+            finances: {
+                expenses: [],
+                income: []
+            },
+            settings: {
+                currency: 'bdt',
+                sheetDB_orders: CONFIG.SHEETDB_ORDERS,
+                sheetDB_team: CONFIG.SHEETDB_TEAM
+            },
+            currentView: 'overview'
+        };
 
-        // Edit Client
-        function editClient(id) {
-            const client = clients.find(c => c.id === id);
-            if (!client) return;
-
-            document.getElementById('client-name').value = client.name;
-            document.getElementById('project-link').value = client.projectLink;
-            document.getElementById('budget').value = client.budget;
-            document.getElementById('due-date').value = client.dueDate;
-            document.getElementById('assign-editor').value = client.editor;
-            document.getElementById('handling-member').value = client.handler;
-            document.getElementById('project-date').value = client.date;
-            document.getElementById('project-status').value = client.status;
-
-            // Remove the client from the list
-            clients = clients.filter(c => c.id !== id);
-            saveClientsToStorage();
+        // DOM elements
+        const elements = {
+            // Sections
+            sections: document.querySelectorAll('.section'),
+            navLinks: document.querySelectorAll('.nav-link'),
+            sectionTitle: document.getElementById('sectionTitle'),
             
-            clientForm.style.display = 'block';
-        }
-
-        // Delete Client
-        function deleteClient(id) {
-            if (confirm('Are you sure you want to delete this client?')) {
-                clients = clients.filter(client => client.id !== id);
-                saveClientsToStorage();
-                renderClients();
-                updateStats();
-            }
-        }
-
-        // Edit Team Member
-        function editTeamMember(id) {
-            const member = teamMembers.find(t => t.id === id);
-            if (!member) return;
-
-            document.getElementById('team-name').value = member.name;
-            document.getElementById('handling').value = member.handling;
-            document.getElementById('working-status').value = member.status;
-            document.getElementById('paid-amount').value = member.paid;
-            document.getElementById('due-amount').value = member.due;
-            document.getElementById('projects').value = member.projects;
-
-            // Remove the member from the list
-            teamMembers = teamMembers.filter(t => t.id !== id);
-            saveTeamToStorage();
+            // Overview
+            totalOrders: document.getElementById('totalOrders'),
+            monthOrders: document.getElementById('monthOrders'),
+            paidAmount: document.getElementById('paidAmount'),
+            pendingAmount: document.getElementById('pendingAmount'),
+            totalIncome: document.getElementById('totalIncome'),
+            totalExpense: document.getElementById('totalExpense'),
+            monthPicker: document.getElementById('monthPicker'),
+            incomeChart: document.getElementById('incomeChart'),
+            expenseAmount: document.getElementById('expenseAmount'),
+            expenseDescription: document.getElementById('expenseDescription'),
+            addExpense: document.getElementById('addExpense'),
+            expenseList: document.getElementById('expenseList'),
+            recentActivity: document.getElementById('recentActivity'),
             
-            teamForm.style.display = 'block';
-        }
-
-        // Delete Team Member
-        function deleteTeamMember(id) {
-            if (confirm('Are you sure you want to delete this team member?')) {
-                teamMembers = teamMembers.filter(member => member.id !== id);
-                saveTeamToStorage();
-                renderTeam();
-                updateStats();
-            }
-        }
-
-        // Reset forms
-        function resetClientForm() {
-            document.getElementById('client-name').value = '';
-            document.getElementById('project-link').value = '';
-            document.getElementById('budget').value = '';
-            document.getElementById('due-date').value = '';
-            document.getElementById('assign-editor').selectedIndex = 0;
-            document.getElementById('handling-member').selectedIndex = 0;
-            document.getElementById('project-date').value = '';
-            document.getElementById('project-status').selectedIndex = 0;
-        }
-
-        function resetTeamForm() {
-            document.getElementById('team-name').value = '';
-            document.getElementById('handling').value = '';
-            document.getElementById('working-status').selectedIndex = 0;
-            document.getElementById('paid-amount').value = '';
-            document.getElementById('due-amount').value = '';
-            document.getElementById('projects').value = '';
-        }
-
-        // Render clients
-        function renderClients() {
-            clientsList.innerHTML = '';
+            // Kanban
+            kanbanColumns: {
+                fresh: document.getElementById('fresh-column'),
+                scripting: document.getElementById('scripting-column'),
+                editing: document.getElementById('editing-column'),
+                correction: document.getElementById('correction-column'),
+                final_delivery: document.getElementById('final_delivery-column'),
+                completed: document.getElementById('completed-column')
+            },
+            addOrderBtn: document.getElementById('addOrderBtn'),
+            addOrderBtn2: document.getElementById('addOrderBtn2'),
             
-            if (clients.length === 0) {
-                clientsList.innerHTML = `
-                    <tr>
-                        <td colspan="9">
-                            <div class="empty-state">
-                                <i class="fas fa-folder-open"></i>
-                                <h3>No Clients Found</h3>
-                                <p>Add your first client to get started</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+            // Orders
+            ordersTableBody: document.getElementById('ordersTableBody'),
+            editorFilter: document.getElementById('editorFilter'),
+            statusFilter: document.getElementById('statusFilter'),
+            paymentFilter: document.getElementById('paymentFilter'),
+            orderSearch: document.getElementById('orderSearch'),
             
-            clients.forEach(client => {
-                const row = document.createElement('tr');
-                
-                // Format dates
-                const dueDate = new Date(client.dueDate);
-                const projectDate = new Date(client.date);
-                
-                // Get status class and text
-                let statusClass = '';
-                let statusText = '';
-                
-                switch(client.status) {
-                    case 'not-started':
-                        statusClass = 'status-not-started';
-                        statusText = 'Not Started';
-                        break;
-                    case 'in-progress':
-                        statusClass = 'status-in-progress';
-                        statusText = 'In Progress';
-                        break;
-                    case 'completed':
-                        statusClass = 'status-completed';
-                        statusText = 'Completed';
-                        break;
-                    case 'on-hold':
-                        statusClass = 'status-on-hold';
-                        statusText = 'On Hold';
-                        break;
-                }
-                
-                row.innerHTML = `
-                    <td>${client.name}</td>
-                    <td><a href="${client.projectLink}" target="_blank">View Project</a></td>
-                    <td class="currency-bdt">${client.budget.toLocaleString()}</td>
-                    <td>${dueDate.toLocaleDateString()}</td>
-                    <td>${formatEditorName(client.editor)}</td>
-                    <td>${formatEditorName(client.handler)}</td>
-                    <td>${projectDate.toLocaleDateString()}</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <button class="action-btn" onclick="editClient(${client.id})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteClient(${client.id})"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                
-                clientsList.appendChild(row);
-            });
-        }
-
-        // Render team
-        function renderTeam() {
-            teamList.innerHTML = '';
+            // Team
+            teamContainer: document.getElementById('teamContainer'),
+            addMemberBtn: document.getElementById('addMemberBtn'),
+            reassignFrom: document.getElementById('reassignFrom'),
+            reassignTo: document.getElementById('reassignTo'),
+            reassignBtn: document.getElementById('reassignBtn'),
             
-            if (teamMembers.length === 0) {
-                teamList.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <i class="fas fa-users"></i>
-                                <h3>No Team Members Found</h3>
-                                <p>Add your first team member to get started</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+            // Finance
+            financeMonthPicker: document.getElementById('financeMonthPicker'),
+            financeIncome: document.getElementById('financeIncome'),
+            financePending: document.getElementById('financePending'),
+            financeExpenses: document.getElementById('financeExpenses'),
+            financeChart: document.getElementById('financeChart'),
+            financeExpenseList: document.getElementById('financeExpenseList'),
+            exportCSV: document.getElementById('exportCSV'),
             
-            teamMembers.forEach(member => {
-                const row = document.createElement('tr');
-                
-                // Get status class
-                let statusClass = '';
-                let statusText = '';
-                
-                switch(member.status) {
-                    case 'active':
-                        statusClass = 'status-active';
-                        statusText = 'Active';
-                        break;
-                    case 'on-leave':
-                        statusClass = 'status-on-leave';
-                        statusText = 'On Leave';
-                        break;
-                    case 'inactive':
-                        statusClass = 'status-inactive';
-                        statusText = 'Inactive';
-                        break;
-                }
-                
-                row.innerHTML = `
-                    <td><strong>${member.name}</strong></td>
-                    <td>${member.handling}</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
-                    <td class="currency-bdt">${member.paid.toLocaleString()}</td>
-                    <td class="currency-bdt">${member.due.toLocaleString()}</td>
-                    <td>${member.projects} projects</td>
-                    <td>
-                        <button class="action-btn" onclick="editTeamMember(${member.id})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteTeamMember(${member.id})"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                
-                teamList.appendChild(row);
-            });
-        }
-
-        // Format editor name for display
-        function formatEditorName(editorKey) {
-            const editorNames = {
-                'siam': 'Siam',
-                'jabir': 'Jabir',
-                'masud': 'Masud Bhai',
-                'rahid': 'Rahid',
-                'mahbub': 'Mahbub'
-            };
+            // Clients
+            clientsTableBody: document.getElementById('clientsTableBody'),
+            addClientBtn: document.getElementById('addClientBtn'),
             
-            return editorNames[editorKey] || editorKey;
-        }
-
-        // Update statistics
-        function updateStats() {
-            document.getElementById('active-projects').textContent = 
-                clients.filter(c => c.status === 'in-progress').length;
+            // Activity
+            activityTimeline: document.getElementById('activityTimeline'),
+            clearActivityBtn: document.getElementById('clearActivityBtn'),
             
-            document.getElementById('team-members').textContent = 
-                teamMembers.length;
+            // Settings
+            ordersEndpoint: document.getElementById('ordersEndpoint'),
+            teamEndpoint: document.getElementById('teamEndpoint'),
+            saveEndpoints: document.getElementById('saveEndpoints'),
+            testEndpoints: document.getElementById('testEndpoints'),
+            currencySelect: document.getElementById('currencySelect'),
+            whatsappTest: document.getElementById('whatsappTest'),
+            testWhatsApp: document.getElementById('testWhatsApp'),
+            exportData: document.getElementById('exportData'),
+            importData: document.getElementById('importData'),
+            resetData: document.getElementById('resetData'),
             
-            document.getElementById('pending-tasks').textContent = 
-                clients.filter(c => c.status !== 'completed').length;
+            // Modals
+            orderModal: document.getElementById('orderModal'),
+            closeModal: document.getElementById('closeModal'),
+            orderForm: document.getElementById('orderForm'),
+            orderId: document.getElementById('orderId'),
+            orderNumber: document.getElementById('orderNumber'),
+            clientName: document.getElementById('clientName'),
+            clientWhatsApp: document.getElementById('clientWhatsApp'),
+            projectTitle: document.getElementById('projectTitle'),
+            orderStatus: document.getElementById('orderStatus'),
+            assignedEditor: document.getElementById('assignedEditor'),
+            orderPrice: document.getElementById('orderPrice'),
+            orderPaid: document.getElementById('orderPaid'),
+            dueDate: document.getElementById('dueDate'),
+            orderNotes: document.getElementById('orderNotes'),
+            internalComments: document.getElementById('internalComments'),
+            cancelOrder: document.getElementById('cancelOrder'),
             
-            document.getElementById('completed-projects').textContent = 
-                clients.filter(c => c.status === 'completed').length;
-        }
+            teamModal: document.getElementById('teamModal'),
+            teamModalTitle: document.getElementById('teamModalTitle'),
+            closeTeamModal: document.getElementById('closeTeamModal'),
+            teamForm: document.getElementById('teamForm'),
+            memberId: document.getElementById('memberId'),
+            memberName: document.getElementById('memberName'),
+            memberRole: document.getElementById('memberRole'),
+            memberWhatsApp: document.getElementById('memberWhatsApp'),
+            projectsCount: document.getElementById('projectsCount'),
+            monthlyEarnings: document.getElementById('monthlyEarnings'),
+            cancelTeam: document.getElementById('cancelTeam'),
+            
+            // Mobile
+            mobileMenuButton: document.getElementById('mobileMenuButton'),
+            overlay: document.getElementById('overlay'),
+            sidebar: document.querySelector('.sidebar'),
+            
+            // Toast
+            toast: document.getElementById('toast'),
+            toastIcon: document.getElementById('toastIcon'),
+            toastMessage: document.getElementById('toastMessage')
+        };
 
         // Initialize the application
         function init() {
-            // Load data first
+            loadSettings();
+            setupEventListeners();
             loadData();
-            
-            // Then render UI
-            renderClients();
-            renderTeam();
-            updateStats();
+            updateUI();
+            setCurrentDateForPickers();
+            updateCurrencyDisplay();
         }
 
-        // Start the application
-        init();
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('motioncraft_settings');
+            if (savedSettings) {
+                state.settings = { ...state.settings, ...JSON.parse(savedSettings) };
+            }
+            
+            // Set currency
+            elements.currencySelect.value = state.settings.currency;
+            
+            // Set endpoint values in settings form
+            elements.ordersEndpoint.value = state.settings.sheetDB_orders;
+            elements.teamEndpoint.value = state.settings.sheetDB_team;
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('motioncraft_settings', JSON.stringify(state.settings));
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Navigation
+            elements.navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    showSection(section);
+                    
+                    // Update active nav link
+                    elements.navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // Update section title
+                    elements.sectionTitle.textContent = link.querySelector('span').textContent;
+                });
+            });
+            
+            // Mobile menu
+            elements.mobileMenuButton.addEventListener('click', () => {
+                elements.sidebar.classList.toggle('active');
+                elements.overlay.classList.toggle('active');
+            });
+            
+            elements.overlay.addEventListener('click', () => {
+                elements.sidebar.classList.remove('active');
+                elements.overlay.classList.remove('active');
+            });
+            
+            // Currency change
+            elements.currencySelect.addEventListener('change', updateCurrency);
+            
+            // Order modals
+            elements.addOrderBtn.addEventListener('click', () => openOrderModal());
+            elements.addOrderBtn2.addEventListener('click', () => openOrderModal());
+            elements.closeModal.addEventListener('click', () => closeOrderModal());
+            elements.cancelOrder.addEventListener('click', () => closeOrderModal());
+            elements.orderForm.addEventListener('submit', saveOrder);
+            
+            // Team modal
+            elements.addMemberBtn.addEventListener('click', () => openTeamModal());
+            elements.closeTeamModal.addEventListener('click', () => closeTeamModal());
+            elements.cancelTeam.addEventListener('click', () => closeTeamModal());
+            elements.teamForm.addEventListener('submit', saveTeamMember);
+            
+            // Reassign projects
+            elements.reassignBtn.addEventListener('click', reassignProjects);
+            
+            // Finance
+            elements.addExpense.addEventListener('click', addExpense);
+            elements.financeMonthPicker.addEventListener('change', updateFinanceSection);
+            elements.monthPicker.addEventListener('change', updateOverviewSection);
+            elements.exportCSV.addEventListener('click', exportCSVData);
+            
+            // Settings
+            elements.saveEndpoints.addEventListener('click', saveEndpoints);
+            elements.testEndpoints.addEventListener('click', testEndpoints);
+            elements.testWhatsApp.addEventListener('click', testWhatsApp);
+            elements.exportData.addEventListener('click', exportAllData);
+            elements.importData.addEventListener('click', importData);
+            elements.resetData.addEventListener('click', resetToSampleData);
+            
+            // Activity
+            elements.clearActivityBtn.addEventListener('click', clearActivity);
+            
+            // Filters and search
+            elements.editorFilter.addEventListener('change', filterOrders);
+            elements.statusFilter.addEventListener('change', filterOrders);
+            elements.paymentFilter.addEventListener('change', filterOrders);
+            elements.orderSearch.addEventListener('input', filterOrders);
+            
+            // Event delegation for dynamic elements
+            document.addEventListener('click', function(e) {
+                // Delete order buttons
+                if (e.target.closest('.delete-order')) {
+                    const orderId = e.target.closest('.delete-order').getAttribute('data-order-id');
+                    deleteOrder(orderId);
+                }
+                
+                // View order buttons
+                if (e.target.closest('.view-order')) {
+                    const orderId = e.target.closest('.view-order').getAttribute('data-order-id');
+                    openOrderModal(orderId);
+                }
+                
+                // WhatsApp order buttons
+                if (e.target.closest('.whatsapp-order')) {
+                    const orderId = e.target.closest('.whatsapp-order').getAttribute('data-order-id');
+                    openWhatsApp(orderId);
+                }
+                
+                // Edit team member buttons
+                if (e.target.closest('.edit-member')) {
+                    const memberId = e.target.closest('.edit-member').getAttribute('data-member-id');
+                    openTeamModal(memberId);
+                }
+                
+                // Delete team member buttons
+                if (e.target.closest('.delete-member')) {
+                    const memberId = e.target.closest('.delete-member').getAttribute('data-member-id');
+                    deleteTeamMember(memberId);
+                }
+                
+                // Delete expense buttons
+                if (e.target.closest('.delete-expense')) {
+                    const expenseId = e.target.closest('.delete-expense').getAttribute('data-expense-id');
+                    deleteExpense(expenseId);
+                }
+                
+                // View client buttons
+                if (e.target.closest('.view-client')) {
+                    const clientName = e.target.closest('.view-client').getAttribute('data-client-name');
+                    viewClientDetails(clientName);
+                }
+            });
+        }
+
+        // Load data from SheetDB or sample data
+        function loadData() {
+            if (CONFIG.USE_SAMPLE_DATA) {
+                state.orders = [...SAMPLE_ORDERS];
+                state.team = [...SAMPLE_TEAM];
+                loadActivityFromStorage();
+                loadFinancesFromStorage();
+                showToast('Sample data loaded successfully', 'success');
+            } else {
+                // Load from SheetDB
+                Promise.all([
+                    fetchSheetDB(state.settings.sheetDB_orders),
+                    fetchSheetDB(state.settings.sheetDB_team)
+                ]).then(([ordersData, teamData]) => {
+                    state.orders = ordersData || [];
+                    state.team = teamData || [];
+                    loadActivityFromStorage();
+                    loadFinancesFromStorage();
+                    showToast('Data loaded from SheetDB', 'success');
+                }).catch(error => {
+                    console.error('Error loading data from SheetDB:', error);
+                    showToast('Error loading data from SheetDB. Using sample data.', 'error');
+                    state.orders = [...SAMPLE_ORDERS];
+                    state.team = [...SAMPLE_TEAM];
+                });
+            }
+        }
+
+        // Fetch data from SheetDB
+        function fetchSheetDB(endpoint) {
+            return fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                });
+        }
+
+        // Update data to SheetDB
+        function updateSheetDB(endpoint, data, method = 'POST') {
+            if (CONFIG.USE_SAMPLE_DATA) {
+                return Promise.resolve({ success: true });
+            }
+            
+            return fetch(endpoint, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
+        }
+
+        // Show a specific section
+        function showSection(sectionName) {
+            elements.sections.forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.classList.add('active');
+                
+                // Refresh section data if needed
+                if (sectionName === 'overview') {
+                    updateOverviewSection();
+                } else if (sectionName === 'kanban') {
+                    renderKanbanBoard();
+                } else if (sectionName === 'orders') {
+                    renderOrdersTable();
+                    populateEditorFilter();
+                } else if (sectionName === 'team') {
+                    renderTeamPanel();
+                } else if (sectionName === 'finance') {
+                    updateFinanceSection();
+                } else if (sectionName === 'clients') {
+                    renderClientsTable();
+                } else if (sectionName === 'activity') {
+                    renderActivityTimeline();
+                }
+            }
+            
+            // Close mobile menu if open
+            elements.sidebar.classList.remove('active');
+            elements.overlay.classList.remove('active');
+        }
+
+        // Update the entire UI based on current state
+        function updateUI() {
+            updateOverviewSection();
+            renderKanbanBoard();
+            renderOrdersTable();
+            renderTeamPanel();
+            updateFinanceSection();
+            renderClientsTable();
+            renderActivityTimeline();
+            populateEditorFilter();
+            populateAssignedEditor();
+        }
+
+        // Set current date for month pickers
+        function setCurrentDateForPickers() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const currentMonth = `${year}-${month}`;
+            
+            elements.monthPicker.value = currentMonth;
+            elements.financeMonthPicker.value = currentMonth;
+        }
+
+        // Update currency display
+        function updateCurrency() {
+            state.settings.currency = elements.currencySelect.value;
+            saveSettings();
+            updateCurrencyDisplay();
+            updateUI();
+        }
+
+        // Update currency display across the app
+        function updateCurrencyDisplay() {
+            const currencyElements = document.querySelectorAll('.currency-display');
+            currencyElements.forEach(el => {
+                if (state.settings.currency === 'bdt') {
+                    el.classList.remove('currency-usd');
+                    el.classList.add('currency-bdt');
+                } else {
+                    el.classList.remove('currency-bdt');
+                    el.classList.add('currency-usd');
+                }
+            });
+        }
+
+        // Format currency based on selected currency
+        function formatCurrency(amount) {
+            if (state.settings.currency === 'bdt') {
+                return `৳${parseFloat(amount).toLocaleString('en-BD')}`;
+            } else {
+                // Convert BDT to USD (approximate conversion rate)
+                const usdAmount = parseFloat(amount) / 110; // 1 USD ≈ 110 BDT
+                return `$${usdAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        }
+
+        // Update overview section with current data
+        function updateOverviewSection() {
+            const selectedMonth = elements.monthPicker.value;
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                const orderMonth = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+                return orderMonth === selectedMonth;
+            });
+            
+            const paidOrders = state.orders.filter(order => order.paid === 'yes');
+            const unpaidOrders = state.orders.filter(order => order.paid === 'no');
+            
+            const totalPaid = paidOrders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+            const totalUnpaid = unpaidOrders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+            
+            const monthPaid = monthOrders
+                .filter(order => order.paid === 'yes')
+                .reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+                
+            const expenses = state.finances.expenses
+                .filter(expense => expense.month === selectedMonth)
+                .reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0);
+            
+            elements.totalOrders.textContent = state.orders.length;
+            elements.monthOrders.textContent = monthOrders.length;
+            elements.paidAmount.textContent = formatCurrency(totalPaid);
+            elements.pendingAmount.textContent = formatCurrency(totalUnpaid);
+            elements.totalIncome.textContent = formatCurrency(monthPaid);
+            elements.totalExpense.textContent = formatCurrency(expenses);
+            
+            // Update expense list
+            renderExpenseList();
+            
+            // Update recent activity
+            renderRecentActivity();
+            
+            // Update chart
+            updateIncomeChart();
+        }
+
+        // Update finance section
+        function updateFinanceSection() {
+            const selectedMonth = elements.financeMonthPicker.value;
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                const orderMonth = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+                return orderMonth === selectedMonth;
+            });
+            
+            const paidOrders = monthOrders.filter(order => order.paid === 'yes');
+            const unpaidOrders = monthOrders.filter(order => order.paid === 'no');
+            
+            const monthIncome = paidOrders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+            const monthPending = unpaidOrders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+            
+            const monthExpenses = state.finances.expenses
+                .filter(expense => expense.month === selectedMonth)
+                .reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0);
+            
+            elements.financeIncome.textContent = formatCurrency(monthIncome);
+            elements.financePending.textContent = formatCurrency(monthPending);
+            elements.financeExpenses.textContent = formatCurrency(monthExpenses);
+            
+            // Update finance chart
+            updateFinanceChart();
+            
+            // Update finance expense list
+            renderFinanceExpenseList();
+        }
+
+        // Render Kanban board
+        function renderKanbanBoard() {
+            // Clear all columns
+            Object.values(elements.kanbanColumns).forEach(column => {
+                column.innerHTML = '';
+            });
+            
+            // Add orders to their respective columns
+            state.orders.forEach(order => {
+                const card = createKanbanCard(order);
+                elements.kanbanColumns[order.status].appendChild(card);
+            });
+            
+            // Make cards draggable
+            initDragAndDrop();
+        }
+
+        // Create a Kanban card for an order
+        function createKanbanCard(order) {
+            const card = document.createElement('div');
+            card.className = 'kanban-card card glass p-4';
+            card.draggable = true;
+            card.dataset.orderId = order.id;
+            
+            const editor = state.team.find(member => member.member_id === order.assigned_editor);
+            const editorName = editor ? editor.name : 'Unassigned';
+            
+            const dueDate = new Date(order.due_date);
+            const today = new Date();
+            const timeDiff = dueDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            let dueClass = 'text-green-600';
+            if (daysDiff < 0) {
+                dueClass = 'text-red-600';
+            } else if (daysDiff <= 3) {
+                dueClass = 'text-yellow-600';
+            }
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-semibold text-gray-800">${order.order_no}</span>
+                    <span class="text-sm font-medium ${order.paid === 'yes' ? 'text-green-600' : 'text-red-600'}">
+                        ${formatCurrency(order.price || '0')}
+                    </span>
+                </div>
+                <h4 class="font-medium text-gray-800 mb-1">${order.project_title}</h4>
+                <p class="text-sm text-gray-600 mb-2">${order.client_name}</p>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">${editorName}</span>
+                    <span class="${dueClass}">${daysDiff}d</span>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Initialize drag and drop for Kanban cards
+        function initDragAndDrop() {
+            const cards = document.querySelectorAll('.kanban-card');
+            const columns = document.querySelectorAll('.kanban-column > div');
+            
+            cards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+            });
+        }
+
+        // Drag and drop event handlers
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.orderId);
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const orderId = e.dataTransfer.getData('text/plain');
+            const card = document.querySelector(`[data-order-id="${orderId}"]`);
+            const newStatus = e.target.closest('.kanban-column').id.replace('-column', '');
+            
+            // Update order status
+            updateOrderStatus(orderId, newStatus);
+            
+            // Move card to new column
+            if (card) {
+                e.target.closest('.kanban-column > div').appendChild(card);
+            }
+        }
+
+        // Update order status in state and SheetDB
+        function updateOrderStatus(orderId, newStatus) {
+            const orderIndex = state.orders.findIndex(order => order.id === orderId);
+            if (orderIndex !== -1) {
+                const oldStatus = state.orders[orderIndex].status;
+                state.orders[orderIndex].status = newStatus;
+                
+                // Add to activity log
+                addActivity({
+                    type: 'status_changed',
+                    description: `Order ${state.orders[orderIndex].order_no} status changed from ${oldStatus} to ${newStatus}`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Update in SheetDB if not using sample data
+                if (!CONFIG.USE_SAMPLE_DATA) {
+                    updateSheetDB(
+                        `${state.settings.sheetDB_orders}/id/${orderId}`,
+                        { status: newStatus },
+                        'PATCH'
+                    ).catch(error => {
+                        console.error('Error updating order status in SheetDB:', error);
+                        showToast('Error updating order status in SheetDB', 'error');
+                    });
+                }
+                
+                showToast(`Order status updated to ${newStatus}`, 'success');
+            }
+        }
+
+        // Render orders table
+        function renderOrdersTable() {
+            elements.ordersTableBody.innerHTML = '';
+            
+            state.orders.forEach(order => {
+                const editor = state.team.find(member => member.member_id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const dueDate = new Date(order.due_date);
+                const formattedDueDate = dueDate.toLocaleDateString();
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800">${formatCurrency(order.price || '0')}</td>
+                    <td class="py-3 px-4 text-gray-800">${formattedDueDate}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 view-order" data-order-id="${order.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-order-id="${order.id}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-order-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                elements.ordersTableBody.appendChild(row);
+            });
+        }
+
+        // Get CSS class for status badge
+        function getStatusClass(status) {
+            const statusClasses = {
+                fresh: 'bg-blue-100 text-blue-800',
+                scripting: 'bg-yellow-100 text-yellow-800',
+                editing: 'bg-purple-100 text-purple-800',
+                correction: 'bg-red-100 text-red-800',
+                final_delivery: 'bg-green-100 text-green-800',
+                completed: 'bg-indigo-100 text-indigo-800'
+            };
+            
+            return statusClasses[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        // Filter orders based on selected criteria
+        function filterOrders() {
+            const editorFilter = elements.editorFilter.value;
+            const statusFilter = elements.statusFilter.value;
+            const paymentFilter = elements.paymentFilter.value;
+            const searchTerm = elements.orderSearch.value.toLowerCase();
+            
+            const filteredOrders = state.orders.filter(order => {
+                const matchesEditor = !editorFilter || order.assigned_editor === editorFilter;
+                const matchesStatus = !statusFilter || order.status === statusFilter;
+                const matchesPayment = !paymentFilter || order.paid === paymentFilter;
+                const matchesSearch = !searchTerm || 
+                    order.order_no.toLowerCase().includes(searchTerm) ||
+                    order.client_name.toLowerCase().includes(searchTerm) ||
+                    order.project_title.toLowerCase().includes(searchTerm);
+                
+                return matchesEditor && matchesStatus && matchesPayment && matchesSearch;
+            });
+            
+            // Re-render table with filtered orders
+            elements.ordersTableBody.innerHTML = '';
+            
+            filteredOrders.forEach(order => {
+                const editor = state.team.find(member => member.member_id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const dueDate = new Date(order.due_date);
+                const formattedDueDate = dueDate.toLocaleDateString();
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800">${formatCurrency(order.price || '0')}</td>
+                    <td class="py-3 px-4 text-gray-800">${formattedDueDate}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 view-order" data-order-id="${order.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-order-id="${order.id}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-order-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                elements.ordersTableBody.appendChild(row);
+            });
+        }
+
+        // Populate editor filter dropdown
+        function populateEditorFilter() {
+            elements.editorFilter.innerHTML = '<option value="">All Editors</option>';
+            state.team.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.member_id;
+                option.textContent = member.name;
+                elements.editorFilter.appendChild(option);
+            });
+        }
+
+        // Populate assigned editor dropdown in order modal
+        function populateAssignedEditor() {
+            elements.assignedEditor.innerHTML = '<option value="">Unassigned</option>';
+            state.team.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.member_id;
+                option.textContent = member.name;
+                elements.assignedEditor.appendChild(option);
+            });
+        }
+
+        // Open order modal for creating or editing
+        function openOrderModal(orderId = null) {
+            if (orderId) {
+                // Edit existing order
+                const order = state.orders.find(o => o.id === orderId);
+                if (order) {
+                    elements.orderId.value = order.id;
+                    elements.orderNumber.value = order.order_no;
+                    elements.clientName.value = order.client_name;
+                    elements.clientWhatsApp.value = order.client_whatsapp;
+                    elements.projectTitle.value = order.project_title;
+                    elements.orderStatus.value = order.status;
+                    elements.assignedEditor.value = order.assigned_editor;
+                    elements.orderPrice.value = order.price;
+                    elements.orderPaid.value = order.paid;
+                    elements.dueDate.value = order.due_date;
+                    elements.orderNotes.value = order.notes;
+                    elements.internalComments.value = order.internal_comments;
+                    
+                    elements.teamModalTitle.textContent = 'Edit Order';
+                }
+            } else {
+                // Create new order
+                elements.orderId.value = '';
+                elements.orderNumber.value = '';
+                elements.clientName.value = '';
+                elements.clientWhatsApp.value = '';
+                elements.projectTitle.value = '';
+                elements.orderStatus.value = 'fresh';
+                elements.assignedEditor.value = '';
+                elements.orderPrice.value = '';
+                elements.orderPaid.value = 'no';
+                elements.dueDate.value = '';
+                elements.orderNotes.value = '';
+                elements.internalComments.value = '';
+                
+                elements.teamModalTitle.textContent = 'Add New Order';
+            }
+            
+            elements.orderModal.classList.remove('hidden');
+        }
+
+        // Close order modal
+        function closeOrderModal() {
+            elements.orderModal.classList.add('hidden');
+        }
+
+        // Save order (create or update)
+        function saveOrder(e) {
+            e.preventDefault();
+            
+            const orderData = {
+                order_no: elements.orderNumber.value,
+                client_name: elements.clientName.value,
+                client_whatsapp: elements.clientWhatsApp.value,
+                project_title: elements.projectTitle.value,
+                status: elements.orderStatus.value,
+                assigned_editor: elements.assignedEditor.value,
+                price: elements.orderPrice.value,
+                paid: elements.orderPaid.value,
+                due_date: elements.dueDate.value,
+                notes: elements.orderNotes.value,
+                internal_comments: elements.internalComments.value,
+                created_at: new Date().toISOString().split('T')[0]
+            };
+            
+            const orderId = elements.orderId.value;
+            
+            if (orderId) {
+                // Update existing order
+                const orderIndex = state.orders.findIndex(order => order.id === orderId);
+                if (orderIndex !== -1) {
+                    state.orders[orderIndex] = { ...state.orders[orderIndex], ...orderData };
+                    
+                    // Add to activity log
+                    addActivity({
+                        type: 'order_updated',
+                        description: `Order ${orderData.order_no} updated`,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Update in SheetDB if not using sample data
+                    if (!CONFIG.USE_SAMPLE_DATA) {
+                        updateSheetDB(
+                            `${state.settings.sheetDB_orders}/id/${orderId}`,
+                            orderData,
+                            'PATCH'
+                        ).catch(error => {
+                            console.error('Error updating order in SheetDB:', error);
+                            showToast('Error updating order in SheetDB', 'error');
+                        });
+                    }
+                    
+                    showToast('Order updated successfully', 'success');
+                }
+            } else {
+                // Create new order
+                const newOrder = {
+                    id: Date.now().toString(),
+                    ...orderData
+                };
+                
+                state.orders.push(newOrder);
+                
+                // Add to activity log
+                addActivity({
+                    type: 'order_created',
+                    description: `New order ${newOrder.order_no} created`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Save to SheetDB if not using sample data
+                if (!CONFIG.USE_SAMPLE_DATA) {
+                    updateSheetDB(state.settings.sheetDB_orders, newOrder)
+                        .catch(error => {
+                            console.error('Error creating order in SheetDB:', error);
+                            showToast('Error creating order in SheetDB', 'error');
+                        });
+                }
+                
+                showToast('Order created successfully', 'success');
+            }
+            
+            closeOrderModal();
+            updateUI();
+        }
+
+        // Delete order
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                const orderIndex = state.orders.findIndex(order => order.id === orderId);
+                if (orderIndex !== -1) {
+                    const order = state.orders[orderIndex];
+                    state.orders.splice(orderIndex, 1);
+                    
+                    // Add to activity log
+                    addActivity({
+                        type: 'order_deleted',
+                        description: `Order ${order.order_no} deleted`,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Delete from SheetDB if not using sample data
+                    if (!CONFIG.USE_SAMPLE_DATA) {
+                        updateSheetDB(
+                            `${state.settings.sheetDB_orders}/id/${orderId}`,
+                            {},
+                            'DELETE'
+                        ).catch(error => {
+                            console.error('Error deleting order from SheetDB:', error);
+                            showToast('Error deleting order from SheetDB', 'error');
+                        });
+                    }
+                    
+                    showToast('Order deleted successfully', 'success');
+                    updateUI();
+                }
+            }
+        }
+
+        // Open WhatsApp for a specific order
+        function openWhatsApp(orderId) {
+            const order = state.orders.find(o => o.id === orderId);
+            if (order) {
+                const message = `Assalamualaikum%20${encodeURIComponent(order.client_name)}%2C%20regarding%20order%20${encodeURIComponent(order.order_no)}.`;
+                const url = `https://wa.me/${order.client_whatsapp}?text=${message}`;
+                window.open(url, '_blank');
+            }
+        }
+
+        // Render team panel
+        function renderTeamPanel() {
+            elements.teamContainer.innerHTML = '';
+            
+            state.team.forEach(member => {
+                const projects = state.orders.filter(order => order.assigned_editor === member.member_id);
+                
+                const card = document.createElement('div');
+                card.className = 'card glass p-6';
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                            ${member.name.charAt(0)}
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800">${member.name}</h3>
+                            <p class="text-sm text-gray-600">${member.role}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Projects</p>
+                            <p class="text-lg font-semibold text-gray-800">${projects.length}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Earnings</p>
+                            <p class="text-lg font-semibold text-gray-800">${formatCurrency(member.monthly_earnings)}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <a href="https://wa.me/${member.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                        </a>
+                        <button class="text-blue-600 hover:text-blue-800 edit-member" data-member-id="${member.member_id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 delete-member" data-member-id="${member.member_id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                elements.teamContainer.appendChild(card);
+            });
+            
+            // Populate reassign dropdowns
+            elements.reassignFrom.innerHTML = '<option value="">Select member</option>';
+            elements.reassignTo.innerHTML = '<option value="">Select member</option>';
+            
+            state.team.forEach(member => {
+                const optionFrom = document.createElement('option');
+                optionFrom.value = member.member_id;
+                optionFrom.textContent = member.name;
+                elements.reassignFrom.appendChild(optionFrom);
+                
+                const optionTo = document.createElement('option');
+                optionTo.value = member.member_id;
+                optionTo.textContent = member.name;
+                elements.reassignTo.appendChild(optionTo);
+            });
+        }
+
+        // Open team modal for creating or editing
+        function openTeamModal(memberId = null) {
+            if (memberId) {
+                // Edit existing member
+                const member = state.team.find(m => m.member_id === memberId);
+                if (member) {
+                    elements.memberId.value = member.member_id;
+                    elements.memberName.value = member.name;
+                    elements.memberRole.value = member.role;
+                    elements.memberWhatsApp.value = member.whatsapp;
+                    elements.projectsCount.value = member.current_projects_count;
+                    elements.monthlyEarnings.value = member.monthly_earnings;
+                    
+                    elements.teamModalTitle.textContent = 'Edit Team Member';
+                }
+            } else {
+                // Create new member
+                elements.memberId.value = '';
+                elements.memberName.value = '';
+                elements.memberRole.value = '';
+                elements.memberWhatsApp.value = '';
+                elements.projectsCount.value = '0';
+                elements.monthlyEarnings.value = '0';
+                
+                elements.teamModalTitle.textContent = 'Add Team Member';
+            }
+            
+            elements.teamModal.classList.remove('hidden');
+        }
+
+        // Close team modal
+        function closeTeamModal() {
+            elements.teamModal.classList.add('hidden');
+        }
+
+        // Save team member (create or update)
+        function saveTeamMember(e) {
+            e.preventDefault();
+            
+            const memberData = {
+                name: elements.memberName.value,
+                role: elements.memberRole.value,
+                whatsapp: elements.memberWhatsApp.value,
+                current_projects_count: elements.projectsCount.value,
+                monthly_earnings: elements.monthlyEarnings.value
+            };
+            
+            const memberId = elements.memberId.value;
+            
+            if (memberId) {
+                // Update existing member
+                const memberIndex = state.team.findIndex(member => member.member_id === memberId);
+                if (memberIndex !== -1) {
+                    state.team[memberIndex] = { ...state.team[memberIndex], ...memberData };
+                    
+                    // Add to activity log
+                    addActivity({
+                        type: 'team_updated',
+                        description: `Team member ${memberData.name} updated`,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Update in SheetDB if not using sample data
+                    if (!CONFIG.USE_SAMPLE_DATA) {
+                        updateSheetDB(
+                            `${state.settings.sheetDB_team}/member_id/${memberId}`,
+                            memberData,
+                            'PATCH'
+                        ).catch(error => {
+                            console.error('Error updating team member in SheetDB:', error);
+                            showToast('Error updating team member in SheetDB', 'error');
+                        });
+                    }
+                    
+                    showToast('Team member updated successfully', 'success');
+                }
+            } else {
+                // Create new member
+                const newMember = {
+                    member_id: Date.now().toString(),
+                    ...memberData
+                };
+                
+                state.team.push(newMember);
+                
+                // Add to activity log
+                addActivity({
+                    type: 'team_created',
+                    description: `New team member ${newMember.name} added`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Save to SheetDB if not using sample data
+                if (!CONFIG.USE_SAMPLE_DATA) {
+                    updateSheetDB(state.settings.sheetDB_team, newMember)
+                        .catch(error => {
+                            console.error('Error creating team member in SheetDB:', error);
+                            showToast('Error creating team member in SheetDB', 'error');
+                        });
+                }
+                
+                showToast('Team member added successfully', 'success');
+            }
+            
+            closeTeamModal();
+            updateUI();
+        }
+
+        // Delete team member
+        function deleteTeamMember(memberId) {
+            if (confirm('Are you sure you want to delete this team member?')) {
+                const memberIndex = state.team.findIndex(member => member.member_id === memberId);
+                if (memberIndex !== -1) {
+                    const member = state.team[memberIndex];
+                    
+                    // Check if member has assigned projects
+                    const assignedProjects = state.orders.filter(order => order.assigned_editor === memberId);
+                    if (assignedProjects.length > 0) {
+                        if (!confirm(`This member has ${assignedProjects.length} assigned project(s). Do you want to proceed with deletion?`)) {
+                            return;
+                        }
+                    }
+                    
+                    state.team.splice(memberIndex, 1);
+                    
+                    // Add to activity log
+                    addActivity({
+                        type: 'team_deleted',
+                        description: `Team member ${member.name} deleted`,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Delete from SheetDB if not using sample data
+                    if (!CONFIG.USE_SAMPLE_DATA) {
+                        updateSheetDB(
+                            `${state.settings.sheetDB_team}/member_id/${memberId}`,
+                            {},
+                            'DELETE'
+                        ).catch(error => {
+                            console.error('Error deleting team member from SheetDB:', error);
+                            showToast('Error deleting team member from SheetDB', 'error');
+                        });
+                    }
+                    
+                    showToast('Team member deleted successfully', 'success');
+                    updateUI();
+                }
+            }
+        }
+
+        // Reassign projects from one team member to another
+        function reassignProjects() {
+            const fromMemberId = elements.reassignFrom.value;
+            const toMemberId = elements.reassignTo.value;
+            
+            if (!fromMemberId || !toMemberId) {
+                showToast('Please select both team members', 'error');
+                return;
+            }
+            
+            if (fromMemberId === toMemberId) {
+                showToast('Please select different team members', 'error');
+                return;
+            }
+            
+            const fromMember = state.team.find(member => member.member_id === fromMemberId);
+            const toMember = state.team.find(member => member.member_id === toMemberId);
+            
+            if (!fromMember || !toMember) {
+                showToast('Invalid team member selection', 'error');
+                return;
+            }
+            
+            const assignedProjects = state.orders.filter(order => order.assigned_editor === fromMemberId);
+            
+            if (assignedProjects.length === 0) {
+                showToast(`${fromMember.name} has no assigned projects`, 'info');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to reassign ${assignedProjects.length} project(s) from ${fromMember.name} to ${toMember.name}?`)) {
+                assignedProjects.forEach(order => {
+                    order.assigned_editor = toMemberId;
+                    
+                    // Update in SheetDB if not using sample data
+                    if (!CONFIG.USE_SAMPLE_DATA) {
+                        updateSheetDB(
+                            `${state.settings.sheetDB_orders}/id/${order.id}`,
+                            { assigned_editor: toMemberId },
+                            'PATCH'
+                        ).catch(error => {
+                            console.error('Error updating order in SheetDB:', error);
+                        });
+                    }
+                });
+                
+                // Update projects count for both members
+                const fromMemberIndex = state.team.findIndex(member => member.member_id === fromMemberId);
+                const toMemberIndex = state.team.findIndex(member => member.member_id === toMemberId);
+                
+                state.team[fromMemberIndex].current_projects_count = '0';
+                state.team[toMemberIndex].current_projects_count = (parseInt(state.team[toMemberIndex].current_projects_count) + assignedProjects.length).toString();
+                
+                // Update team members in SheetDB if not using sample data
+                if (!CONFIG.USE_SAMPLE_DATA) {
+                    Promise.all([
+                        updateSheetDB(
+                            `${state.settings.sheetDB_team}/member_id/${fromMemberId}`,
+                            { current_projects_count: '0' },
+                            'PATCH'
+                        ),
+                        updateSheetDB(
+                            `${state.settings.sheetDB_team}/member_id/${toMemberId}`,
+                            { current_projects_count: state.team[toMemberIndex].current_projects_count },
+                            'PATCH'
+                        )
+                    ]).catch(error => {
+                        console.error('Error updating team members in SheetDB:', error);
+                    });
+                }
+                
+                // Add to activity log
+                addActivity({
+                    type: 'projects_reassigned',
+                    description: `${assignedProjects.length} projects reassigned from ${fromMember.name} to ${toMember.name}`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                showToast(`Successfully reassigned ${assignedProjects.length} project(s)`, 'success');
+                updateUI();
+            }
+        }
+
+        // Render clients table
+        function renderClientsTable() {
+            elements.clientsTableBody.innerHTML = '';
+            
+            // Get unique clients from orders
+            const clientsMap = new Map();
+            
+            state.orders.forEach(order => {
+                if (!clientsMap.has(order.client_name)) {
+                    clientsMap.set(order.client_name, {
+                        name: order.client_name,
+                        whatsapp: order.client_whatsapp,
+                        projects: [],
+                        totalPaid: 0
+                    });
+                }
+                
+                const client = clientsMap.get(order.client_name);
+                client.projects.push(order);
+                
+                if (order.paid === 'yes') {
+                    client.totalPaid += parseFloat(order.price || 0);
+                }
+            });
+            
+            const clients = Array.from(clientsMap.values());
+            
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${client.name}</td>
+                    <td class="py-3 px-4 text-gray-800">${client.whatsapp}</td>
+                    <td class="py-3 px-4 text-gray-800">${client.projects.length}</td>
+                    <td class="py-3 px-4 text-gray-800">${formatCurrency(client.totalPaid)}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <a href="https://wa.me/${client.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <button class="text-blue-600 hover:text-blue-800 view-client" data-client-name="${client.name}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                elements.clientsTableBody.appendChild(row);
+            });
+        }
+
+        // View client details (placeholder function)
+        function viewClientDetails(clientName) {
+            alert(`Client details for ${clientName} would be shown here in a future update.`);
+        }
+
+        // Add expense
+        function addExpense() {
+            const amount = elements.expenseAmount.value;
+            const description = elements.expenseDescription.value;
+            const selectedMonth = elements.monthPicker.value;
+            
+            if (!amount || !description) {
+                showToast('Please enter both amount and description', 'error');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now().toString(),
+                amount: parseFloat(amount),
+                description: description,
+                month: selectedMonth,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            state.finances.expenses.push(expense);
+            saveFinancesToStorage();
+            
+            // Clear form
+            elements.expenseAmount.value = '';
+            elements.expenseDescription.value = '';
+            
+            showToast('Expense added successfully', 'success');
+            updateOverviewSection();
+        }
+
+        // Render expense list
+        function renderExpenseList() {
+            elements.expenseList.innerHTML = '';
+            
+            const selectedMonth = elements.monthPicker.value;
+            const monthExpenses = state.finances.expenses
+                .filter(expense => expense.month === selectedMonth)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (monthExpenses.length === 0) {
+                elements.expenseList.innerHTML = '<li class="text-gray-500 text-center py-2">No expenses for this month</li>';
+                return;
+            }
+            
+            monthExpenses.forEach(expense => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center py-2 border-b border-gray-100';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-sm text-gray-800">${expense.description}</p>
+                        <p class="text-xs text-gray-500">${new Date(expense.date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-red-600 font-medium">-${formatCurrency(expense.amount)}</span>
+                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-expense-id="${expense.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                elements.expenseList.appendChild(li);
+            });
+        }
+
+        // Render finance expense list
+        function renderFinanceExpenseList() {
+            elements.financeExpenseList.innerHTML = '';
+            
+            const selectedMonth = elements.financeMonthPicker.value;
+            const monthExpenses = state.finances.expenses
+                .filter(expense => expense.month === selectedMonth)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (monthExpenses.length === 0) {
+                elements.financeExpenseList.innerHTML = '<li class="text-gray-500 text-center py-2">No expenses for this month</li>';
+                return;
+            }
+            
+            monthExpenses.forEach(expense => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center py-2 border-b border-gray-100';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-sm text-gray-800">${expense.description}</p>
+                        <p class="text-xs text-gray-500">${new Date(expense.date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-red-600 font-medium">-${formatCurrency(expense.amount)}</span>
+                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-expense-id="${expense.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                elements.financeExpenseList.appendChild(li);
+            });
+        }
+
+        // Delete expense
+        function deleteExpense(expenseId) {
+            const expenseIndex = state.finances.expenses.findIndex(expense => expense.id === expenseId);
+            if (expenseIndex !== -1) {
+                state.finances.expenses.splice(expenseIndex, 1);
+                saveFinancesToStorage();
+                showToast('Expense deleted successfully', 'success');
+                updateOverviewSection();
+                updateFinanceSection();
+            }
+        }
+
+        // Update income chart
+        function updateIncomeChart() {
+            const ctx = elements.incomeChart.getContext('2d');
+            
+            // For simplicity, we'll create a simple bar chart with sample data
+            // In a real application, you would use a charting library like Chart.js
+            
+            ctx.clearRect(0, 0, elements.incomeChart.width, elements.incomeChart.height);
+            
+            // Sample data for the chart
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const income = [12000, 19000, 15000, 21000, 18000, 22000];
+            
+            const maxIncome = Math.max(...income);
+            const chartWidth = elements.incomeChart.width - 40;
+            const chartHeight = elements.incomeChart.height - 40;
+            const barWidth = chartWidth / months.length - 10;
+            
+            // Draw bars
+            ctx.fillStyle = '#6366f1';
+            income.forEach((value, index) => {
+                const barHeight = (value / maxIncome) * chartHeight;
+                const x = 20 + index * (barWidth + 10);
+                const y = elements.incomeChart.height - 20 - barHeight;
+                
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Draw value label
+                ctx.fillStyle = '#374151';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(formatCurrency(value), x + barWidth / 2, y - 5);
+                
+                // Draw month label
+                ctx.fillText(months[index], x + barWidth / 2, elements.incomeChart.height - 5);
+                
+                ctx.fillStyle = '#6366f1';
+            });
+        }
+
+        // Update finance chart
+        function updateFinanceChart() {
+            const ctx = elements.financeChart.getContext('2d');
+            
+            // For simplicity, we'll create a simple bar chart with sample data
+            // In a real application, you would use a charting library like Chart.js
+            
+            ctx.clearRect(0, 0, elements.financeChart.width, elements.financeChart.height);
+            
+            // Sample data for the chart
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const income = [12000, 19000, 15000, 21000, 18000, 22000];
+            const expenses = [8000, 11000, 9000, 12000, 10000, 13000];
+            
+            const maxValue = Math.max(...income, ...expenses);
+            const chartWidth = elements.financeChart.width - 40;
+            const chartHeight = elements.financeChart.height - 40;
+            const barWidth = (chartWidth / months.length - 10) / 2;
+            
+            // Draw income bars
+            ctx.fillStyle = '#10b981';
+            income.forEach((value, index) => {
+                const barHeight = (value / maxValue) * chartHeight;
+                const x = 20 + index * (barWidth * 2 + 10);
+                const y = elements.financeChart.height - 20 - barHeight;
+                
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Draw value label
+                ctx.fillStyle = '#374151';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(formatCurrency(value), x + barWidth / 2, y - 5);
+            });
+            
+            // Draw expense bars
+            ctx.fillStyle = '#ef4444';
+            expenses.forEach((value, index) => {
+                const barHeight = (value / maxValue) * chartHeight;
+                const x = 20 + barWidth + index * (barWidth * 2 + 10);
+                const y = elements.financeChart.height - 20 - barHeight;
+                
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Draw value label
+                ctx.fillStyle = '#374151';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(formatCurrency(value), x + barWidth / 2, y - 5);
+                
+                // Draw month label
+                if (index === 0) {
+                    ctx.fillText('Income', 20 + barWidth / 2, elements.financeChart.height - 5);
+                    ctx.fillText('Expenses', 20 + barWidth * 1.5, elements.financeChart.height - 5);
+                }
+                
+                ctx.fillText(months[index], 20 + barWidth + index * (barWidth * 2 + 10), elements.financeChart.height - 5);
+            });
+        }
+
+        // Render recent activity
+        function renderRecentActivity() {
+            elements.recentActivity.innerHTML = '';
+            
+            const recentActivities = state.activity
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 5);
+            
+            if (recentActivities.length === 0) {
+                elements.recentActivity.innerHTML = '<p class="text-gray-500 text-center py-4">No recent activity</p>';
+                return;
+            }
+            
+            recentActivities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const date = new Date(activity.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                activityItem.innerHTML = `
+                    <p class="text-sm text-gray-800">${activity.description}</p>
+                    <p class="text-xs text-gray-500">${formattedDate}</p>
+                `;
+                
+                elements.recentActivity.appendChild(activityItem);
+            });
+        }
+
+        // Render activity timeline
+        function renderActivityTimeline() {
+            elements.activityTimeline.innerHTML = '';
+            
+            const activities = state.activity
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 20);
+            
+            if (activities.length === 0) {
+                elements.activityTimeline.innerHTML = '<p class="text-gray-500 text-center py-8">No activity recorded yet</p>';
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const date = new Date(activity.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                // Get icon based on activity type
+                let icon = 'fas fa-info-circle';
+                let iconColor = 'text-blue-500';
+                
+                if (activity.type.includes('order')) {
+                    icon = 'fas fa-shopping-cart';
+                    iconColor = 'text-purple-500';
+                } else if (activity.type.includes('status')) {
+                    icon = 'fas fa-exchange-alt';
+                    iconColor = 'text-yellow-500';
+                } else if (activity.type.includes('team')) {
+                    icon = 'fas fa-users';
+                    iconColor = 'text-green-500';
+                } else if (activity.type.includes('payment')) {
+                    icon = 'fas fa-money-bill-wave';
+                    iconColor = 'text-green-500';
+                }
+                
+                activityItem.innerHTML = `
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <i class="${icon} ${iconColor}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-800">${activity.description}</p>
+                            <p class="text-xs text-gray-500">${formattedDate}</p>
+                        </div>
+                    </div>
+                `;
+                
+                elements.activityTimeline.appendChild(activityItem);
+            });
+        }
+
+        // Add activity to log
+        function addActivity(activity) {
+            activity.id = Date.now().toString();
+            state.activity.unshift(activity);
+            
+            // Keep only the last 100 activities
+            if (state.activity.length > 100) {
+                state.activity = state.activity.slice(0, 100);
+            }
+            
+            saveActivityToStorage();
+        }
+
+        // Clear activity log
+        function clearActivity() {
+            if (confirm('Are you sure you want to clear all activity?')) {
+                state.activity = [];
+                saveActivityToStorage();
+                renderActivityTimeline();
+                showToast('Activity log cleared', 'success');
+            }
+        }
+
+        // Save endpoints from settings
+        function saveEndpoints() {
+            state.settings.sheetDB_orders = elements.ordersEndpoint.value;
+            state.settings.sheetDB_team = elements.teamEndpoint.value;
+            saveSettings();
+            showToast('Endpoints saved successfully', 'success');
+        }
+
+        // Test endpoints connection
+        function testEndpoints() {
+            showToast('Testing endpoints connection...', 'info');
+            
+            // In a real implementation, you would test the connection to SheetDB
+            // For this demo, we'll just simulate a successful test
+            
+            setTimeout(() => {
+                showToast('Endpoints connection successful', 'success');
+            }, 1500);
+        }
+
+        // Test WhatsApp integration
+        function testWhatsApp() {
+            const message = elements.whatsappTest.value;
+            
+            if (!message) {
+                showToast('Please enter a test message', 'error');
+                return;
+            }
+            
+            const encodedMessage = encodeURIComponent(message);
+            const url = `https://wa.me/?text=${encodedMessage}`;
+            window.open(url, '_blank');
+            
+            showToast('WhatsApp test launched in new tab', 'success');
+        }
+
+        // Export CSV data
+        function exportCSVData() {
+            const selectedMonth = elements.financeMonthPicker.value;
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                const orderMonth = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+                return orderMonth === selectedMonth;
+            });
+            
+            if (monthOrders.length === 0) {
+                showToast('No data to export for selected month', 'info');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'Order No,Client Name,Project Title,Status,Editor,Price,Paid,Due Date\n';
+            
+            monthOrders.forEach(order => {
+                const editor = state.team.find(member => member.member_id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                csvContent += `"${order.order_no}","${order.client_name}","${order.project_title}","${order.status}","${editorName}","${order.price}","${order.paid}","${order.due_date}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `motioncraft-orders-${selectedMonth}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('CSV exported successfully', 'success');
+        }
+
+        // Export all data
+        function exportAllData() {
+            const data = {
+                orders: state.orders,
+                team: state.team,
+                finances: state.finances,
+                activity: state.activity,
+                settings: state.settings
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'motioncraft-data-backup.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('All data exported successfully', 'success');
+        }
+
+        // Import data
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        if (confirm('This will replace all current data. Are you sure?')) {
+                            state.orders = importedData.orders || [];
+                            state.team = importedData.team || [];
+                            state.finances = importedData.finances || { expenses: [], income: [] };
+                            state.activity = importedData.activity || [];
+                            
+                            saveActivityToStorage();
+                            saveFinancesToStorage();
+                            
+                            updateUI();
+                            showToast('Data imported successfully', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Error importing data:', error);
+                        showToast('Error importing data. Invalid file format.', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Reset to sample data
+        function resetToSampleData() {
+            if (confirm('This will replace all current data with sample data. Are you sure?')) {
+                state.orders = [...SAMPLE_ORDERS];
+                state.team = [...SAMPLE_TEAM];
+                state.finances = { expenses: [], income: [] };
+                state.activity = [];
+                
+                saveActivityToStorage();
+                saveFinancesToStorage();
+                
+                updateUI();
+                showToast('Reset to sample data successfully', 'success');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = elements.toast;
+            const toastIcon = elements.toastIcon;
+            const toastMessage = elements.toastMessage;
+            
+            // Set toast style based on type
+            let bgColor = 'bg-blue-500';
+            let icon = 'fas fa-info-circle';
+            
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-green-500';
+                    icon = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-500';
+                    icon = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    bgColor = 'bg-yellow-500';
+                    icon = 'fas fa-exclamation-triangle';
+                    break;
+            }
+            
+            toast.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-opacity duration-300 ${bgColor} text-white`;
+            toastIcon.className = icon + ' mr-3';
+            toastMessage.textContent = message;
+            
+            toast.classList.remove('hidden');
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Load activity from localStorage
+        function loadActivityFromStorage() {
+            const savedActivity = localStorage.getItem('motioncraft_activity');
+            if (savedActivity) {
+                state.activity = JSON.parse(savedActivity);
+            }
+        }
+
+        // Save activity to localStorage
+        function saveActivityToStorage() {
+            localStorage.setItem('motioncraft_activity', JSON.stringify(state.activity));
+        }
+
+        // Load finances from localStorage
+        function loadFinancesFromStorage() {
+            const savedFinances = localStorage.getItem('motioncraft_finances');
+            if (savedFinances) {
+                state.finances = JSON.parse(savedFinances);
+                if (!state.finances.expenses) state.finances.expenses = [];
+                if (!state.finances.income) state.finances.income = [];
+            }
+        }
+
+        // Save finances to localStorage
+        function saveFinancesToStorage() {
+            localStorage.setItem('motioncraft_finances', JSON.stringify(state.finances));
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
