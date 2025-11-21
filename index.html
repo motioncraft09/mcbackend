@@ -1082,8 +1082,8 @@
         // Configuration
         const CONFIG = {
             USE_SAMPLE_DATA: true, // Set to false when using real SheetDB endpoints
-            SHEETDB_ORDERS: "https://sheetdb.io/api/v1/xxxxxxxx",
-            SHEETDB_TEAM: "https://sheetdb.io/api/v1/xxxxxxxx"
+            SHEETDB_ORDERS: "https://sheetdb.io/api/v1/4t736q7rxsj5z",
+            SHEETDB_TEAM: "https://sheetdb.io/api/v1/7jf3yo21e6l1o"
         };
 
         // Application State
@@ -1237,52 +1237,51 @@
                 state.settings = { ...state.settings, ...JSON.parse(savedSettings) };
             }
 
-            // Load data based on settings
-            if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
-                loadFromSheetDB();
+            // Load data from localStorage
+            const savedOrders = localStorage.getItem('motioncraft_orders');
+            const savedTeam = localStorage.getItem('motioncraft_team');
+            const savedClients = localStorage.getItem('motioncraft_clients');
+            const savedActivity = localStorage.getItem('motioncraft_activity');
+            const savedExpenses = localStorage.getItem('motioncraft_expenses');
+
+            if (savedOrders) {
+                state.orders = JSON.parse(savedOrders);
             } else {
-                loadSampleData();
+                state.orders = [...SAMPLE_DATA.orders];
+            }
+
+            if (savedTeam) {
+                state.team = JSON.parse(savedTeam);
+            } else {
+                state.team = [...SAMPLE_DATA.team];
+            }
+
+            if (savedClients) {
+                state.clients = JSON.parse(savedClients);
+            } else {
+                state.clients = [...SAMPLE_DATA.clients];
+            }
+
+            if (savedActivity) {
+                state.activity = JSON.parse(savedActivity);
+            } else {
+                state.activity = [...SAMPLE_DATA.activity];
+            }
+
+            if (savedExpenses) {
+                state.finances.expenses = JSON.parse(savedExpenses);
             }
 
             // Update UI with settings
             updateSettingsUI();
         }
 
-        function loadSampleData() {
-            state.orders = [...SAMPLE_DATA.orders];
-            state.team = [...SAMPLE_DATA.team];
-            state.clients = [...SAMPLE_DATA.clients];
-            state.activity = [...SAMPLE_DATA.activity];
-            
-            // Load expenses from localStorage
-            const savedExpenses = localStorage.getItem('motioncraft_expenses');
-            if (savedExpenses) {
-                state.finances.expenses = JSON.parse(savedExpenses);
-            }
-        }
-
-        async function loadFromSheetDB() {
-            try {
-                showToast('Loading data from SheetDB...', 'info');
-                
-                // Load orders
-                const ordersResponse = await fetch(state.settings.sheetDB_orders);
-                if (ordersResponse.ok) {
-                    state.orders = await ordersResponse.json();
-                }
-                
-                // Load team
-                const teamResponse = await fetch(state.settings.sheetDB_team);
-                if (teamResponse.ok) {
-                    state.team = await teamResponse.json();
-                }
-                
-                showToast('Data loaded successfully from SheetDB!', 'success');
-            } catch (error) {
-                console.error('Error loading from SheetDB:', error);
-                showToast('Failed to load data from SheetDB. Using sample data.', 'error');
-                loadSampleData();
-            }
+        function saveData() {
+            localStorage.setItem('motioncraft_orders', JSON.stringify(state.orders));
+            localStorage.setItem('motioncraft_team', JSON.stringify(state.team));
+            localStorage.setItem('motioncraft_clients', JSON.stringify(state.clients));
+            localStorage.setItem('motioncraft_activity', JSON.stringify(state.activity));
+            localStorage.setItem('motioncraft_expenses', JSON.stringify(state.finances.expenses));
         }
 
         function setupEventListeners() {
@@ -1501,13 +1500,9 @@
                 state.orders.push(newOrder);
                 showToast('Order created successfully!', 'success');
                 addActivity(`New order ${orderData.order_no} created`);
-                
-                // Add to SheetDB if enabled
-                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
-                    saveToSheetDB('orders', newOrder);
-                }
             }
             
+            saveData();
             closeOrderModal();
             renderOrdersTable();
             updateKanbanBoard();
@@ -1522,11 +1517,7 @@
                 showToast('Order deleted successfully!', 'success');
                 addActivity(`Order ${order.order_no} deleted`);
                 
-                // Delete from SheetDB if enabled
-                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
-                    deleteFromSheetDB('orders', orderId);
-                }
-                
+                saveData();
                 renderOrdersTable();
                 updateKanbanBoard();
                 updateStats();
@@ -1594,13 +1585,9 @@
                 state.team.push(newMember);
                 showToast('Team member added successfully!', 'success');
                 addActivity(`New team member ${memberData.name} added`);
-                
-                // Add to SheetDB if enabled
-                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
-                    saveToSheetDB('team', newMember);
-                }
             }
             
+            saveData();
             closeTeamModal();
             renderTeamMembers();
             updateReassignDropdowns();
@@ -1623,11 +1610,7 @@
                 showToast('Team member deleted successfully!', 'success');
                 addActivity(`Team member ${member.name} deleted`);
                 
-                // Delete from SheetDB if enabled
-                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
-                    deleteFromSheetDB('team', memberId);
-                }
-                
+                saveData();
                 renderTeamMembers();
                 updateReassignDropdowns();
             }
@@ -1677,6 +1660,7 @@
                 showToast(`Successfully reassigned ${assignedProjects.length} project(s)`, 'success');
                 addActivity(`${assignedProjects.length} projects reassigned from ${fromMember.name} to ${toMember.name}`);
                 
+                saveData();
                 renderOrdersTable();
                 renderTeamMembers();
                 updateKanbanBoard();
@@ -1746,6 +1730,7 @@
                 addActivity(`New client ${clientData.name} added`);
             }
             
+            saveData();
             closeClientModal();
             renderClientsTable();
         }
@@ -1758,6 +1743,7 @@
                 showToast('Client deleted successfully!', 'success');
                 addActivity(`Client ${client.name} deleted`);
                 
+                saveData();
                 renderClientsTable();
             }
         }
@@ -1781,7 +1767,7 @@
             };
             
             state.finances.expenses.push(expense);
-            saveExpensesToStorage();
+            saveData();
             
             // Clear form
             document.getElementById('expenseAmount').value = '';
@@ -1799,7 +1785,7 @@
             if (expenseIndex !== -1) {
                 const expense = state.finances.expenses[expenseIndex];
                 state.finances.expenses.splice(expenseIndex, 1);
-                saveExpensesToStorage();
+                saveData();
                 
                 showToast('Expense deleted successfully!', 'success');
                 addActivity(`Expense deleted: ${expense.description}`);
@@ -1807,10 +1793,6 @@
                 renderExpenseList();
                 updateStats();
             }
-        }
-
-        function saveExpensesToStorage() {
-            localStorage.setItem('motioncraft_expenses', JSON.stringify(state.finances.expenses));
         }
 
         function exportCSV() {
@@ -1866,7 +1848,7 @@
                 state.activity = state.activity.slice(0, 50);
             }
             
-            saveActivityToStorage();
+            saveData();
             renderRecentActivity();
             renderActivityTimeline();
         }
@@ -1874,15 +1856,11 @@
         function clearActivity() {
             if (confirm('Are you sure you want to clear all activity?')) {
                 state.activity = [];
-                saveActivityToStorage();
+                saveData();
                 renderRecentActivity();
                 renderActivityTimeline();
                 showToast('Activity cleared successfully!', 'success');
             }
-        }
-
-        function saveActivityToStorage() {
-            localStorage.setItem('motioncraft_activity', JSON.stringify(state.activity));
         }
 
         // Settings Functions
@@ -2013,9 +1991,8 @@
                             state.settings = { ...state.settings, ...importedData.settings };
                         }
                         
+                        saveData();
                         saveSettings();
-                        saveExpensesToStorage();
-                        saveActivityToStorage();
                         
                         renderAllSections();
                         updateStats();
@@ -2033,7 +2010,13 @@
 
         function resetData() {
             if (confirm('This will replace all current data with sample data. Are you sure?')) {
-                loadSampleData();
+                state.orders = [...SAMPLE_DATA.orders];
+                state.team = [...SAMPLE_DATA.team];
+                state.clients = [...SAMPLE_DATA.clients];
+                state.activity = [...SAMPLE_DATA.activity];
+                state.finances.expenses = [];
+                
+                saveData();
                 renderAllSections();
                 updateStats();
                 showToast('Data reset to sample data successfully!', 'success');
@@ -2064,47 +2047,6 @@
 
         function saveSettings() {
             localStorage.setItem('motioncraft_settings', JSON.stringify(state.settings));
-        }
-
-        // SheetDB Integration
-        async function saveToSheetDB(type, data) {
-            if (!state.settings.useSheetDB || CONFIG.USE_SAMPLE_DATA) return;
-            
-            try {
-                const endpoint = type === 'orders' ? state.settings.sheetDB_orders : state.settings.sheetDB_team;
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to save to SheetDB');
-                }
-            } catch (error) {
-                console.error('Error saving to SheetDB:', error);
-                showToast('Failed to sync with SheetDB', 'error');
-            }
-        }
-
-        async function deleteFromSheetDB(type, id) {
-            if (!state.settings.useSheetDB || CONFIG.USE_SAMPLE_DATA) return;
-            
-            try {
-                const endpoint = type === 'orders' ? state.settings.sheetDB_orders : state.settings.sheetDB_team;
-                const response = await fetch(`${endpoint}/id/${id}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to delete from SheetDB');
-                }
-            } catch (error) {
-                console.error('Error deleting from SheetDB:', error);
-                showToast('Failed to sync with SheetDB', 'error');
-            }
         }
 
         // Rendering Functions
@@ -2590,6 +2532,7 @@
                 showToast(`Order ${order.order_no} moved to ${newStatus}`, 'success');
                 addActivity(`Order ${order.order_no} status changed from ${oldStatus} to ${newStatus}`);
                 
+                saveData();
                 updateKanbanBoard();
             }
         }
