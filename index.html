@@ -336,6 +336,10 @@
         .toast.info {
             background: #3b82f6;
         }
+
+        .toast.warning {
+            background: #f59e0b;
+        }
     </style>
 </head>
 <body>
@@ -445,7 +449,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Total Orders</p>
-                                <h3 class="text-2xl font-bold text-gray-800" id="totalOrders">24</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" id="totalOrders">0</h3>
                             </div>
                         </div>
                     </div>
@@ -457,7 +461,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">This Month Orders</p>
-                                <h3 class="text-2xl font-bold text-gray-800" id="monthOrders">8</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" id="monthOrders">0</h3>
                             </div>
                         </div>
                     </div>
@@ -469,7 +473,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Paid Amount</p>
-                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="paidAmount">85,000</h3>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="paidAmount">0</h3>
                             </div>
                         </div>
                     </div>
@@ -481,7 +485,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-600">Pending Amount</p>
-                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="pendingAmount">45,000</h3>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="pendingAmount">0</h3>
                             </div>
                         </div>
                     </div>
@@ -491,7 +495,7 @@
                     <div class="card glass p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Total Income</h3>
-                            <span class="text-green-600 font-medium currency-bdt" id="totalIncome">85,000</span>
+                            <span class="text-green-600 font-medium currency-bdt" id="totalIncome">0</span>
                         </div>
                         <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
                             <canvas id="incomeChart"></canvas>
@@ -501,7 +505,7 @@
                     <div class="card glass p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Expenses</h3>
-                            <span class="text-red-600 font-medium currency-bdt" id="totalExpense">15,000</span>
+                            <span class="text-red-600 font-medium currency-bdt" id="totalExpense">0</span>
                         </div>
                         <div class="mb-4">
                             <label class="block text-sm text-gray-600 mb-2">Add Expense</label>
@@ -513,30 +517,7 @@
                         </div>
                         <div class="h-40 overflow-y-auto">
                             <ul id="expenseList" class="space-y-2">
-                                <li class="flex justify-between items-center py-2 border-b border-gray-100">
-                                    <div>
-                                        <p class="text-sm text-gray-800">Software Subscription</p>
-                                        <p class="text-xs text-gray-500">2023-11-15</p>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <span class="text-red-600 font-medium currency-bdt">5,000</span>
-                                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="1">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </li>
-                                <li class="flex justify-between items-center py-2 border-b border-gray-100">
-                                    <div>
-                                        <p class="text-sm text-gray-800">Marketing</p>
-                                        <p class="text-xs text-gray-500">2023-11-10</p>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <span class="text-red-600 font-medium currency-bdt">10,000</span>
-                                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="2">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </li>
+                                <!-- Expenses will be populated dynamically -->
                             </ul>
                         </div>
                     </div>
@@ -545,18 +526,7 @@
                 <div class="card glass p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
                     <div class="space-y-4" id="recentActivity">
-                        <div class="activity-item">
-                            <p class="text-sm text-gray-800">Order MC-024 status changed from editing to final_delivery</p>
-                            <p class="text-xs text-gray-500">2023-11-20 14:30</p>
-                        </div>
-                        <div class="activity-item">
-                            <p class="text-sm text-gray-800">New order MC-025 created</p>
-                            <p class="text-xs text-gray-500">2023-11-20 11:15</p>
-                        </div>
-                        <div class="activity-item">
-                            <p class="text-sm text-gray-800">Payment received for order MC-022</p>
-                            <p class="text-xs text-gray-500">2023-11-19 16:45</p>
-                        </div>
+                        <!-- Activity will be populated dynamically -->
                     </div>
                 </div>
             </section>
@@ -574,97 +544,42 @@
                     <div class="kanban-column status-fresh p-4" data-status="fresh">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Fresh</h3>
                         <div class="space-y-4" id="fresh-column">
-                            <div class="kanban-card card glass p-4" data-order="MC-025" draggable="true">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="font-semibold text-gray-800">MC-025</span>
-                                    <span class="text-sm font-medium text-red-600 currency-bdt">12,000</span>
-                                </div>
-                                <h4 class="font-medium text-gray-800 mb-1">Product Demo Video</h4>
-                                <p class="text-sm text-gray-600 mb-2">Tech Solutions Inc.</p>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-600">Unassigned</span>
-                                    <span class="text-green-600">7d</span>
-                                </div>
-                            </div>
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
 
                     <div class="kanban-column status-scripting p-4" data-status="scripting">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Scripting</h3>
                         <div class="space-y-4" id="scripting-column">
-                            <div class="kanban-card card glass p-4" data-order="MC-023" draggable="true">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="font-semibold text-gray-800">MC-023</span>
-                                    <span class="text-sm font-medium text-red-600 currency-bdt">18,000</span>
-                                </div>
-                                <h4 class="font-medium text-gray-800 mb-1">Corporate Training</h4>
-                                <p class="text-sm text-gray-600 mb-2">Global Education</p>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-600">Alex Johnson</span>
-                                    <span class="text-yellow-600">3d</span>
-                                </div>
-                            </div>
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
 
                     <div class="kanban-column status-editing p-4" data-status="editing">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Editing</h3>
                         <div class="space-y-4" id="editing-column">
-                            <div class="kanban-card card glass p-4" data-order="MC-021" draggable="true">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="font-semibold text-gray-800">MC-021</span>
-                                    <span class="text-sm font-medium text-green-600 currency-bdt">25,000</span>
-                                </div>
-                                <h4 class="font-medium text-gray-800 mb-1">Brand Campaign</h4>
-                                <p class="text-sm text-gray-600 mb-2">Fashion House Ltd</p>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-600">Maria Garcia</span>
-                                    <span class="text-green-600">5d</span>
-                                </div>
-                            </div>
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
 
                     <div class="kanban-column status-correction p-4" data-status="correction">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Correction</h3>
                         <div class="space-y-4" id="correction-column">
-                            <div class="kanban-card card glass p-4" data-order="MC-019" draggable="true">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="font-semibold text-gray-800">MC-019</span>
-                                    <span class="text-sm font-medium text-green-600 currency-bdt">15,000</span>
-                                </div>
-                                <h4 class="font-medium text-gray-800 mb-1">Social Media Ads</h4>
-                                <p class="text-sm text-gray-600 mb-2">Startup XYZ</p>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-600">David Kim</span>
-                                    <span class="text-red-600">-1d</span>
-                                </div>
-                            </div>
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
 
                     <div class="kanban-column status-final_delivery p-4" data-status="final_delivery">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Final Delivery</h3>
                         <div class="space-y-4" id="final_delivery-column">
-                            <!-- Empty column -->
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
 
                     <div class="kanban-column status-completed p-4" data-status="completed">
                         <h3 class="font-semibold text-gray-800 mb-4 text-center">Completed</h3>
                         <div class="space-y-4" id="completed-column">
-                            <div class="kanban-card card glass p-4" data-order="MC-018" draggable="true">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="font-semibold text-gray-800">MC-018</span>
-                                    <span class="text-sm font-medium text-green-600 currency-bdt">20,000</span>
-                                </div>
-                                <h4 class="font-medium text-gray-800 mb-1">Event Highlights</h4>
-                                <p class="text-sm text-gray-600 mb-2">Conference Org</p>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-600">Alex Johnson</span>
-                                    <span class="text-green-600">Completed</span>
-                                </div>
-                            </div>
+                            <!-- Kanban cards will be populated dynamically -->
                         </div>
                     </div>
                 </div>
@@ -686,9 +601,7 @@
                                 <label class="block text-sm text-gray-600 mb-1">Filter by Editor</label>
                                 <select id="editorFilter" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                     <option value="">All Editors</option>
-                                    <option value="1">Alex Johnson</option>
-                                    <option value="2">Maria Garcia</option>
-                                    <option value="3">David Kim</option>
+                                    <!-- Editors will be populated dynamically -->
                                 </select>
                             </div>
                             <div class="w-full md:w-auto">
@@ -764,12 +677,14 @@
                             <label class="block text-sm text-gray-600 mb-1">Reassign projects from:</label>
                             <select id="reassignFrom" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                 <option value="">Select member</option>
+                                <!-- Team members will be populated dynamically -->
                             </select>
                         </div>
                         <div class="flex-1">
                             <label class="block text-sm text-gray-600 mb-1">Reassign projects to:</label>
                             <select id="reassignTo" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                 <option value="">Select member</option>
+                                <!-- Team members will be populated dynamically -->
                             </select>
                         </div>
                         <div class="mt-4 md:mt-6">
@@ -781,32 +696,211 @@
                 </div>
             </section>
 
-            <!-- Other Sections -->
+            <!-- Finance Section -->
             <section id="finance" class="section hidden fade-in">
-                <div class="card glass p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Finance Section</h2>
-                    <p class="text-gray-600">Finance management content goes here.</p>
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Finance Overview</h2>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center">
+                        <div class="mb-2 sm:mb-0 sm:mr-4">
+                            <label class="text-sm text-gray-600 mr-2">Select Month:</label>
+                            <input type="month" id="financeMonthPicker" class="p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <button id="exportCSV" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-file-export mr-2"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="card glass p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Income</p>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="financeIncome">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Pending Amount</p>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="financePending">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Expenses</p>
+                                <h3 class="text-2xl font-bold text-gray-800 currency-bdt" id="financeExpenses">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Income vs Expenses</h3>
+                        <div class="chart-container">
+                            <canvas id="financeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Expense Breakdown</h3>
+                        <div class="h-64 overflow-y-auto">
+                            <ul id="financeExpenseList" class="space-y-2">
+                                <!-- Expenses will be listed here -->
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </section>
 
+            <!-- Clients Section -->
             <section id="clients" class="section hidden fade-in">
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Clients Management</h2>
+                    <button id="addClientBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i> Add Client
+                    </button>
+                </div>
+
                 <div class="card glass p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Clients Section</h2>
-                    <p class="text-gray-600">Clients management content goes here.</p>
+                    <div class="table-container">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 text-gray-600 font-medium">Client Name</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 font-medium">WhatsApp</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 font-medium">Projects</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 font-medium">Total Paid</th>
+                                    <th class="text-left py-3 px-4 text-gray-600 font-medium">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTableBody">
+                                <!-- Clients will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
+            <!-- Activity Section -->
             <section id="activity" class="section hidden fade-in">
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Activity Timeline</h2>
+                    <button id="clearActivityBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        <i class="fas fa-trash mr-2"></i> Clear Activity
+                    </button>
+                </div>
+
                 <div class="card glass p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Activity Section</h2>
-                    <p class="text-gray-600">Activity timeline content goes here.</p>
+                    <div class="space-y-6" id="activityTimeline">
+                        <!-- Activity items will be added here -->
+                    </div>
                 </div>
             </section>
 
+            <!-- Settings Section -->
             <section id="settings" class="section hidden fade-in">
-                <div class="card glass p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Settings Section</h2>
-                    <p class="text-gray-600">Settings content goes here.</p>
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Settings</h2>
+                    <p class="text-gray-600">Configure your dashboard and integrations</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">SheetDB Integration</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Orders Sheet Endpoint</label>
+                                <input type="text" id="ordersEndpoint" class="w-full p-2 rounded-lg border border-gray-200 bg-white" placeholder="https://sheetdb.io/api/v1/xxxxxxxx">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Team Sheet Endpoint</label>
+                                <input type="text" id="teamEndpoint" class="w-full p-2 rounded-lg border border-gray-200 bg-white" placeholder="https://sheetdb.io/api/v1/xxxxxxxx">
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                <button id="saveEndpoints" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                    Save Endpoints
+                                </button>
+                                <button id="testEndpoints" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    Test Connection
+                                </button>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-blue-700">
+                                    <strong>Note:</strong> Create free accounts at <a href="https://sheetdb.io" target="_blank" class="underline">sheetdb.io</a> and get your API endpoints. 
+                                    The dashboard will sync with your Google Sheets automatically.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Appearance</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">Currency</span>
+                                <select id="currencySelect" class="p-2 rounded-lg border border-gray-200 bg-white">
+                                    <option value="bdt">BDT (৳)</option>
+                                    <option value="usd">USD ($)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">Theme</span>
+                                <select id="themeSelect" class="p-2 rounded-lg border border-gray-200 bg-white">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="auto">Auto (System)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Data Management</h3>
+                        <div class="space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                <button id="exportData" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-download mr-2"></i> Export All Data
+                                </button>
+                                <button id="importData" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                                    <i class="fas fa-upload mr-2"></i> Import Data
+                                </button>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                <button id="resetData" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                    <i class="fas fa-refresh mr-2"></i> Reset to Sample Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">WhatsApp Integration</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Test WhatsApp Message</label>
+                                <textarea id="whatsappTest" class="w-full p-2 rounded-lg border border-gray-200 bg-white h-24" placeholder="Enter message to test WhatsApp formatting"></textarea>
+                            </div>
+                            <button id="testWhatsApp" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                <i class="fab fa-whatsapp mr-2"></i> Test WhatsApp
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -816,10 +910,11 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-800">Add New Order</h3>
+                <h3 class="text-xl font-semibold text-gray-800" id="orderModalTitle">Add New Order</h3>
             </div>
             <div class="p-6">
                 <form id="orderForm">
+                    <input type="hidden" id="orderId">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Order Number</label>
@@ -852,9 +947,7 @@
                             <label class="block text-sm text-gray-600 mb-1">Assigned Editor</label>
                             <select id="assignedEditor" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                                 <option value="">Unassigned</option>
-                                <option value="1">Alex Johnson</option>
-                                <option value="2">Maria Garcia</option>
-                                <option value="3">David Kim</option>
+                                <!-- Editors will be populated dynamically -->
                             </select>
                         </div>
                         <div>
@@ -867,6 +960,10 @@
                                 <option value="no">No</option>
                                 <option value="yes">Yes</option>
                             </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Due Date</label>
+                            <input type="date" id="dueDate" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
                         </div>
                     </div>
                     <div class="mb-4">
@@ -890,10 +987,11 @@
     <div id="teamModal" class="modal">
         <div class="modal-content">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-800">Add Team Member</h3>
+                <h3 class="text-xl font-semibold text-gray-800" id="teamModalTitle">Add Team Member</h3>
             </div>
             <div class="p-6">
                 <form id="teamForm">
+                    <input type="hidden" id="memberId">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Name</label>
@@ -906,6 +1004,14 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">WhatsApp</label>
                             <input type="text" id="memberWhatsApp" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Current Projects Count</label>
+                            <input type="number" id="projectsCount" class="w-full p-2 rounded-lg border border-gray-200 bg-white" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Monthly Earnings</label>
+                            <input type="number" id="monthlyEarnings" class="w-full p-2 rounded-lg border border-gray-200 bg-white" value="0">
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
@@ -921,6 +1027,46 @@
         </div>
     </div>
 
+    <!-- Client Modal -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800" id="clientModalTitle">Add New Client</h3>
+            </div>
+            <div class="p-6">
+                <form id="clientForm">
+                    <input type="hidden" id="clientId">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Client Name</label>
+                            <input type="text" id="clientNameInput" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">WhatsApp Number</label>
+                            <input type="text" id="clientWhatsAppInput" class="w-full p-2 rounded-lg border border-gray-200 bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Email</label>
+                            <input type="email" id="clientEmail" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Company</label>
+                            <input type="text" id="clientCompany" class="w-full p-2 rounded-lg border border-gray-200 bg-white">
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" id="cancelClient" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Save Client
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast">
         <div class="flex items-center">
@@ -929,168 +1075,223 @@
         </div>
     </div>
 
+    <!-- File Input for Import (hidden) -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
     <script>
+        // Configuration
+        const CONFIG = {
+            USE_SAMPLE_DATA: true, // Set to false when using real SheetDB endpoints
+            SHEETDB_ORDERS: "https://sheetdb.io/api/v1/xxxxxxxx",
+            SHEETDB_TEAM: "https://sheetdb.io/api/v1/xxxxxxxx"
+        };
+
         // Application State
         const state = {
+            orders: [],
+            team: [],
+            clients: [],
+            activity: [],
+            finances: {
+                expenses: [],
+                income: []
+            },
+            settings: {
+                currency: 'bdt',
+                theme: 'light',
+                sheetDB_orders: CONFIG.SHEETDB_ORDERS,
+                sheetDB_team: CONFIG.SHEETDB_TEAM,
+                useSheetDB: false
+            },
+            currentView: 'overview'
+        };
+
+        // Sample Data
+        const SAMPLE_DATA = {
             orders: [
                 {
-                    id: 1,
-                    order_no: 'MC-025',
-                    client_name: 'Tech Solutions Inc.',
-                    client_whatsapp: '+1234567890',
-                    project_title: 'Product Demo Video',
-                    status: 'fresh',
-                    assigned_editor: '',
-                    price: 12000,
-                    paid: 'no',
-                    due_date: '2023-11-27',
-                    notes: 'Need high-quality product demonstration'
+                    id: "1",
+                    order_no: "MC-001",
+                    client_name: "John Smith",
+                    client_whatsapp: "+1234567890",
+                    project_title: "Corporate Brand Video",
+                    status: "fresh",
+                    assigned_editor: "",
+                    price: "15000",
+                    paid: "no",
+                    created_at: "2023-10-15",
+                    due_date: "2023-11-15",
+                    notes: "Client wants a modern and professional look",
+                    internal_comments: "Need to assign an editor with corporate video experience"
                 },
                 {
-                    id: 2,
-                    order_no: 'MC-023',
-                    client_name: 'Global Education',
-                    client_whatsapp: '+1234567891',
-                    project_title: 'Corporate Training',
-                    status: 'scripting',
-                    assigned_editor: '1',
-                    price: 18000,
-                    paid: 'no',
-                    due_date: '2023-11-23',
-                    notes: 'Training videos for new employees'
+                    id: "2",
+                    order_no: "MC-002",
+                    client_name: "Sarah Johnson",
+                    client_whatsapp: "+1234567891",
+                    project_title: "Product Launch Video",
+                    status: "scripting",
+                    assigned_editor: "1",
+                    price: "20000",
+                    paid: "yes",
+                    created_at: "2023-10-20",
+                    due_date: "2023-11-25",
+                    notes: "Focus on the product's unique features",
+                    internal_comments: "Script is 50% complete"
                 },
                 {
-                    id: 3,
-                    order_no: 'MC-021',
-                    client_name: 'Fashion House Ltd',
-                    client_whatsapp: '+1234567892',
-                    project_title: 'Brand Campaign',
-                    status: 'editing',
-                    assigned_editor: '2',
-                    price: 25000,
-                    paid: 'yes',
-                    due_date: '2023-11-25',
-                    notes: 'Spring collection campaign videos'
-                },
-                {
-                    id: 4,
-                    order_no: 'MC-019',
-                    client_name: 'Startup XYZ',
-                    client_whatsapp: '+1234567893',
-                    project_title: 'Social Media Ads',
-                    status: 'correction',
-                    assigned_editor: '3',
-                    price: 15000,
-                    paid: 'yes',
-                    due_date: '2023-11-19',
-                    notes: 'Client requested color corrections'
-                },
-                {
-                    id: 5,
-                    order_no: 'MC-018',
-                    client_name: 'Conference Org',
-                    client_whatsapp: '+1234567894',
-                    project_title: 'Event Highlights',
-                    status: 'completed',
-                    assigned_editor: '1',
-                    price: 20000,
-                    paid: 'yes',
-                    due_date: '2023-11-15',
-                    notes: 'Annual conference highlights video'
+                    id: "3",
+                    order_no: "MC-003",
+                    client_name: "Mike Davis",
+                    client_whatsapp: "+1234567892",
+                    project_title: "Social Media Ads",
+                    status: "editing",
+                    assigned_editor: "2",
+                    price: "8000",
+                    paid: "no",
+                    created_at: "2023-10-25",
+                    due_date: "2023-11-05",
+                    notes: "Short videos for Instagram and Facebook",
+                    internal_comments: "First draft ready for review"
                 }
             ],
             team: [
                 {
-                    id: 1,
-                    name: 'Alex Johnson',
-                    role: 'Senior Video Editor',
-                    whatsapp: '+1234567895',
-                    projects_count: 2,
-                    monthly_earnings: 32000
+                    id: "1",
+                    name: "Alex Johnson",
+                    role: "Senior Video Editor",
+                    whatsapp: "+1234567896",
+                    current_projects_count: "2",
+                    monthly_earnings: "32000"
                 },
                 {
-                    id: 2,
-                    name: 'Maria Garcia',
-                    role: 'Video Editor',
-                    whatsapp: '+1234567896',
-                    projects_count: 2,
-                    monthly_earnings: 24000
+                    id: "2",
+                    name: "Maria Garcia",
+                    role: "Video Editor",
+                    whatsapp: "+1234567897",
+                    current_projects_count: "2",
+                    monthly_earnings: "24000"
                 },
                 {
-                    id: 3,
-                    name: 'David Kim',
-                    role: 'Motion Graphics Designer',
-                    whatsapp: '+1234567897',
-                    projects_count: 1,
-                    monthly_earnings: 18000
+                    id: "3",
+                    name: "David Kim",
+                    role: "Motion Graphics Designer",
+                    whatsapp: "+1234567898",
+                    current_projects_count: "1",
+                    monthly_earnings: "18000"
                 }
             ],
-            expenses: [
-                { id: 1, description: 'Software Subscription', amount: 5000, date: '2023-11-15' },
-                { id: 2, description: 'Marketing', amount: 10000, date: '2023-11-10' }
+            clients: [
+                {
+                    id: "1",
+                    name: "John Smith",
+                    whatsapp: "+1234567890",
+                    email: "john@example.com",
+                    company: "Tech Corp",
+                    total_orders: 3,
+                    total_paid: 35000
+                },
+                {
+                    id: "2",
+                    name: "Sarah Johnson",
+                    whatsapp: "+1234567891",
+                    email: "sarah@example.com",
+                    company: "Startup XYZ",
+                    total_orders: 2,
+                    total_paid: 28000
+                }
             ],
             activity: [
-                { id: 1, message: 'Order MC-024 status changed from editing to final_delivery', timestamp: '2023-11-20 14:30' },
-                { id: 2, message: 'New order MC-025 created', timestamp: '2023-11-20 11:15' },
-                { id: 3, message: 'Payment received for order MC-022', timestamp: '2023-11-19 16:45' }
+                {
+                    id: "1",
+                    type: "order_created",
+                    description: "New order MC-001 created",
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: "2",
+                    type: "status_changed",
+                    description: "Order MC-002 status changed to scripting",
+                    timestamp: new Date().toISOString()
+                }
             ]
         };
 
-        // DOM Elements
-        const elements = {
-            // Navigation
-            mobileMenuBtn: document.querySelector('.mobile-menu-btn'),
-            overlay: document.querySelector('.overlay'),
-            sidebar: document.querySelector('.sidebar'),
-            navLinks: document.querySelectorAll('.nav-link'),
-            sections: document.querySelectorAll('.section'),
-            sectionTitle: document.getElementById('sectionTitle'),
-
-            // Modals
-            orderModal: document.getElementById('orderModal'),
-            teamModal: document.getElementById('teamModal'),
-            orderForm: document.getElementById('orderForm'),
-            teamForm: document.getElementById('teamForm'),
-            cancelOrder: document.getElementById('cancelOrder'),
-            cancelTeam: document.getElementById('cancelTeam'),
-
-            // Buttons
-            addOrderBtn: document.getElementById('addOrderBtn'),
-            addOrderBtn2: document.getElementById('addOrderBtn2'),
-            addMemberBtn: document.getElementById('addMemberBtn'),
-            addExpense: document.getElementById('addExpense'),
-            reassignBtn: document.getElementById('reassignBtn'),
-
-            // Filters
-            editorFilter: document.getElementById('editorFilter'),
-            statusFilter: document.getElementById('statusFilter'),
-            paymentFilter: document.getElementById('paymentFilter'),
-            orderSearch: document.getElementById('orderSearch'),
-
-            // Toast
-            toast: document.getElementById('toast'),
-            toastIcon: document.getElementById('toastIcon'),
-            toastMessage: document.getElementById('toastMessage')
-        };
-
         // Initialize Application
-        function init() {
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+
+        function initApp() {
+            loadData();
             setupEventListeners();
-            renderOrdersTable();
-            renderTeamMembers();
-            setupDragAndDrop();
-            initCharts();
+            renderAllSections();
             updateStats();
+            initCharts();
         }
 
-        // Event Listeners
+        function loadData() {
+            // Load settings from localStorage
+            const savedSettings = localStorage.getItem('motioncraft_settings');
+            if (savedSettings) {
+                state.settings = { ...state.settings, ...JSON.parse(savedSettings) };
+            }
+
+            // Load data based on settings
+            if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
+                loadFromSheetDB();
+            } else {
+                loadSampleData();
+            }
+
+            // Update UI with settings
+            updateSettingsUI();
+        }
+
+        function loadSampleData() {
+            state.orders = [...SAMPLE_DATA.orders];
+            state.team = [...SAMPLE_DATA.team];
+            state.clients = [...SAMPLE_DATA.clients];
+            state.activity = [...SAMPLE_DATA.activity];
+            
+            // Load expenses from localStorage
+            const savedExpenses = localStorage.getItem('motioncraft_expenses');
+            if (savedExpenses) {
+                state.finances.expenses = JSON.parse(savedExpenses);
+            }
+        }
+
+        async function loadFromSheetDB() {
+            try {
+                showToast('Loading data from SheetDB...', 'info');
+                
+                // Load orders
+                const ordersResponse = await fetch(state.settings.sheetDB_orders);
+                if (ordersResponse.ok) {
+                    state.orders = await ordersResponse.json();
+                }
+                
+                // Load team
+                const teamResponse = await fetch(state.settings.sheetDB_team);
+                if (teamResponse.ok) {
+                    state.team = await teamResponse.json();
+                }
+                
+                showToast('Data loaded successfully from SheetDB!', 'success');
+            } catch (error) {
+                console.error('Error loading from SheetDB:', error);
+                showToast('Failed to load data from SheetDB. Using sample data.', 'error');
+                loadSampleData();
+            }
+        }
+
         function setupEventListeners() {
-            // Mobile menu
-            elements.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-            elements.overlay.addEventListener('click', toggleMobileMenu);
+            // Mobile Menu
+            document.querySelector('.mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+            document.querySelector('.overlay').addEventListener('click', toggleMobileMenu);
 
             // Navigation
-            elements.navLinks.forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     showSection(link.dataset.section);
@@ -1098,273 +1299,338 @@
                 });
             });
 
-            // Order modals
-            elements.addOrderBtn.addEventListener('click', () => openOrderModal());
-            elements.addOrderBtn2.addEventListener('click', () => openOrderModal());
-            elements.cancelOrder.addEventListener('click', () => closeOrderModal());
-            elements.orderForm.addEventListener('submit', saveOrder);
+            // Order Management
+            document.getElementById('addOrderBtn').addEventListener('click', () => openOrderModal());
+            document.getElementById('addOrderBtn2').addEventListener('click', () => openOrderModal());
+            document.getElementById('orderForm').addEventListener('submit', saveOrder);
+            document.getElementById('cancelOrder').addEventListener('click', closeOrderModal);
 
-            // Team modal
-            elements.addMemberBtn.addEventListener('click', () => openTeamModal());
-            elements.cancelTeam.addEventListener('click', () => closeTeamModal());
-            elements.teamForm.addEventListener('submit', saveTeamMember);
+            // Team Management
+            document.getElementById('addMemberBtn').addEventListener('click', () => openTeamModal());
+            document.getElementById('teamForm').addEventListener('submit', saveTeamMember);
+            document.getElementById('cancelTeam').addEventListener('click', closeTeamModal);
+            document.getElementById('reassignBtn').addEventListener('click', reassignProjects);
 
-            // Expenses
-            elements.addExpense.addEventListener('click', addNewExpense);
+            // Client Management
+            document.getElementById('addClientBtn').addEventListener('click', () => openClientModal());
+            document.getElementById('clientForm').addEventListener('submit', saveClient);
+            document.getElementById('cancelClient').addEventListener('click', closeClientModal);
 
-            // Reassign projects
-            elements.reassignBtn.addEventListener('click', reassignProjects);
+            // Finance
+            document.getElementById('addExpense').addEventListener('click', addExpense);
+            document.getElementById('exportCSV').addEventListener('click', exportCSV);
+
+            // Activity
+            document.getElementById('clearActivityBtn').addEventListener('click', clearActivity);
+
+            // Settings
+            document.getElementById('saveEndpoints').addEventListener('click', saveEndpoints);
+            document.getElementById('testEndpoints').addEventListener('click', testEndpoints);
+            document.getElementById('testWhatsApp').addEventListener('click', testWhatsApp);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('importData').addEventListener('click', importData);
+            document.getElementById('resetData').addEventListener('click', resetData);
+            document.getElementById('currencySelect').addEventListener('change', updateCurrency);
+            document.getElementById('themeSelect').addEventListener('change', updateTheme);
 
             // Filters
-            elements.editorFilter.addEventListener('change', filterOrders);
-            elements.statusFilter.addEventListener('change', filterOrders);
-            elements.paymentFilter.addEventListener('change', filterOrders);
-            elements.orderSearch.addEventListener('input', filterOrders);
+            document.getElementById('editorFilter').addEventListener('change', filterOrders);
+            document.getElementById('statusFilter').addEventListener('change', filterOrders);
+            document.getElementById('paymentFilter').addEventListener('change', filterOrders);
+            document.getElementById('orderSearch').addEventListener('input', filterOrders);
 
-            // Expense deletion (event delegation)
-            document.addEventListener('click', (e) => {
+            // Event delegation for dynamic elements
+            document.addEventListener('click', function(e) {
+                // Delete order
+                if (e.target.closest('.delete-order')) {
+                    const orderId = e.target.closest('.delete-order').dataset.id;
+                    deleteOrder(orderId);
+                }
+                
+                // Edit order
+                if (e.target.closest('.edit-order')) {
+                    const orderId = e.target.closest('.edit-order').dataset.id;
+                    openOrderModal(orderId);
+                }
+                
+                // WhatsApp order
+                if (e.target.closest('.whatsapp-order')) {
+                    const orderId = e.target.closest('.whatsapp-order').dataset.id;
+                    const order = state.orders.find(o => o.id === orderId);
+                    if (order) {
+                        openWhatsApp(order.client_whatsapp, `Hello ${order.client_name}, regarding your order ${order.order_no}`);
+                    }
+                }
+                
+                // Delete team member
+                if (e.target.closest('.delete-member')) {
+                    const memberId = e.target.closest('.delete-member').dataset.id;
+                    deleteTeamMember(memberId);
+                }
+                
+                // Edit team member
+                if (e.target.closest('.edit-member')) {
+                    const memberId = e.target.closest('.edit-member').dataset.id;
+                    openTeamModal(memberId);
+                }
+                
+                // Delete client
+                if (e.target.closest('.delete-client')) {
+                    const clientId = e.target.closest('.delete-client').dataset.id;
+                    deleteClient(clientId);
+                }
+                
+                // Edit client
+                if (e.target.closest('.edit-client')) {
+                    const clientId = e.target.closest('.edit-client').dataset.id;
+                    openClientModal(clientId);
+                }
+                
+                // Delete expense
                 if (e.target.closest('.delete-expense')) {
                     const expenseId = e.target.closest('.delete-expense').dataset.id;
                     deleteExpense(expenseId);
                 }
             });
+
+            // Drag and drop for kanban
+            setupDragAndDrop();
         }
 
-        // Mobile Menu
         function toggleMobileMenu() {
-            elements.sidebar.classList.toggle('active');
-            elements.overlay.classList.toggle('active');
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
         }
 
-        // Navigation
         function showSection(sectionName) {
-            elements.sections.forEach(section => {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
+            
+            // Show target section
             document.getElementById(sectionName).classList.add('active');
-            elements.sectionTitle.textContent = document.querySelector(`[data-section="${sectionName}"] span`).textContent;
+            
+            // Update section title
+            document.getElementById('sectionTitle').textContent = 
+                document.querySelector(`[data-section="${sectionName}"] span`).textContent;
             
             // Close mobile menu
             toggleMobileMenu();
         }
 
         function updateActiveNav(activeLink) {
-            elements.navLinks.forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             activeLink.classList.add('active');
         }
 
-        // Order Management
-        function openOrderModal() {
-            elements.orderModal.classList.add('active');
+        // Order Management Functions
+        function openOrderModal(orderId = null) {
+            const modal = document.getElementById('orderModal');
+            const title = document.getElementById('orderModalTitle');
+            const form = document.getElementById('orderForm');
+            
+            if (orderId) {
+                // Edit existing order
+                const order = state.orders.find(o => o.id === orderId);
+                if (order) {
+                    title.textContent = 'Edit Order';
+                    document.getElementById('orderId').value = order.id;
+                    document.getElementById('orderNumber').value = order.order_no;
+                    document.getElementById('clientName').value = order.client_name;
+                    document.getElementById('clientWhatsApp').value = order.client_whatsapp;
+                    document.getElementById('projectTitle').value = order.project_title;
+                    document.getElementById('orderStatus').value = order.status;
+                    document.getElementById('assignedEditor').value = order.assigned_editor;
+                    document.getElementById('orderPrice').value = order.price;
+                    document.getElementById('orderPaid').value = order.paid;
+                    document.getElementById('dueDate').value = order.due_date;
+                    document.getElementById('orderNotes').value = order.notes || '';
+                }
+            } else {
+                // Add new order
+                title.textContent = 'Add New Order';
+                form.reset();
+                document.getElementById('orderId').value = '';
+            }
+            
+            // Populate assigned editor dropdown
+            populateEditorDropdown();
+            
+            modal.classList.add('active');
         }
 
         function closeOrderModal() {
-            elements.orderModal.classList.remove('active');
-            elements.orderForm.reset();
+            document.getElementById('orderModal').classList.remove('active');
         }
 
         function saveOrder(e) {
             e.preventDefault();
             
-            const newOrder = {
-                id: state.orders.length + 1,
+            const orderId = document.getElementById('orderId').value;
+            const orderData = {
                 order_no: document.getElementById('orderNumber').value,
                 client_name: document.getElementById('clientName').value,
                 client_whatsapp: document.getElementById('clientWhatsApp').value,
                 project_title: document.getElementById('projectTitle').value,
                 status: document.getElementById('orderStatus').value,
                 assigned_editor: document.getElementById('assignedEditor').value,
-                price: parseInt(document.getElementById('orderPrice').value) || 0,
+                price: document.getElementById('orderPrice').value,
                 paid: document.getElementById('orderPaid').value,
+                due_date: document.getElementById('dueDate').value,
                 notes: document.getElementById('orderNotes').value,
-                due_date: new Date().toISOString().split('T')[0]
+                created_at: new Date().toISOString().split('T')[0]
             };
-
-            state.orders.push(newOrder);
+            
+            if (orderId) {
+                // Update existing order
+                const index = state.orders.findIndex(o => o.id === orderId);
+                if (index !== -1) {
+                    state.orders[index] = { ...state.orders[index], ...orderData };
+                    showToast('Order updated successfully!', 'success');
+                    addActivity(`Order ${orderData.order_no} updated`);
+                }
+            } else {
+                // Add new order
+                const newOrder = {
+                    id: Date.now().toString(),
+                    ...orderData
+                };
+                state.orders.push(newOrder);
+                showToast('Order created successfully!', 'success');
+                addActivity(`New order ${orderData.order_no} created`);
+                
+                // Add to SheetDB if enabled
+                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
+                    saveToSheetDB('orders', newOrder);
+                }
+            }
+            
+            closeOrderModal();
             renderOrdersTable();
             updateKanbanBoard();
             updateStats();
-            closeOrderModal();
-            showToast('Order created successfully!', 'success');
-            
-            // Add activity
-            state.activity.unshift({
-                id: state.activity.length + 1,
-                message: `New order ${newOrder.order_no} created`,
-                timestamp: new Date().toLocaleString()
-            });
-        }
-
-        function renderOrdersTable() {
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
-
-            state.orders.forEach(order => {
-                const editor = state.team.find(member => member.id == order.assigned_editor);
-                const editorName = editor ? editor.name : 'Unassigned';
-                
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-200';
-                row.innerHTML = `
-                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
-                            ${order.status.replace('_', ' ')}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
-                    <td class="py-3 px-4 text-gray-800 currency-bdt">${order.price.toLocaleString()}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
-                    <td class="py-3 px-4">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800 view-order" data-id="${order.id}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-whatsapp="${order.client_whatsapp}">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // Add event listeners for action buttons
-            document.querySelectorAll('.delete-order').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const orderId = e.target.closest('.delete-order').dataset.id;
-                    deleteOrder(orderId);
-                });
-            });
-
-            document.querySelectorAll('.whatsapp-order').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const whatsapp = e.target.closest('.whatsapp-order').dataset.whatsapp;
-                    openWhatsApp(whatsapp);
-                });
-            });
-        }
-
-        function getStatusClass(status) {
-            const classes = {
-                fresh: 'bg-blue-100 text-blue-800',
-                scripting: 'bg-yellow-100 text-yellow-800',
-                editing: 'bg-purple-100 text-purple-800',
-                correction: 'bg-red-100 text-red-800',
-                final_delivery: 'bg-green-100 text-green-800',
-                completed: 'bg-indigo-100 text-indigo-800'
-            };
-            return classes[status] || 'bg-gray-100 text-gray-800';
         }
 
         function deleteOrder(orderId) {
             if (confirm('Are you sure you want to delete this order?')) {
-                state.orders = state.orders.filter(order => order.id != orderId);
+                const order = state.orders.find(o => o.id === orderId);
+                state.orders = state.orders.filter(o => o.id !== orderId);
+                
+                showToast('Order deleted successfully!', 'success');
+                addActivity(`Order ${order.order_no} deleted`);
+                
+                // Delete from SheetDB if enabled
+                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
+                    deleteFromSheetDB('orders', orderId);
+                }
+                
                 renderOrdersTable();
                 updateKanbanBoard();
                 updateStats();
-                showToast('Order deleted successfully!', 'success');
             }
         }
 
-        function openWhatsApp(phone) {
-            window.open(`https://wa.me/${phone}`, '_blank');
-        }
-
-        // Team Management
-        function openTeamModal() {
-            elements.teamModal.classList.add('active');
+        // Team Management Functions
+        function openTeamModal(memberId = null) {
+            const modal = document.getElementById('teamModal');
+            const title = document.getElementById('teamModalTitle');
+            const form = document.getElementById('teamForm');
+            
+            if (memberId) {
+                // Edit existing member
+                const member = state.team.find(m => m.id === memberId);
+                if (member) {
+                    title.textContent = 'Edit Team Member';
+                    document.getElementById('memberId').value = member.id;
+                    document.getElementById('memberName').value = member.name;
+                    document.getElementById('memberRole').value = member.role;
+                    document.getElementById('memberWhatsApp').value = member.whatsapp;
+                    document.getElementById('projectsCount').value = member.current_projects_count;
+                    document.getElementById('monthlyEarnings').value = member.monthly_earnings;
+                }
+            } else {
+                // Add new member
+                title.textContent = 'Add Team Member';
+                form.reset();
+                document.getElementById('memberId').value = '';
+            }
+            
+            modal.classList.add('active');
         }
 
         function closeTeamModal() {
-            elements.teamModal.classList.remove('active');
-            elements.teamForm.reset();
+            document.getElementById('teamModal').classList.remove('active');
         }
 
         function saveTeamMember(e) {
             e.preventDefault();
             
-            const newMember = {
-                id: state.team.length + 1,
+            const memberId = document.getElementById('memberId').value;
+            const memberData = {
                 name: document.getElementById('memberName').value,
                 role: document.getElementById('memberRole').value,
                 whatsapp: document.getElementById('memberWhatsApp').value,
-                projects_count: 0,
-                monthly_earnings: 0
+                current_projects_count: document.getElementById('projectsCount').value,
+                monthly_earnings: document.getElementById('monthlyEarnings').value
             };
-
-            state.team.push(newMember);
-            renderTeamMembers();
-            closeTeamModal();
-            showToast('Team member added successfully!', 'success');
-        }
-
-        function renderTeamMembers() {
-            const container = document.getElementById('teamContainer');
-            container.innerHTML = '';
-
-            state.team.forEach(member => {
-                const memberOrders = state.orders.filter(order => order.assigned_editor == member.id);
+            
+            if (memberId) {
+                // Update existing member
+                const index = state.team.findIndex(m => m.id === memberId);
+                if (index !== -1) {
+                    state.team[index] = { ...state.team[index], ...memberData };
+                    showToast('Team member updated successfully!', 'success');
+                    addActivity(`Team member ${memberData.name} updated`);
+                }
+            } else {
+                // Add new member
+                const newMember = {
+                    id: Date.now().toString(),
+                    ...memberData
+                };
+                state.team.push(newMember);
+                showToast('Team member added successfully!', 'success');
+                addActivity(`New team member ${memberData.name} added`);
                 
-                const card = document.createElement('div');
-                card.className = 'card glass p-6';
-                card.innerHTML = `
-                    <div class="flex items-center mb-4">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-                            ${member.name.charAt(0)}
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-lg font-semibold text-gray-800">${member.name}</h3>
-                            <p class="text-sm text-gray-600">${member.role}</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <p class="text-sm text-gray-600">Projects</p>
-                            <p class="text-lg font-semibold text-gray-800">${memberOrders.length}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Earnings</p>
-                            <p class="text-lg font-semibold text-gray-800 currency-bdt">${member.monthly_earnings.toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <a href="https://wa.me/${member.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
-                            <i class="fab fa-whatsapp text-xl"></i>
-                        </a>
-                        <button class="text-blue-600 hover:text-blue-800 edit-member" data-id="${member.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-600 hover:text-red-800 delete-member" data-id="${member.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            // Update reassign dropdowns
+                // Add to SheetDB if enabled
+                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
+                    saveToSheetDB('team', newMember);
+                }
+            }
+            
+            closeTeamModal();
+            renderTeamMembers();
             updateReassignDropdowns();
         }
 
-        function updateReassignDropdowns() {
-            const fromSelect = document.getElementById('reassignFrom');
-            const toSelect = document.getElementById('reassignTo');
-            
-            fromSelect.innerHTML = '<option value="">Select member</option>';
-            toSelect.innerHTML = '<option value="">Select member</option>';
-            
-            state.team.forEach(member => {
-                fromSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
-                toSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
-            });
+        function deleteTeamMember(memberId) {
+            if (confirm('Are you sure you want to delete this team member?')) {
+                const member = state.team.find(m => m.id === memberId);
+                
+                // Check if member has assigned projects
+                const assignedProjects = state.orders.filter(o => o.assigned_editor === memberId);
+                if (assignedProjects.length > 0) {
+                    if (!confirm(`This member has ${assignedProjects.length} assigned project(s). Do you want to proceed with deletion?`)) {
+                        return;
+                    }
+                }
+                
+                state.team = state.team.filter(m => m.id !== memberId);
+                
+                showToast('Team member deleted successfully!', 'success');
+                addActivity(`Team member ${member.name} deleted`);
+                
+                // Delete from SheetDB if enabled
+                if (state.settings.useSheetDB && !CONFIG.USE_SAMPLE_DATA) {
+                    deleteFromSheetDB('team', memberId);
+                }
+                
+                renderTeamMembers();
+                updateReassignDropdowns();
+            }
         }
 
         function reassignProjects() {
@@ -1381,20 +1647,907 @@
                 return;
             }
             
-            let reassignedCount = 0;
-            state.orders.forEach(order => {
-                if (order.assigned_editor == fromId) {
-                    order.assigned_editor = toId;
-                    reassignedCount++;
-                }
-            });
+            const fromMember = state.team.find(m => m.id === fromId);
+            const toMember = state.team.find(m => m.id === toId);
             
-            renderOrdersTable();
-            updateKanbanBoard();
-            showToast(`Reassigned ${reassignedCount} projects successfully!`, 'success');
+            if (!fromMember || !toMember) {
+                showToast('Invalid team member selection', 'error');
+                return;
+            }
+            
+            const assignedProjects = state.orders.filter(order => order.assigned_editor === fromId);
+            
+            if (assignedProjects.length === 0) {
+                showToast(`${fromMember.name} has no assigned projects`, 'info');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to reassign ${assignedProjects.length} project(s) from ${fromMember.name} to ${toMember.name}?`)) {
+                assignedProjects.forEach(order => {
+                    order.assigned_editor = toId;
+                });
+                
+                // Update projects count
+                const fromIndex = state.team.findIndex(m => m.id === fromId);
+                const toIndex = state.team.findIndex(m => m.id === toId);
+                
+                state.team[fromIndex].current_projects_count = "0";
+                state.team[toIndex].current_projects_count = (parseInt(state.team[toIndex].current_projects_count) + assignedProjects.length).toString();
+                
+                showToast(`Successfully reassigned ${assignedProjects.length} project(s)`, 'success');
+                addActivity(`${assignedProjects.length} projects reassigned from ${fromMember.name} to ${toMember.name}`);
+                
+                renderOrdersTable();
+                renderTeamMembers();
+                updateKanbanBoard();
+            }
         }
 
-        // Kanban Board
+        // Client Management Functions
+        function openClientModal(clientId = null) {
+            const modal = document.getElementById('clientModal');
+            const title = document.getElementById('clientModalTitle');
+            const form = document.getElementById('clientForm');
+            
+            if (clientId) {
+                // Edit existing client
+                const client = state.clients.find(c => c.id === clientId);
+                if (client) {
+                    title.textContent = 'Edit Client';
+                    document.getElementById('clientId').value = client.id;
+                    document.getElementById('clientNameInput').value = client.name;
+                    document.getElementById('clientWhatsAppInput').value = client.whatsapp;
+                    document.getElementById('clientEmail').value = client.email || '';
+                    document.getElementById('clientCompany').value = client.company || '';
+                }
+            } else {
+                // Add new client
+                title.textContent = 'Add New Client';
+                form.reset();
+                document.getElementById('clientId').value = '';
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeClientModal() {
+            document.getElementById('clientModal').classList.remove('active');
+        }
+
+        function saveClient(e) {
+            e.preventDefault();
+            
+            const clientId = document.getElementById('clientId').value;
+            const clientData = {
+                name: document.getElementById('clientNameInput').value,
+                whatsapp: document.getElementById('clientWhatsAppInput').value,
+                email: document.getElementById('clientEmail').value,
+                company: document.getElementById('clientCompany').value,
+                total_orders: "0",
+                total_paid: "0"
+            };
+            
+            if (clientId) {
+                // Update existing client
+                const index = state.clients.findIndex(c => c.id === clientId);
+                if (index !== -1) {
+                    state.clients[index] = { ...state.clients[index], ...clientData };
+                    showToast('Client updated successfully!', 'success');
+                    addActivity(`Client ${clientData.name} updated`);
+                }
+            } else {
+                // Add new client
+                const newClient = {
+                    id: Date.now().toString(),
+                    ...clientData
+                };
+                state.clients.push(newClient);
+                showToast('Client added successfully!', 'success');
+                addActivity(`New client ${clientData.name} added`);
+            }
+            
+            closeClientModal();
+            renderClientsTable();
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('Are you sure you want to delete this client?')) {
+                const client = state.clients.find(c => c.id === clientId);
+                state.clients = state.clients.filter(c => c.id !== clientId);
+                
+                showToast('Client deleted successfully!', 'success');
+                addActivity(`Client ${client.name} deleted`);
+                
+                renderClientsTable();
+            }
+        }
+
+        // Finance Functions
+        function addExpense() {
+            const amount = document.getElementById('expenseAmount').value;
+            const description = document.getElementById('expenseDescription').value;
+            
+            if (!amount || !description) {
+                showToast('Please enter both amount and description', 'error');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now().toString(),
+                amount: parseFloat(amount),
+                description: description,
+                date: new Date().toISOString().split('T')[0],
+                month: new Date().toISOString().substring(0, 7)
+            };
+            
+            state.finances.expenses.push(expense);
+            saveExpensesToStorage();
+            
+            // Clear form
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseDescription').value = '';
+            
+            showToast('Expense added successfully!', 'success');
+            addActivity(`Expense added: ${description} - ৳${amount}`);
+            
+            renderExpenseList();
+            updateStats();
+        }
+
+        function deleteExpense(expenseId) {
+            const expenseIndex = state.finances.expenses.findIndex(expense => expense.id === expenseId);
+            if (expenseIndex !== -1) {
+                const expense = state.finances.expenses[expenseIndex];
+                state.finances.expenses.splice(expenseIndex, 1);
+                saveExpensesToStorage();
+                
+                showToast('Expense deleted successfully!', 'success');
+                addActivity(`Expense deleted: ${expense.description}`);
+                
+                renderExpenseList();
+                updateStats();
+            }
+        }
+
+        function saveExpensesToStorage() {
+            localStorage.setItem('motioncraft_expenses', JSON.stringify(state.finances.expenses));
+        }
+
+        function exportCSV() {
+            const selectedMonth = document.getElementById('financeMonthPicker').value;
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                const orderMonth = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+                return orderMonth === selectedMonth;
+            });
+            
+            if (monthOrders.length === 0) {
+                showToast('No data to export for selected month', 'info');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'Order No,Client Name,Project Title,Status,Editor,Price,Paid,Due Date\n';
+            
+            monthOrders.forEach(order => {
+                const editor = state.team.find(member => member.id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                csvContent += `"${order.order_no}","${order.client_name}","${order.project_title}","${order.status}","${editorName}","${order.price}","${order.paid}","${order.due_date}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `motioncraft-orders-${selectedMonth}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('CSV exported successfully!', 'success');
+        }
+
+        // Activity Functions
+        function addActivity(description) {
+            const activity = {
+                id: Date.now().toString(),
+                type: 'user_action',
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            
+            state.activity.unshift(activity);
+            
+            // Keep only last 50 activities
+            if (state.activity.length > 50) {
+                state.activity = state.activity.slice(0, 50);
+            }
+            
+            saveActivityToStorage();
+            renderRecentActivity();
+            renderActivityTimeline();
+        }
+
+        function clearActivity() {
+            if (confirm('Are you sure you want to clear all activity?')) {
+                state.activity = [];
+                saveActivityToStorage();
+                renderRecentActivity();
+                renderActivityTimeline();
+                showToast('Activity cleared successfully!', 'success');
+            }
+        }
+
+        function saveActivityToStorage() {
+            localStorage.setItem('motioncraft_activity', JSON.stringify(state.activity));
+        }
+
+        // Settings Functions
+        function updateSettingsUI() {
+            document.getElementById('ordersEndpoint').value = state.settings.sheetDB_orders;
+            document.getElementById('teamEndpoint').value = state.settings.sheetDB_team;
+            document.getElementById('currencySelect').value = state.settings.currency;
+            document.getElementById('themeSelect').value = state.settings.theme;
+        }
+
+        function saveEndpoints() {
+            state.settings.sheetDB_orders = document.getElementById('ordersEndpoint').value;
+            state.settings.sheetDB_team = document.getElementById('teamEndpoint').value;
+            
+            // Validate URLs
+            if (state.settings.sheetDB_orders && !state.settings.sheetDB_orders.startsWith('https://sheetdb.io/api/v1/')) {
+                showToast('Invalid orders endpoint format', 'error');
+                return;
+            }
+            
+            if (state.settings.sheetDB_team && !state.settings.sheetDB_team.startsWith('https://sheetdb.io/api/v1/')) {
+                showToast('Invalid team endpoint format', 'error');
+                return;
+            }
+            
+            state.settings.useSheetDB = !!(state.settings.sheetDB_orders && state.settings.sheetDB_team);
+            
+            saveSettings();
+            showToast('Endpoints saved successfully!', 'success');
+        }
+
+        async function testEndpoints() {
+            showToast('Testing connections...', 'info');
+            
+            let ordersOk = false;
+            let teamOk = false;
+            
+            // Test orders endpoint
+            if (state.settings.sheetDB_orders) {
+                try {
+                    const response = await fetch(state.settings.sheetDB_orders);
+                    ordersOk = response.ok;
+                } catch (error) {
+                    console.error('Orders endpoint test failed:', error);
+                }
+            }
+            
+            // Test team endpoint
+            if (state.settings.sheetDB_team) {
+                try {
+                    const response = await fetch(state.settings.sheetDB_team);
+                    teamOk = response.ok;
+                } catch (error) {
+                    console.error('Team endpoint test failed:', error);
+                }
+            }
+            
+            if (ordersOk && teamOk) {
+                showToast('Both endpoints are working correctly!', 'success');
+            } else if (ordersOk || teamOk) {
+                showToast('One endpoint is working, but the other may have issues', 'warning');
+            } else {
+                showToast('Both endpoints failed. Please check your URLs', 'error');
+            }
+        }
+
+        function testWhatsApp() {
+            const message = document.getElementById('whatsappTest').value;
+            
+            if (!message) {
+                showToast('Please enter a test message', 'error');
+                return;
+            }
+            
+            const encodedMessage = encodeURIComponent(message);
+            const url = `https://wa.me/?text=${encodedMessage}`;
+            window.open(url, '_blank');
+            
+            showToast('WhatsApp test launched in new tab', 'success');
+        }
+
+        function exportData() {
+            const data = {
+                orders: state.orders,
+                team: state.team,
+                clients: state.clients,
+                activity: state.activity,
+                finances: state.finances,
+                settings: state.settings,
+                export_date: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'motioncraft-backup.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully!', 'success');
+        }
+
+        function importData() {
+            document.getElementById('fileInput').click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    
+                    if (confirm('This will replace all current data. Are you sure?')) {
+                        state.orders = importedData.orders || [];
+                        state.team = importedData.team || [];
+                        state.clients = importedData.clients || [];
+                        state.activity = importedData.activity || [];
+                        state.finances = importedData.finances || { expenses: [], income: [] };
+                        
+                        if (importedData.settings) {
+                            state.settings = { ...state.settings, ...importedData.settings };
+                        }
+                        
+                        saveSettings();
+                        saveExpensesToStorage();
+                        saveActivityToStorage();
+                        
+                        renderAllSections();
+                        updateStats();
+                        showToast('Data imported successfully!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error importing data:', error);
+                    showToast('Error importing data. Invalid file format.', 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+            e.target.value = ''; // Reset file input
+        });
+
+        function resetData() {
+            if (confirm('This will replace all current data with sample data. Are you sure?')) {
+                loadSampleData();
+                renderAllSections();
+                updateStats();
+                showToast('Data reset to sample data successfully!', 'success');
+            }
+        }
+
+        function updateCurrency() {
+            state.settings.currency = document.getElementById('currencySelect').value;
+            saveSettings();
+            updateCurrencyDisplay();
+            updateStats();
+        }
+
+        function updateTheme() {
+            state.settings.theme = document.getElementById('themeSelect').value;
+            saveSettings();
+            applyTheme();
+        }
+
+        function applyTheme() {
+            // This is a basic implementation - you can expand this
+            if (state.settings.theme === 'dark') {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem('motioncraft_settings', JSON.stringify(state.settings));
+        }
+
+        // SheetDB Integration
+        async function saveToSheetDB(type, data) {
+            if (!state.settings.useSheetDB || CONFIG.USE_SAMPLE_DATA) return;
+            
+            try {
+                const endpoint = type === 'orders' ? state.settings.sheetDB_orders : state.settings.sheetDB_team;
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to save to SheetDB');
+                }
+            } catch (error) {
+                console.error('Error saving to SheetDB:', error);
+                showToast('Failed to sync with SheetDB', 'error');
+            }
+        }
+
+        async function deleteFromSheetDB(type, id) {
+            if (!state.settings.useSheetDB || CONFIG.USE_SAMPLE_DATA) return;
+            
+            try {
+                const endpoint = type === 'orders' ? state.settings.sheetDB_orders : state.settings.sheetDB_team;
+                const response = await fetch(`${endpoint}/id/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete from SheetDB');
+                }
+            } catch (error) {
+                console.error('Error deleting from SheetDB:', error);
+                showToast('Failed to sync with SheetDB', 'error');
+            }
+        }
+
+        // Rendering Functions
+        function renderAllSections() {
+            renderOrdersTable();
+            renderTeamMembers();
+            renderClientsTable();
+            renderKanbanBoard();
+            renderExpenseList();
+            renderRecentActivity();
+            renderActivityTimeline();
+            populateEditorDropdown();
+            updateReassignDropdowns();
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            state.orders.forEach(order => {
+                const editor = state.team.find(member => member.id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800 currency-bdt">${parseInt(order.price).toLocaleString()}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 edit-order" data-id="${order.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-id="${order.id}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderTeamMembers() {
+            const container = document.getElementById('teamContainer');
+            container.innerHTML = '';
+            
+            state.team.forEach(member => {
+                const assignedProjects = state.orders.filter(order => order.assigned_editor === member.id);
+                
+                const card = document.createElement('div');
+                card.className = 'card glass p-6';
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                            ${member.name.charAt(0)}
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800">${member.name}</h3>
+                            <p class="text-sm text-gray-600">${member.role}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Projects</p>
+                            <p class="text-lg font-semibold text-gray-800">${assignedProjects.length}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Earnings</p>
+                            <p class="text-lg font-semibold text-gray-800 currency-bdt">${parseInt(member.monthly_earnings).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <a href="https://wa.me/${member.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                        </a>
+                        <button class="text-blue-600 hover:text-blue-800 edit-member" data-id="${member.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 delete-member" data-id="${member.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderClientsTable() {
+            const tbody = document.getElementById('clientsTableBody');
+            tbody.innerHTML = '';
+            
+            state.clients.forEach(client => {
+                const clientOrders = state.orders.filter(order => order.client_name === client.name);
+                const paidOrders = clientOrders.filter(order => order.paid === 'yes');
+                const totalPaid = paidOrders.reduce((sum, order) => sum + parseInt(order.price), 0);
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${client.name}</td>
+                    <td class="py-3 px-4 text-gray-800">${client.whatsapp}</td>
+                    <td class="py-3 px-4 text-gray-800">${clientOrders.length}</td>
+                    <td class="py-3 px-4 text-gray-800 currency-bdt">${totalPaid.toLocaleString()}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <a href="https://wa.me/${client.whatsapp}" target="_blank" class="text-green-600 hover:text-green-800">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <button class="text-blue-600 hover:text-blue-800 edit-client" data-id="${client.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-client" data-id="${client.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderKanbanBoard() {
+            const statuses = ['fresh', 'scripting', 'editing', 'correction', 'final_delivery', 'completed'];
+            
+            statuses.forEach(status => {
+                const column = document.getElementById(`${status}-column`);
+                column.innerHTML = '';
+                
+                const statusOrders = state.orders.filter(order => order.status === status);
+                
+                statusOrders.forEach(order => {
+                    const editor = state.team.find(member => member.id === order.assigned_editor);
+                    const editorName = editor ? editor.name : 'Unassigned';
+                    
+                    const dueDate = new Date(order.due_date);
+                    const today = new Date();
+                    const timeDiff = dueDate.getTime() - today.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    let dueClass = 'text-green-600';
+                    if (daysDiff < 0) {
+                        dueClass = 'text-red-600';
+                    } else if (daysDiff <= 3) {
+                        dueClass = 'text-yellow-600';
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card card glass p-4';
+                    card.draggable = true;
+                    card.dataset.orderId = order.id;
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-semibold text-gray-800">${order.order_no}</span>
+                            <span class="text-sm font-medium ${order.paid === 'yes' ? 'text-green-600' : 'text-red-600'} currency-bdt">
+                                ${parseInt(order.price).toLocaleString()}
+                            </span>
+                        </div>
+                        <h4 class="font-medium text-gray-800 mb-1">${order.project_title}</h4>
+                        <p class="text-sm text-gray-600 mb-2">${order.client_name}</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">${editorName}</span>
+                            <span class="${dueClass}">${daysDiff}d</span>
+                        </div>
+                    `;
+                    
+                    column.appendChild(card);
+                });
+            });
+            
+            // Re-setup drag and drop
+            setupDragAndDrop();
+        }
+
+        function renderExpenseList() {
+            const list = document.getElementById('expenseList');
+            const financeList = document.getElementById('financeExpenseList');
+            
+            const selectedMonth = document.getElementById('monthPicker').value || new Date().toISOString().substring(0, 7);
+            const monthExpenses = state.finances.expenses.filter(expense => expense.month === selectedMonth);
+            
+            list.innerHTML = '';
+            financeList.innerHTML = '';
+            
+            if (monthExpenses.length === 0) {
+                list.innerHTML = '<li class="text-gray-500 text-center py-2">No expenses for this month</li>';
+                financeList.innerHTML = '<li class="text-gray-500 text-center py-2">No expenses for this month</li>';
+                return;
+            }
+            
+            monthExpenses.forEach(expense => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center py-2 border-b border-gray-100';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-sm text-gray-800">${expense.description}</p>
+                        <p class="text-xs text-gray-500">${expense.date}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-red-600 font-medium currency-bdt">${expense.amount.toLocaleString()}</span>
+                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="${expense.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                list.appendChild(li.cloneNode(true));
+                financeList.appendChild(li);
+            });
+        }
+
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = '';
+            
+            const recentActivities = state.activity.slice(0, 5);
+            
+            if (recentActivities.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No recent activity</p>';
+                return;
+            }
+            
+            recentActivities.forEach(activity => {
+                const date = new Date(activity.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <p class="text-sm text-gray-800">${activity.description}</p>
+                    <p class="text-xs text-gray-500">${formattedDate}</p>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderActivityTimeline() {
+            const container = document.getElementById('activityTimeline');
+            container.innerHTML = '';
+            
+            if (state.activity.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No activity recorded yet</p>';
+                return;
+            }
+            
+            state.activity.forEach(activity => {
+                const date = new Date(activity.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                let icon = 'fas fa-info-circle';
+                let iconColor = 'text-blue-500';
+                
+                if (activity.type.includes('order')) {
+                    icon = 'fas fa-shopping-cart';
+                    iconColor = 'text-purple-500';
+                } else if (activity.type.includes('status')) {
+                    icon = 'fas fa-exchange-alt';
+                    iconColor = 'text-yellow-500';
+                } else if (activity.type.includes('team')) {
+                    icon = 'fas fa-users';
+                    iconColor = 'text-green-500';
+                } else if (activity.type.includes('payment')) {
+                    icon = 'fas fa-money-bill-wave';
+                    iconColor = 'text-green-500';
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <i class="${icon} ${iconColor}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-800">${activity.description}</p>
+                            <p class="text-xs text-gray-500">${formattedDate}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function populateEditorDropdown() {
+            const dropdown = document.getElementById('assignedEditor');
+            const filter = document.getElementById('editorFilter');
+            
+            dropdown.innerHTML = '<option value="">Unassigned</option>';
+            filter.innerHTML = '<option value="">All Editors</option>';
+            
+            state.team.forEach(member => {
+                dropdown.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+                filter.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+            });
+        }
+
+        function updateReassignDropdowns() {
+            const fromSelect = document.getElementById('reassignFrom');
+            const toSelect = document.getElementById('reassignTo');
+            
+            fromSelect.innerHTML = '<option value="">Select member</option>';
+            toSelect.innerHTML = '<option value="">Select member</option>';
+            
+            state.team.forEach(member => {
+                fromSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+                toSelect.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+            });
+        }
+
+        function updateStats() {
+            // Total orders
+            document.getElementById('totalOrders').textContent = state.orders.length;
+            
+            // This month orders
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            const monthOrders = state.orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                const orderMonth = orderDate.toISOString().substring(0, 7);
+                return orderMonth === currentMonth;
+            });
+            document.getElementById('monthOrders').textContent = monthOrders.length;
+            
+            // Paid amount
+            const paidOrders = state.orders.filter(order => order.paid === 'yes');
+            const totalPaid = paidOrders.reduce((sum, order) => sum + parseInt(order.price), 0);
+            document.getElementById('paidAmount').textContent = totalPaid.toLocaleString();
+            
+            // Pending amount
+            const unpaidOrders = state.orders.filter(order => order.paid === 'no');
+            const totalUnpaid = unpaidOrders.reduce((sum, order) => sum + parseInt(order.price), 0);
+            document.getElementById('pendingAmount').textContent = totalUnpaid.toLocaleString();
+            
+            // Finance section stats
+            document.getElementById('financeIncome').textContent = totalPaid.toLocaleString();
+            document.getElementById('financePending').textContent = totalUnpaid.toLocaleString();
+            
+            const totalExpenses = state.finances.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            document.getElementById('financeExpenses').textContent = totalExpenses.toLocaleString();
+            document.getElementById('totalExpense').textContent = totalExpenses.toLocaleString();
+            
+            const netIncome = totalPaid - totalExpenses;
+            document.getElementById('totalIncome').textContent = netIncome.toLocaleString();
+        }
+
+        function updateCurrencyDisplay() {
+            document.querySelectorAll('.currency-bdt').forEach(el => {
+                if (state.settings.currency === 'bdt') {
+                    el.classList.remove('currency-usd');
+                    el.classList.add('currency-bdt');
+                } else {
+                    el.classList.remove('currency-bdt');
+                    el.classList.add('currency-usd');
+                }
+            });
+        }
+
+        function getStatusClass(status) {
+            const statusClasses = {
+                fresh: 'bg-blue-100 text-blue-800',
+                scripting: 'bg-yellow-100 text-yellow-800',
+                editing: 'bg-purple-100 text-purple-800',
+                correction: 'bg-red-100 text-red-800',
+                final_delivery: 'bg-green-100 text-green-800',
+                completed: 'bg-indigo-100 text-indigo-800'
+            };
+            
+            return statusClasses[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function filterOrders() {
+            const editor = document.getElementById('editorFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const payment = document.getElementById('paymentFilter').value;
+            const search = document.getElementById('orderSearch').value.toLowerCase();
+            
+            const filteredOrders = state.orders.filter(order => {
+                const matchesEditor = !editor || order.assigned_editor === editor;
+                const matchesStatus = !status || order.status === status;
+                const matchesPayment = !payment || order.paid === payment;
+                const matchesSearch = !search || 
+                    order.order_no.toLowerCase().includes(search) ||
+                    order.client_name.toLowerCase().includes(search) ||
+                    order.project_title.toLowerCase().includes(search);
+                
+                return matchesEditor && matchesStatus && matchesPayment && matchesSearch;
+            });
+            
+            renderFilteredOrders(filteredOrders);
+        }
+
+        function renderFilteredOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            orders.forEach(order => {
+                const editor = state.team.find(member => member.id === order.assigned_editor);
+                const editorName = editor ? editor.name : 'Unassigned';
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
+                            ${order.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
+                    <td class="py-3 px-4 text-gray-800 currency-bdt">${parseInt(order.price).toLocaleString()}</td>
+                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 edit-order" data-id="${order.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-id="${order.id}">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         function setupDragAndDrop() {
             const cards = document.querySelectorAll('.kanban-card');
             const columns = document.querySelectorAll('.kanban-column');
@@ -1411,7 +2564,7 @@
         }
 
         function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.dataset.order);
+            e.dataTransfer.setData('text/plain', e.target.dataset.orderId);
             e.target.classList.add('dragging');
         }
 
@@ -1425,154 +2578,26 @@
 
         function handleDrop(e) {
             e.preventDefault();
-            const orderNumber = e.dataTransfer.getData('text/plain');
+            const orderId = e.dataTransfer.getData('text/plain');
             const newStatus = e.target.closest('.kanban-column').dataset.status;
             
             // Update order status
-            const order = state.orders.find(o => o.order_no === orderNumber);
+            const order = state.orders.find(o => o.id === orderId);
             if (order) {
+                const oldStatus = order.status;
                 order.status = newStatus;
-                updateKanbanBoard();
-                showToast(`Order ${orderNumber} moved to ${newStatus}`, 'success');
-            }
-        }
-
-        function updateKanbanBoard() {
-            const columns = ['fresh', 'scripting', 'editing', 'correction', 'final_delivery', 'completed'];
-            
-            columns.forEach(status => {
-                const column = document.getElementById(`${status}-column`);
-                column.innerHTML = '';
                 
-                const statusOrders = state.orders.filter(order => order.status === status);
-                statusOrders.forEach(order => {
-                    const editor = state.team.find(member => member.id == order.assigned_editor);
-                    const editorName = editor ? editor.name : 'Unassigned';
-                    
-                    const card = document.createElement('div');
-                    card.className = 'kanban-card card glass p-4';
-                    card.draggable = true;
-                    card.dataset.order = order.order_no;
-                    
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="font-semibold text-gray-800">${order.order_no}</span>
-                            <span class="text-sm font-medium ${order.paid === 'yes' ? 'text-green-600' : 'text-red-600'} currency-bdt">
-                                ${order.price.toLocaleString()}
-                            </span>
-                        </div>
-                        <h4 class="font-medium text-gray-800 mb-1">${order.project_title}</h4>
-                        <p class="text-sm text-gray-600 mb-2">${order.client_name}</p>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">${editorName}</span>
-                            <span class="text-green-600">${getDueDays(order.due_date)}</span>
-                        </div>
-                    `;
-                    
-                    column.appendChild(card);
-                });
-            });
-            
-            // Re-setup drag and drop for new cards
-            setupDragAndDrop();
-        }
-
-        function getDueDays(dueDate) {
-            const today = new Date();
-            const due = new Date(dueDate);
-            const diffTime = due - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
-            if (diffDays === 0) return 'Today';
-            return `${diffDays}d`;
-        }
-
-        // Expenses
-        function addNewExpense() {
-            const amount = document.getElementById('expenseAmount').value;
-            const description = document.getElementById('expenseDescription').value;
-            
-            if (!amount || !description) {
-                showToast('Please fill all fields', 'error');
-                return;
+                showToast(`Order ${order.order_no} moved to ${newStatus}`, 'success');
+                addActivity(`Order ${order.order_no} status changed from ${oldStatus} to ${newStatus}`);
+                
+                updateKanbanBoard();
             }
-            
-            const newExpense = {
-                id: state.expenses.length + 1,
-                description: description,
-                amount: parseInt(amount),
-                date: new Date().toISOString().split('T')[0]
-            };
-            
-            state.expenses.push(newExpense);
-            updateExpenseList();
-            updateStats();
-            
-            document.getElementById('expenseAmount').value = '';
-            document.getElementById('expenseDescription').value = '';
-            
-            showToast('Expense added successfully!', 'success');
         }
 
-        function deleteExpense(expenseId) {
-            state.expenses = state.expenses.filter(expense => expense.id != expenseId);
-            updateExpenseList();
-            updateStats();
-            showToast('Expense deleted successfully!', 'success');
-        }
-
-        function updateExpenseList() {
-            const list = document.getElementById('expenseList');
-            list.innerHTML = '';
-            
-            state.expenses.forEach(expense => {
-                const item = document.createElement('li');
-                item.className = 'flex justify-between items-center py-2 border-b border-gray-100';
-                item.innerHTML = `
-                    <div>
-                        <p class="text-sm text-gray-800">${expense.description}</p>
-                        <p class="text-xs text-gray-500">${expense.date}</p>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-red-600 font-medium currency-bdt">${expense.amount.toLocaleString()}</span>
-                        <button class="ml-2 text-red-600 hover:text-red-800 delete-expense" data-id="${expense.id}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        // Stats and Charts
-        function updateStats() {
-            // Update order counts
-            document.getElementById('totalOrders').textContent = state.orders.length;
-            
-            const thisMonth = new Date().getMonth();
-            const monthOrders = state.orders.filter(order => {
-                const orderDate = new Date(order.due_date);
-                return orderDate.getMonth() === thisMonth;
-            });
-            document.getElementById('monthOrders').textContent = monthOrders.length;
-            
-            // Update financials
-            const paidAmount = state.orders
-                .filter(order => order.paid === 'yes')
-                .reduce((sum, order) => sum + order.price, 0);
-            document.getElementById('paidAmount').textContent = paidAmount.toLocaleString();
-            
-            const pendingAmount = state.orders
-                .filter(order => order.paid === 'no')
-                .reduce((sum, order) => sum + order.price, 0);
-            document.getElementById('pendingAmount').textContent = pendingAmount.toLocaleString();
-            
-            const totalExpenses = state.expenses.reduce((sum, expense) => sum + expense.amount, 0);
-            document.getElementById('totalExpense').textContent = totalExpenses.toLocaleString();
-            
-            const totalIncome = paidAmount - totalExpenses;
-            document.getElementById('totalIncome').textContent = totalIncome.toLocaleString();
+        function openWhatsApp(phone, message) {
+            const encodedMessage = encodeURIComponent(message);
+            const url = `https://wa.me/${phone}?text=${encodedMessage}`;
+            window.open(url, '_blank');
         }
 
         function initCharts() {
@@ -1600,90 +2625,59 @@
                     }
                 }
             });
-        }
-
-        // Order Filtering
-        function filterOrders() {
-            const editor = elements.editorFilter.value;
-            const status = elements.statusFilter.value;
-            const payment = elements.paymentFilter.value;
-            const search = elements.orderSearch.value.toLowerCase();
             
-            const filteredOrders = state.orders.filter(order => {
-                const matchesEditor = !editor || order.assigned_editor == editor;
-                const matchesStatus = !status || order.status === status;
-                const matchesPayment = !payment || order.paid === payment;
-                const matchesSearch = !search || 
-                    order.order_no.toLowerCase().includes(search) ||
-                    order.client_name.toLowerCase().includes(search) ||
-                    order.project_title.toLowerCase().includes(search);
-                
-                return matchesEditor && matchesStatus && matchesPayment && matchesSearch;
-            });
-            
-            renderFilteredOrders(filteredOrders);
-        }
-
-        function renderFilteredOrders(orders) {
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
-            
-            orders.forEach(order => {
-                const editor = state.team.find(member => member.id == order.assigned_editor);
-                const editorName = editor ? editor.name : 'Unassigned';
-                
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-200';
-                row.innerHTML = `
-                    <td class="py-3 px-4 text-gray-800">${order.order_no}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.client_name}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.project_title}</td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusClass(order.status)}">
-                            ${order.status.replace('_', ' ')}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-gray-800">${editorName}</td>
-                    <td class="py-3 px-4 text-gray-800 currency-bdt">${order.price.toLocaleString()}</td>
-                    <td class="py-3 px-4 text-gray-800">${order.due_date}</td>
-                    <td class="py-3 px-4">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800 view-order" data-id="${order.id}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="text-green-600 hover:text-green-800 whatsapp-order" data-whatsapp="${order.client_whatsapp}">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800 delete-order" data-id="${order.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
+            // Finance Chart
+            const financeCtx = document.getElementById('financeChart').getContext('2d');
+            new Chart(financeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: [65000, 59000, 80000, 81000, 56000, 85000],
+                            backgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Expenses',
+                            data: [15000, 12000, 18000, 20000, 14000, 16000],
+                            backgroundColor: '#ef4444'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
         }
 
-        // Toast Notifications
         function showToast(message, type = 'info') {
-            elements.toast.className = `toast ${type}`;
-            elements.toastMessage.textContent = message;
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            toastMessage.textContent = message;
             
             // Set icon based on type
-            const icon = elements.toastIcon;
-            icon.className = type === 'success' ? 'fas fa-check-circle mr-3' :
-                            type === 'error' ? 'fas fa-exclamation-circle mr-3' :
-                            'fas fa-info-circle mr-3';
+            toastIcon.className = 
+                type === 'success' ? 'fas fa-check-circle mr-3' :
+                type === 'error' ? 'fas fa-exclamation-circle mr-3' :
+                type === 'warning' ? 'fas fa-exclamation-triangle mr-3' :
+                'fas fa-info-circle mr-3';
             
-            elements.toast.style.display = 'block';
+            toast.style.display = 'block';
             
             setTimeout(() => {
-                elements.toast.style.display = 'none';
+                toast.style.display = 'none';
             }, 3000);
         }
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
