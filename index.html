@@ -54,6 +54,7 @@
             color: var(--text-primary);
             line-height: 1.6;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .container {
@@ -394,6 +395,8 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -408,6 +411,8 @@
             max-width: 500px;
             box-shadow: var(--shadow-lg);
             animation: modalFadeIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalFadeIn {
@@ -420,6 +425,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-card);
+            padding: 10px 0;
+            z-index: 1;
         }
 
         .modal-title {
@@ -433,6 +443,7 @@
             font-size: 24px;
             cursor: pointer;
             color: var(--text-secondary);
+            padding: 5px;
         }
 
         .form-group {
@@ -465,6 +476,10 @@
             gap: 10px;
             justify-content: flex-end;
             margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+            background-color: var(--bg-card);
+            padding: 15px 0;
         }
 
         .charts-container {
@@ -553,6 +568,21 @@
             .header-controls {
                 flex-direction: column;
                 gap: 10px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .form-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -922,10 +952,10 @@
     </div>
 
     <script>
-        // API Configuration - PASTE YOUR 3 API IDs HERE:
-        const ORDERS_API_ID = 'https://sheetdb.io/api/v1/4n4f5dqo0iezd';
-        const EXPENSES_API_ID = 'https://sheetdb.io/api/v1/b4nfkl0gkrr0y';
-        const TEAM_MEMBERS_API_ID = 'https://sheetdb.io/api/v1/h3kh1avvk0fj7';
+        // API Configuration - CORRECTED API IDs (just the ID part, not full URL)
+        const ORDERS_API_ID = '4n4f5dqo0iezd';
+        const EXPENSES_API_ID = 'b4nfkl0gkrr0y';
+        const TEAM_MEMBERS_API_ID = 'h3kh1avvk0fj7';
 
         const ORDERS_BASE_URL = `https://sheetdb.io/api/v1/${ORDERS_API_ID}`;
         const EXPENSES_BASE_URL = `https://sheetdb.io/api/v1/${EXPENSES_API_ID}`;
