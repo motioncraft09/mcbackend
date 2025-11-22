@@ -922,9 +922,14 @@
     </div>
 
     <script>
-        // API Configuration
-        const API_ID = 'YOUR_API_ID_HERE'; // Replace with your SheetDB API ID
-        const BASE_URL = `https://sheetdb.io/api/v1/${API_ID}`;
+        // API Configuration - PASTE YOUR 3 API IDs HERE:
+        const ORDERS_API_ID = 'YOUR_ORDERS_API_ID_HERE';
+        const EXPENSES_API_ID = 'YOUR_EXPENSES_API_ID_HERE';
+        const TEAM_MEMBERS_API_ID = 'YOUR_TEAM_MEMBERS_API_ID_HERE';
+
+        const ORDERS_BASE_URL = `https://sheetdb.io/api/v1/${ORDERS_API_ID}`;
+        const EXPENSES_BASE_URL = `https://sheetdb.io/api/v1/${EXPENSES_API_ID}`;
+        const TEAM_MEMBERS_BASE_URL = `https://sheetdb.io/api/v1/${TEAM_MEMBERS_API_ID}`;
         const EXCHANGE_RATE = 110; // 1 USD = 110 BDT
 
         // Global state
@@ -1104,7 +1109,7 @@
             
             try {
                 // Load orders
-                const ordersResponse = await fetch(`${BASE_URL}?sheet=orders`);
+                const ordersResponse = await fetch(`${ORDERS_BASE_URL}`);
                 if (ordersResponse.ok) {
                     const data = await ordersResponse.json();
                     if (data && Array.isArray(data)) {
@@ -1118,7 +1123,7 @@
                 }
                 
                 // Load expenses
-                const expensesResponse = await fetch(`${BASE_URL}?sheet=expenses`);
+                const expensesResponse = await fetch(`${EXPENSES_BASE_URL}`);
                 if (expensesResponse.ok) {
                     const data = await expensesResponse.json();
                     if (data && Array.isArray(data)) {
@@ -1132,7 +1137,7 @@
                 }
                 
                 // Load team members
-                const teamResponse = await fetch(`${BASE_URL}?sheet=team_members`);
+                const teamResponse = await fetch(`${TEAM_MEMBERS_BASE_URL}`);
                 if (teamResponse.ok) {
                     const data = await teamResponse.json();
                     if (data && Array.isArray(data)) {
@@ -1522,7 +1527,7 @@
         // Add new order
         async function addOrder(orderData) {
             try {
-                const response = await fetch(`${BASE_URL}?sheet=orders`, {
+                const response = await fetch(`${ORDERS_BASE_URL}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1555,7 +1560,7 @@
         // Update existing order
         async function updateOrder(orderId, orderData) {
             try {
-                const response = await fetch(`${BASE_URL}/id/${orderId}?sheet=orders`, {
+                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1596,7 +1601,7 @@
             if (!confirm('Are you sure you want to delete this order?')) return;
             
             try {
-                const response = await fetch(`${BASE_URL}/id/${orderId}?sheet=orders`, {
+                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
                     method: 'DELETE'
                 });
                 
@@ -1625,7 +1630,7 @@
         // Add new team member
         async function addTeamMember(memberData) {
             try {
-                const response = await fetch(`${BASE_URL}?sheet=team_members`, {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1654,7 +1659,7 @@
         // Update existing team member
         async function updateTeamMember(memberId, memberData) {
             try {
-                const response = await fetch(`${BASE_URL}/id/${memberId}?sheet=team_members`, {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1691,7 +1696,7 @@
             if (!confirm('Are you sure you want to delete this team member?')) return;
             
             try {
-                const response = await fetch(`${BASE_URL}/id/${memberId}?sheet=team_members`, {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
                     method: 'DELETE'
                 });
                 
@@ -1716,7 +1721,7 @@
         // Add expense
         async function addExpense(expenseData) {
             try {
-                const response = await fetch(`${BASE_URL}?sheet=expenses`, {
+                const response = await fetch(`${EXPENSES_BASE_URL}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1938,7 +1943,7 @@
             if (!confirm('Are you sure you want to delete this expense?')) return;
             
             try {
-                const response = await fetch(`${BASE_URL}/id/${expenseId}?sheet=expenses`, {
+                const response = await fetch(`${EXPENSES_BASE_URL}/id/${expenseId}`, {
                     method: 'DELETE'
                 });
                 
