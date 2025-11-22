@@ -548,6 +548,27 @@
             font-weight: 600;
         }
 
+        .payment-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .payment-option.active {
+            border-color: var(--accent);
+            background-color: var(--accent-light);
+        }
+
         @media (max-width: 768px) {
             .charts-container {
                 grid-template-columns: 1fr;
@@ -582,6 +603,10 @@
             }
             
             .form-actions {
+                flex-direction: column;
+            }
+            
+            .payment-type {
                 flex-direction: column;
             }
         }
@@ -693,6 +718,7 @@
                                 <th>Pending</th>
                                 <th>Completed</th>
                                 <th>Revenue</th>
+                                <th>Salary</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -898,6 +924,26 @@
                     <label class="form-label" for="memberJoinDate">Join Date</label>
                     <input type="date" class="form-input" id="memberJoinDate" required>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Payment Type</label>
+                    <div class="payment-type">
+                        <div class="payment-option active" data-type="project">Project-Based</div>
+                        <div class="payment-option" data-type="salary">Fixed Salary</div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="salaryFields" style="display: none;">
+                    <label class="form-label" for="memberSalary">Monthly Salary</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" class="form-input" id="memberSalary" min="0" step="0.01" style="flex: 1;">
+                        <select class="form-select" id="memberSalaryCurrency" style="width: 100px;">
+                            <option value="USD">USD</option>
+                            <option value="BDT">BDT</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label class="form-label" for="memberStatus">Status</label>
                     <select class="form-select" id="memberStatus" required>
@@ -998,6 +1044,10 @@
         const totalExpenseEl = document.getElementById('totalExpense');
         const profitEl = document.getElementById('profit');
 
+        // Payment type elements
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        const salaryFields = document.getElementById('salaryFields');
+
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
@@ -1027,6 +1077,15 @@
             // Currency toggle
             currencyOptions.forEach(option => {
                 option.addEventListener('click', () => switchCurrency(option.dataset.currency));
+            });
+            
+            // Payment type toggle
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    salaryFields.style.display = option.dataset.type === 'salary' ? 'block' : 'none';
+                });
             });
             
             // Tab navigation
@@ -1453,6 +1512,16 @@
                     document.getElementById('memberWhatsApp').value = member.whatsapp || '';
                     document.getElementById('memberEmail').value = member.email || '';
                     document.getElementById('memberJoinDate').value = member.joinDate || '';
+                    
+                    // Set payment type
+                    const paymentType = member.paymentType || 'project';
+                    paymentOptions.forEach(opt => {
+                        opt.classList.toggle('active', opt.dataset.type === paymentType);
+                    });
+                    salaryFields.style.display = paymentType === 'salary' ? 'block' : 'none';
+                    
+                    document.getElementById('memberSalary').value = member.salary || '';
+                    document.getElementById('memberSalaryCurrency').value = member.salaryCurrency || 'USD';
                     document.getElementById('memberStatus').value = member.status || 'Active';
                     document.getElementById('memberNotes').value = member.notes || '';
                 }
@@ -1463,6 +1532,12 @@
                 form.reset();
                 document.getElementById('memberJoinDate').value = new Date().toISOString().slice(0, 10);
                 document.getElementById('memberStatus').value = 'Active';
+                
+                // Reset payment type to project-based
+                paymentOptions.forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.type === 'project');
+                });
+                salaryFields.style.display = 'none';
             }
             
             teamMemberModal.classList.add('active');
@@ -1516,12 +1591,17 @@
         async function handleTeamMemberSubmit(e) {
             e.preventDefault();
             
+            const activePaymentType = document.querySelector('.payment-option.active').dataset.type;
+            
             const formData = {
                 name: document.getElementById('memberName').value,
                 role: document.getElementById('memberRole').value,
                 whatsapp: document.getElementById('memberWhatsApp').value,
                 email: document.getElementById('memberEmail').value,
                 joinDate: document.getElementById('memberJoinDate').value,
+                paymentType: activePaymentType,
+                salary: activePaymentType === 'salary' ? parseFloat(document.getElementById('memberSalary').value).toFixed(2) : '',
+                salaryCurrency: activePaymentType === 'salary' ? document.getElementById('memberSalaryCurrency').value : '',
                 status: document.getElementById('memberStatus').value,
                 notes: document.getElementById('memberNotes').value
             };
@@ -1794,7 +1874,7 @@
                 const completedOrders = editorOrders.filter(order => order.projectStatus === 'Final Delivery');
                 
                 // Calculate revenue in current currency
-                const revenue = editorOrders.reduce((sum, order) => {
+                const projectRevenue = editorOrders.reduce((sum, order) => {
                     let amount = parseFloat(order.projectPrice || 0);
                     if (order.currency === 'BDT' && currentCurrency === 'USD') {
                         amount = amount / EXCHANGE_RATE;
@@ -1804,17 +1884,30 @@
                     return sum + amount;
                 }, 0);
                 
+                // Calculate salary in current currency
+                let salaryAmount = 0;
+                if (member.paymentType === 'salary' && member.salary) {
+                    salaryAmount = parseFloat(member.salary || 0);
+                    if (member.salaryCurrency === 'BDT' && currentCurrency === 'USD') {
+                        salaryAmount = salaryAmount / EXCHANGE_RATE;
+                    } else if (member.salaryCurrency === 'USD' && currentCurrency === 'BDT') {
+                        salaryAmount = salaryAmount * EXCHANGE_RATE;
+                    }
+                }
+                
                 return {
                     id: member.id,
                     name: member.name,
                     role: member.role,
                     whatsapp: member.whatsapp,
                     status: member.status,
+                    paymentType: member.paymentType || 'project',
+                    salary: salaryAmount,
                     totalProjects: editorOrders.length,
                     thisMonth: thisMonthOrders.length,
                     pending: pendingOrders.length,
                     completed: completedOrders.length,
-                    revenue: revenue
+                    revenue: member.paymentType === 'salary' ? salaryAmount : projectRevenue
                 };
             });
             
@@ -1824,7 +1917,7 @@
                 <div class="stat-card">
                     <div class="stat-label">${stat.name}'s Projects</div>
                     <div class="stat-value">${stat.totalProjects}</div>
-                    <div class="stat-label">Revenue: ${formatCurrency(stat.revenue, currentCurrency)}</div>
+                    <div class="stat-label">${stat.paymentType === 'salary' ? 'Salary' : 'Revenue'}: ${formatCurrency(stat.revenue, currentCurrency)}</div>
                 </div>
             `).join('');
             
@@ -1832,7 +1925,7 @@
             if (teamStats.length === 0) {
                 teamTableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="empty-state">
+                        <td colspan="10" class="empty-state">
                             <div class="empty-state-icon">👥</div>
                             <div>No team members found</div>
                         </td>
@@ -1853,7 +1946,8 @@
                         <td>${stat.thisMonth}</td>
                         <td>${stat.pending}</td>
                         <td>${stat.completed}</td>
-                        <td>${formatCurrency(stat.revenue, currentCurrency)}</td>
+                        <td>${stat.paymentType === 'project' ? formatCurrency(stat.revenue, currentCurrency) : '-'}</td>
+                        <td>${stat.paymentType === 'salary' ? formatCurrency(stat.salary, currentCurrency) : '-'}</td>
                         <td>
                             <button class="btn btn-secondary btn-small edit-team-member" data-id="${stat.id}">
                                 Edit
