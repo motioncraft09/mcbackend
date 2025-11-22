@@ -1014,7 +1014,7 @@
     </div>
 
     <script>
-        // API Configuration - CORRECTED API IDs (just the ID part, not full URL)
+        // API Configuration
         const ORDERS_API_ID = '64moozfun8vys';
         const EXPENSES_API_ID = 'b4nfkl0gkrr0y';
         const TEAM_MEMBERS_API_ID = 'h3kh1avvk0fj7';
@@ -1204,45 +1204,55 @@
             
             try {
                 // Load orders
-                const ordersResponse = await fetch(`${ORDERS_BASE_URL}`);
+                console.log('Loading orders from:', ORDERS_BASE_URL);
+                const ordersResponse = await fetch(ORDERS_BASE_URL);
                 if (ordersResponse.ok) {
                     const data = await ordersResponse.json();
                     if (data && Array.isArray(data)) {
                         orders = data;
                         saveToLocalStorage('orders', orders);
+                        console.log('Orders loaded successfully:', orders.length);
                     } else {
-                        throw new Error('Invalid orders data format');
+                        console.warn('Invalid orders data format, using empty array');
+                        orders = [];
                     }
                 } else {
-                    throw new Error(`Failed to load orders: ${ordersResponse.status}`);
+                    console.warn(`Failed to load orders: ${ordersResponse.status}, using local storage`);
+                    throw new Error(`API returned ${ordersResponse.status}`);
                 }
                 
                 // Load expenses
-                const expensesResponse = await fetch(`${EXPENSES_BASE_URL}`);
+                console.log('Loading expenses from:', EXPENSES_BASE_URL);
+                const expensesResponse = await fetch(EXPENSES_BASE_URL);
                 if (expensesResponse.ok) {
                     const data = await expensesResponse.json();
                     if (data && Array.isArray(data)) {
                         expenses = data;
                         saveToLocalStorage('expenses', expenses);
+                        console.log('Expenses loaded successfully:', expenses.length);
                     } else {
-                        throw new Error('Invalid expenses data format');
+                        console.warn('Invalid expenses data format, using empty array');
+                        expenses = [];
                     }
                 } else {
-                    throw new Error(`Failed to load expenses: ${expensesResponse.status}`);
+                    console.warn(`Failed to load expenses: ${expensesResponse.status}, using local storage`);
                 }
                 
                 // Load team members
-                const teamResponse = await fetch(`${TEAM_MEMBERS_BASE_URL}`);
+                console.log('Loading team members from:', TEAM_MEMBERS_BASE_URL);
+                const teamResponse = await fetch(TEAM_MEMBERS_BASE_URL);
                 if (teamResponse.ok) {
                     const data = await teamResponse.json();
                     if (data && Array.isArray(data)) {
                         teamMembers = data;
                         saveToLocalStorage('team_members', teamMembers);
+                        console.log('Team members loaded successfully:', teamMembers.length);
                     } else {
-                        throw new Error('Invalid team members data format');
+                        console.warn('Invalid team members data format, using empty array');
+                        teamMembers = [];
                     }
                 } else {
-                    throw new Error(`Failed to load team members: ${teamResponse.status}`);
+                    console.warn(`Failed to load team members: ${teamResponse.status}, using local storage`);
                 }
                 
                 // Update all dashboards
@@ -1250,77 +1260,101 @@
                 renderTeamStats();
                 updateFinance();
                 renderClients();
+                
             } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Error loading data from API. Using cached data if available.');
+                console.error('Error loading data from API:', error);
                 
                 // Use cached data if API fails
                 if (orders.length === 0) {
-                    orders = getFromLocalStorage('orders') || [];
-                    renderOrders();
+                    const cachedOrders = getFromLocalStorage('orders');
+                    orders = cachedOrders || [];
+                    console.log('Using cached orders:', orders.length);
                 }
                 
                 if (expenses.length === 0) {
-                    expenses = getFromLocalStorage('expenses') || [];
-                    updateFinance();
+                    const cachedExpenses = getFromLocalStorage('expenses');
+                    expenses = cachedExpenses || [];
+                    console.log('Using cached expenses:', expenses.length);
                 }
                 
                 if (teamMembers.length === 0) {
-                    teamMembers = getFromLocalStorage('team_members') || [];
+                    const cachedTeamMembers = getFromLocalStorage('team_members');
+                    teamMembers = cachedTeamMembers || [];
+                    console.log('Using cached team members:', teamMembers.length);
                 }
                 
+                // Update all dashboards with cached data
+                renderOrders();
                 renderTeamStats();
+                updateFinance();
                 renderClients();
+                
+                // Show user-friendly message
+                if (orders.length === 0 && expenses.length === 0 && teamMembers.length === 0) {
+                    alert('Unable to connect to the database. Please check your API configuration. You can still use the app with local storage.');
+                }
             }
         }
 
         // Save data to localStorage
         function saveToLocalStorage(key, data) {
-            localStorage.setItem(`motioncraft_${key}`, JSON.stringify(data));
+            try {
+                localStorage.setItem(`motioncraft_${key}`, JSON.stringify(data));
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+            }
         }
 
         // Load data from localStorage
         function loadFromLocalStorage() {
-            const savedOrders = localStorage.getItem('motioncraft_orders');
-            const savedExpenses = localStorage.getItem('motioncraft_expenses');
-            const savedTeamMembers = localStorage.getItem('motioncraft_team_members');
             const savedTheme = localStorage.getItem('theme');
             const savedCurrency = localStorage.getItem('currency');
             
-            if (savedOrders) {
-                try {
-                    orders = JSON.parse(savedOrders);
-                } catch (e) {
-                    console.error('Error parsing saved orders:', e);
-                    orders = [];
+            // Load data only if we don't have it already
+            if (orders.length === 0) {
+                const savedOrders = localStorage.getItem('motioncraft_orders');
+                if (savedOrders) {
+                    try {
+                        orders = JSON.parse(savedOrders);
+                    } catch (e) {
+                        console.error('Error parsing saved orders:', e);
+                        orders = [];
+                    }
                 }
             }
             
-            if (savedExpenses) {
-                try {
-                    expenses = JSON.parse(savedExpenses);
-                } catch (e) {
-                    console.error('Error parsing saved expenses:', e);
-                    expenses = [];
+            if (expenses.length === 0) {
+                const savedExpenses = localStorage.getItem('motioncraft_expenses');
+                if (savedExpenses) {
+                    try {
+                        expenses = JSON.parse(savedExpenses);
+                    } catch (e) {
+                        console.error('Error parsing saved expenses:', e);
+                        expenses = [];
+                    }
                 }
             }
             
-            if (savedTeamMembers) {
-                try {
-                    teamMembers = JSON.parse(savedTeamMembers);
-                } catch (e) {
-                    console.error('Error parsing saved team members:', e);
-                    teamMembers = [];
+            if (teamMembers.length === 0) {
+                const savedTeamMembers = localStorage.getItem('motioncraft_team_members');
+                if (savedTeamMembers) {
+                    try {
+                        teamMembers = JSON.parse(savedTeamMembers);
+                    } catch (e) {
+                        console.error('Error parsing saved team members:', e);
+                        teamMembers = [];
+                    }
                 }
             }
             
             if (savedTheme === 'dark') document.body.classList.add('dark-mode');
-            if (savedCurrency) currentCurrency = savedCurrency;
-            
-            // Update currency UI
-            currencyOptions.forEach(option => {
-                option.classList.toggle('active', option.dataset.currency === currentCurrency);
-            });
+            if (savedCurrency) {
+                currentCurrency = savedCurrency;
+                // Update currency UI
+                currencyOptions.forEach(option => {
+                    option.classList.toggle('active', option.dataset.currency === currentCurrency);
+                });
+            }
         }
 
         // Get data from localStorage
@@ -1441,6 +1475,9 @@
             if (!confirm('Are you sure you want to mark this payment as paid?')) return;
             
             try {
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+                
                 const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
                     method: 'PATCH',
                     headers: {
@@ -1469,7 +1506,6 @@
                 }
             } catch (error) {
                 console.error('Error marking payment as paid:', error);
-                alert('Error marking payment as paid. Data saved locally.');
                 
                 // Fallback: Save locally
                 const index = orders.findIndex(o => o.id === orderId);
@@ -1699,12 +1735,12 @@
         // Add new order
         async function addOrder(orderData) {
             try {
-                const response = await fetch(`${ORDERS_BASE_URL}`, {
+                const response = await fetch(ORDERS_BASE_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ data: [orderData] })
+                    body: JSON.stringify({ data: orderData })
                 });
                 
                 if (response.ok) {
@@ -1715,11 +1751,10 @@
                     renderClients();
                     updateFinance();
                 } else {
-                    throw new Error('Failed to add order');
+                    throw new Error('Failed to add order to API');
                 }
             } catch (error) {
                 console.error('Error adding order:', error);
-                alert('Error adding order. Data saved locally.');
                 
                 // Fallback: Save locally
                 orders.push(orderData);
@@ -1753,11 +1788,10 @@
                         updateFinance();
                     }
                 } else {
-                    throw new Error('Failed to update order');
+                    throw new Error('Failed to update order in API');
                 }
             } catch (error) {
                 console.error('Error updating order:', error);
-                alert('Error updating order. Data saved locally.');
                 
                 // Fallback: Save locally
                 const index = orders.findIndex(o => o.id === orderId);
@@ -1789,11 +1823,10 @@
                     renderClients();
                     updateFinance();
                 } else {
-                    throw new Error('Failed to delete order');
+                    throw new Error('Failed to delete order from API');
                 }
             } catch (error) {
                 console.error('Error deleting order:', error);
-                alert('Error deleting order. Data removed locally.');
                 
                 // Fallback: Remove locally
                 orders = orders.filter(o => o.id !== orderId);
@@ -1808,12 +1841,12 @@
         // Add new team member
         async function addTeamMember(memberData) {
             try {
-                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}`, {
+                const response = await fetch(TEAM_MEMBERS_BASE_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ data: [memberData] })
+                    body: JSON.stringify({ data: memberData })
                 });
                 
                 if (response.ok) {
@@ -1821,11 +1854,10 @@
                     saveToLocalStorage('team_members', teamMembers);
                     renderTeamStats();
                 } else {
-                    throw new Error('Failed to add team member');
+                    throw new Error('Failed to add team member to API');
                 }
             } catch (error) {
                 console.error('Error adding team member:', error);
-                alert('Error adding team member. Data saved locally.');
                 
                 // Fallback: Save locally
                 teamMembers.push(memberData);
@@ -1853,11 +1885,10 @@
                         renderTeamStats();
                     }
                 } else {
-                    throw new Error('Failed to update team member');
+                    throw new Error('Failed to update team member in API');
                 }
             } catch (error) {
                 console.error('Error updating team member:', error);
-                alert('Error updating team member. Data saved locally.');
                 
                 // Fallback: Save locally
                 const index = teamMembers.findIndex(m => m.id === memberId);
@@ -1883,11 +1914,10 @@
                     saveToLocalStorage('team_members', teamMembers);
                     renderTeamStats();
                 } else {
-                    throw new Error('Failed to delete team member');
+                    throw new Error('Failed to delete team member from API');
                 }
             } catch (error) {
                 console.error('Error deleting team member:', error);
-                alert('Error deleting team member. Data removed locally.');
                 
                 // Fallback: Remove locally
                 teamMembers = teamMembers.filter(m => m.id !== memberId);
@@ -1899,12 +1929,12 @@
         // Add expense
         async function addExpense(expenseData) {
             try {
-                const response = await fetch(`${EXPENSES_BASE_URL}`, {
+                const response = await fetch(EXPENSES_BASE_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ data: [expenseData] })
+                    body: JSON.stringify({ data: expenseData })
                 });
                 
                 if (response.ok) {
@@ -1912,14 +1942,39 @@
                     saveToLocalStorage('expenses', expenses);
                     updateFinance();
                 } else {
-                    throw new Error('Failed to add expense');
+                    throw new Error('Failed to add expense to API');
                 }
             } catch (error) {
                 console.error('Error adding expense:', error);
-                alert('Error adding expense. Data saved locally.');
                 
                 // Fallback: Save locally
                 expenses.push(expenseData);
+                saveToLocalStorage('expenses', expenses);
+                updateFinance();
+            }
+        }
+
+        // Delete expense
+        async function deleteExpense(expenseId) {
+            if (!confirm('Are you sure you want to delete this expense?')) return;
+            
+            try {
+                const response = await fetch(`${EXPENSES_BASE_URL}/id/${expenseId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    expenses = expenses.filter(e => e.id !== expenseId);
+                    saveToLocalStorage('expenses', expenses);
+                    updateFinance();
+                } else {
+                    throw new Error('Failed to delete expense from API');
+                }
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+                
+                // Fallback: Remove locally
+                expenses = expenses.filter(e => e.id !== expenseId);
                 saveToLocalStorage('expenses', expenses);
                 updateFinance();
             }
@@ -1982,14 +2037,16 @@
             
             // Update stats grid
             const statsGrid = document.querySelector('#teamDashboard .stats-grid');
-            statsGrid.innerHTML = teamStats.map(stat => `
-                <div class="stat-card">
-                    <div class="stat-label">${stat.name}'s Projects</div>
-                    <div class="stat-value">${stat.totalProjects}</div>
-                    <div class="stat-label">Earnings: ${formatCurrency(stat.totalEarnings, currentCurrency)}</div>
-                    <div class="stat-label">Pending: ${formatCurrency(stat.pendingPayments, currentCurrency)}</div>
-                </div>
-            `).join('');
+            if (statsGrid) {
+                statsGrid.innerHTML = teamStats.map(stat => `
+                    <div class="stat-card">
+                        <div class="stat-label">${stat.name}'s Projects</div>
+                        <div class="stat-value">${stat.totalProjects}</div>
+                        <div class="stat-label">Earnings: ${formatCurrency(stat.totalEarnings, currentCurrency)}</div>
+                        <div class="stat-label">Pending: ${formatCurrency(stat.pendingPayments, currentCurrency)}</div>
+                    </div>
+                `).join('');
+            }
             
             // Update team table
             if (teamStats.length === 0) {
@@ -2187,33 +2244,6 @@
             renderFinanceCharts(income, totalExpense, monthExpenses, editorPayments);
         }
 
-        // Delete expense
-        async function deleteExpense(expenseId) {
-            if (!confirm('Are you sure you want to delete this expense?')) return;
-            
-            try {
-                const response = await fetch(`${EXPENSES_BASE_URL}/id/${expenseId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    expenses = expenses.filter(e => e.id !== expenseId);
-                    saveToLocalStorage('expenses', expenses);
-                    updateFinance();
-                } else {
-                    throw new Error('Failed to delete expense');
-                }
-            } catch (error) {
-                console.error('Error deleting expense:', error);
-                alert('Error deleting expense. Data removed locally.');
-                
-                // Fallback: Remove locally
-                expenses = expenses.filter(e => e.id !== expenseId);
-                saveToLocalStorage('expenses', expenses);
-                updateFinance();
-            }
-        }
-
         // Render finance charts
         function renderFinanceCharts(income, expense, expenses, editorPayments) {
             const financeCtx = document.getElementById('financeChart');
@@ -2351,20 +2381,22 @@
             
             // Update stats grid
             const statsGrid = document.querySelector('#clientsDashboard .stats-grid');
-            statsGrid.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-label">Total Clients</div>
-                    <div class="stat-value">${clients.length}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Orders</div>
-                    <div class="stat-value">${orders.length}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">${formatCurrency(totalRevenue, currentCurrency)}</div>
-                </div>
-            `;
+            if (statsGrid) {
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Total Clients</div>
+                        <div class="stat-value">${clients.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">${orders.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value">${formatCurrency(totalRevenue, currentCurrency)}</div>
+                    </div>
+                `;
+            }
             
             // Update clients table
             if (clients.length === 0) {
