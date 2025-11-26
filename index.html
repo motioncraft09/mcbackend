@@ -1,498 +1,277 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Motioncraft — Owner Dashboard</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Motioncraft — Full Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
-/* ---------- BASIC APPLE-LIKE STYLES ---------- */
 :root{
-  --bg:#f6f7f9; --card:#fff; --muted:#6b7280; --accent:#0f172a; --success:#10b981;
+  --bg:#f6f7f9; --card:#fff; --muted:#6b7280; --accent:#0f172a; --success:#10b981; --danger:#ef4444;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial; background:var(--bg); color:var(--accent); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
-header{background:#fff;padding:14px 18px;border-bottom:1px solid #eee;position:sticky;top:0;z-index:30;}
-header h1{margin:0;font-size:18px;font-weight:600}
-.container{max-width:1200px;margin:20px auto;padding:0 16px;}
-.flex{display:flex;gap:12px;align-items:center}
-.summary{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--accent);}
+.header{background:#fff;padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.header h1{margin:0;font-size:18px}
+.container{max-width:1200px;margin:18px auto;padding:0 16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+.summary{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
 .sum-card{min-width:150px;flex:1;padding:12px;border-radius:10px}
 .kv{color:var(--muted);font-size:13px}
 .huge{font-size:18px;font-weight:700}
-
-/* controls */
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.input,select{padding:10px;border:1px solid #e6e9ef;border-radius:10px;font-size:14px}
-.button{background:#0f172a;color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer}
-.small-btn{padding:6px 10px;border-radius:8px;border:0;background:#111;color:#fff;cursor:pointer;font-size:13px}
-.green{background:#25D366;color:#fff}
-
-/* layout */
-.grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-
-/* table */
+.input,select,button{padding:8px;border-radius:8px;border:1px solid #e6e9ef;font-size:14px}
+.button{background:#111;color:#fff;border:0;cursor:pointer;padding:8px 12px;border-radius:8px}
+.small{padding:6px 8px;border-radius:8px;border:0;background:#111;color:#fff}
 .table-wrap{overflow:auto;border-radius:10px}
-table{width:100%;border-collapse:collapse;background:var(--card);box-shadow:0 6px 18px rgba(16,24,40,0.04)}
-th,td{padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:14px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 12px;border-bottom:1px solid #f3f4f6;text-align:left;font-size:14px}
 th{background:#fafafa;color:var(--muted);font-weight:600}
-tr.overdue{background:#fff5f5}
-
-/* popup (scrollable) */
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999;padding:16px}
-.modal-box{background:#fff;width:100%;max-width:620px;border-radius:12px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
-.modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f3f4f6}
-.modal-body{padding:16px;overflow:auto} /* scrollable area */
-.form-row{display:flex;gap:10px}
-.form-col{flex:1}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:600px){.form-grid{grid-template-columns:1fr}}
-.modal-footer{padding:12px 16px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px}
-
-/* helpers */
 .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a;font-weight:700;font-size:12px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999;padding:16px}
+.modal-box{background:#fff;width:100%;max-width:900px;border-radius:12px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-body{padding:16px;overflow:auto}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:800px){.form-grid{grid-template-columns:1fr}}
+.modal-footer{padding:12px 16px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px}
 .noscroll{overflow:hidden}
+.dark{background:#0b1020;color:#e6eef8}
+.dark .card{background:#071026}
 .small-kv{font-size:12px;color:var(--muted)}
+.right{margin-left:auto}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.csv-btn{background:#06b6d4;color:#fff;border:0;padding:6px 8px;border-radius:8px}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Motioncraft — Owner Dashboard</h1>
-</header>
+<div class="header">
+  <div style="display:flex;gap:12px;align-items:center">
+    <h1>Motioncraft — Owner Dashboard</h1>
+    <span class="small-kv">Admin</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button id="darkToggle" class="small">Dark</button>
+    <button id="logoutBtn" class="small">Logout</button>
+  </div>
+</div>
 
-<div class="container">
+<div class="container" id="app">
 
-  <!-- SUMMARY -->
-  <div class="summary">
-    <div class="sum-card card">
-      <div class="kv">Total Orders</div>
-      <div id="totalOrders" class="huge">0</div>
-      <div class="small-kv" id="activeOrders">0 active</div>
+  <!-- LOGIN UI (shown if not authed) -->
+  <div id="loginCard" class="card" style="max-width:420px;margin:40px auto">
+    <h3>Admin Login</h3>
+    <div class="kv">Enter dashboard password</div>
+    <input id="loginPass" class="input" placeholder="password" style="width:100%;margin-top:8px;margin-bottom:12px">
+    <div style="display:flex;gap:8px">
+      <button class="button" onclick="doLogin()">Login</button>
+      <button class="button" onclick="fillDemo()">Demo (no API)</button>
     </div>
-    <div class="sum-card card">
-      <div class="kv">Pending Payments</div>
-      <div id="pendingPayments" class="huge">0</div>
-      <div class="small-kv">Orders with pending payment</div>
-    </div>
-    <div class="sum-card card">
-      <div class="kv">This Month Income (converted)</div>
-      <div id="thisMonthIncome" class="huge">0 BDT</div>
-      <div class="small-kv">Display currency depends on selector</div>
-    </div>
-    <div class="sum-card card">
-      <div class="kv">Team Members</div>
-      <div id="teamCount" class="huge">0</div>
-      <div class="small-kv">Editors tracked</div>
-    </div>
+    <div class="small-kv" style="margin-top:8px">Default demo password: <strong>motioncraft2023</strong></div>
   </div>
 
-  <!-- CONTROLS -->
-  <div class="controls">
-    <button class="button" onclick="openModal()">+ New Order</button>
+  <!-- MAIN UI -->
+  <div id="mainUI" style="display:none">
 
-    <select id="filterMonth" class="input" style="min-width:180px" onchange="renderAll()">
-      <option value="">All Months</option>
-    </select>
+    <div class="summary">
+      <div class="sum-card card">
+        <div class="kv">Total Orders</div>
+        <div id="totalOrders" class="huge">0</div>
+        <div class="small-kv" id="activeOrders">0 active</div>
+      </div>
+      <div class="sum-card card">
+        <div class="kv">Pending Payments</div>
+        <div id="pendingPayments" class="huge">0</div>
+        <div class="small-kv">Orders with pending</div>
+      </div>
+      <div class="sum-card card">
+        <div class="kv">This Month Income</div>
+        <div id="thisMonthIncome" class="huge">0 BDT</div>
+        <div class="small-kv">Converted currency view</div>
+      </div>
+      <div class="sum-card card">
+        <div class="kv">Team Members</div>
+        <div id="teamCount" class="huge">0</div>
+        <div class="small-kv">Editors tracked</div>
+      </div>
+    </div>
 
-    <select id="filterEditor" class="input" style="min-width:160px" onchange="renderAll()">
-      <option value="">All Editors</option>
-    </select>
+    <div class="controls">
+      <button class="button" onclick="openOrderModal()">+ New Order</button>
 
-    <select id="displayCurrency" class="input" style="min-width:140px" onchange="renderAll()">
-      <option value="BDT">Display BDT</option>
-      <option value="USD">Display USD</option>
-    </select>
+      <select id="filterMonth" class="input">
+        <option value="">All Months</option>
+      </select>
 
-    <input id="searchBox" class="input" placeholder="Search order ID or client" style="min-width:200px" oninput="renderAll()">
-  </div>
+      <select id="filterEditor" class="input">
+        <option value="">All Editors</option>
+      </select>
 
-  <div class="grid">
-    <!-- LEFT: Orders -->
-    <div class="card">
-      <h3 style="margin-top:0">Orders</h3>
-      <div class="table-wrap" style="margin-top:10px">
-        <table id="ordersTable">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Client</th>
-              <th>Phone</th>
-              <th>Service</th>
-              <th>Price</th>
-              <th>Editor Budget</th>
-              <th>Editor</th>
-              <th>Status</th>
-              <th>Month</th>
-              <th>WA</th>
-            </tr>
-          </thead>
+      <select id="displayCurrency" class="input">
+        <option value="BDT">Display BDT</option>
+        <option value="USD">Display USD</option>
+      </select>
+
+      <input id="searchBox" class="input" placeholder="Search order ID or client" oninput="renderAll()">
+
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="csv-btn" onclick="exportCSV()">Export CSV</button>
+        <button class="small" onclick="openTeamModal()">Add Team</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin-top:0">Orders</h3>
+        <div class="table-wrap" style="margin-top:10px">
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>Order</th><th>Client</th><th>Phone</th><th>Service</th><th>Price</th><th>Paid</th><th>EditorBudget</th><th>Editor</th><th>Status</th><th>Month</th><th>WA</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card">
+          <h3 style="margin-top:0">Team Workload</h3>
+          <div id="teamList"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Monthly Summary</h3>
+          <div id="monthSummary"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Profit Calculator</h3>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <input id="pc_income" class="input" placeholder="Income amount">
+            <select id="pc_income_cur" class="input"><option>BDT</option><option>USD</option></select>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <input id="pc_expense" class="input" placeholder="Expense amount">
+            <select id="pc_expense_cur" class="input"><option>BDT</option><option>USD</option></select>
+          </div>
+          <button class="button" onclick="calcProfit()">Calculate</button>
+          <div id="profitResult" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions / Payments manager -->
+    <div style="margin-top:12px" class="card">
+      <h3 style="margin-top:0">Transactions (Payments & Expenses)</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <select id="tx_type" class="input"><option value="payment">Payment</option><option value="expense">Expense</option></select>
+        <input id="tx_order" class="input" placeholder="Related Order ID (optional)">
+        <input id="tx_editor" class="input" placeholder="Editor (optional)">
+        <input id="tx_client" class="input" placeholder="Client (optional)">
+        <input id="tx_amount" class="input" placeholder="Amount">
+        <select id="tx_currency" class="input"><option>BDT</option><option>USD</option></select>
+        <input id="tx_note" class="input" placeholder="Note">
+        <button class="button" onclick="addTransaction()">Add</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="txTable">
+          <thead><tr><th>TX ID</th><th>Type</th><th>Order</th><th>Editor</th><th>Client</th><th>Amount</th><th>Currency</th><th>Date</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
-    <!-- RIGHT: Team & Monthly -->
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="card">
-        <h3 style="margin-top:0">Team Workload</h3>
-        <div id="teamList" style="margin-top:10px"></div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0">Monthly Summary</h3>
-        <div id="monthSummary" style="margin-top:10px"></div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- MODAL: New Order (scrollable body) -->
-<div id="modal" class="modal" role="dialog" aria-hidden="true">
-  <div class="modal-box" role="document">
-    <div class="modal-header">
-      <div style="font-weight:700">Add New Order</div>
-      <div>
-        <button class="small-btn" onclick="closeModal()">Close</button>
-      </div>
-    </div>
-
-    <div class="modal-body">
-      <div style="margin-bottom:8px" class="small-kv">Order details — use full form. Body will scroll if content longer than viewport.</div>
-
-      <div class="form-grid">
-        <div>
-          <label class="kv">Order ID (optional)</label>
-          <input id="i_order_id" class="input" placeholder="MC-1001 (leave empty to auto-generate)">
-        </div>
-        <div>
-          <label class="kv">Client Name</label>
-          <input id="i_client" class="input" placeholder="Client full name">
-        </div>
-
-        <div>
-          <label class="kv">Client Phone</label>
-          <input id="i_phone" class="input" placeholder="+8801712345678 or 01712345678">
-        </div>
-        <div>
-          <label class="kv">Service Type</label>
-          <input id="i_service" class="input" placeholder="e.g., Facebook Ad Edit">
-        </div>
-
-        <div>
-          <label class="kv">Price</label>
-          <input id="i_price" class="input" type="number" placeholder="Amount">
-        </div>
-        <div>
-          <label class="kv">Currency</label>
-          <select id="i_currency" class="input">
-            <option value="BDT">BDT</option>
-            <option value="USD">USD</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="kv">Editor Budget</label>
-          <input id="i_editor_budget" class="input" type="number" placeholder="Amount for editor (same currency)">
-        </div>
-        <div>
-          <label class="kv">Assign Editor</label>
-          <select id="i_editor" class="input">
-            <option value="">Unassigned</option>
-            <option value="Siam">Siam</option>
-            <option value="Mojid">Mojid</option>
-            <option value="Samiul">Samiul</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="kv">Status</label>
-          <select id="i_status" class="input">
-            <option>Fresh</option>
-            <option>Scripting</option>
-            <option>Editing</option>
-            <option>Correction</option>
-            <option>Final Delivery</option>
-            <option>Completed</option>
-          </select>
-        </div>
-        <div>
-          <label class="kv">Notes (optional)</label>
-          <input id="i_notes" class="input" placeholder="Short note">
-        </div>
-
-        <div style="grid-column:1/-1">
-          <label class="kv">Extra (optional)</label>
-          <input id="i_extra" class="input" placeholder="Any extra reference">
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="small-btn" onclick="closeModal()" style="background:#ef4444">Cancel</button>
-      <button class="button" onclick="submitOrder()">Save Order</button>
-    </div>
   </div>
 </div>
+
+<!-- Order Modal -->
+<div id="orderModal" class="modal"><div class="modal-box">
+  <div class="modal-body">
+    <h3>New Order</h3>
+    <div class="form-grid" style="margin-top:8px">
+      <div><input id="m_order_id" class="input" placeholder="Order ID (optional)"></div>
+      <div><input id="m_client" class="input" placeholder="Client name"></div>
+      <div><input id="m_phone" class="input" placeholder="+88017..."></div>
+      <div><input id="m_service" class="input" placeholder="Service"></div>
+      <div><input id="m_price" class="input" type="number" placeholder="Price"></div>
+      <div><select id="m_currency" class="input"><option>BDT</option><option>USD</option></select></div>
+      <div><input id="m_paid" class="input" type="number" placeholder="Paid amount (optional)"></div>
+      <div><input id="m_editor_budget" class="input" type="number" placeholder="Editor budget"></div>
+      <div><select id="m_editor" class="input"><option value="">Unassigned</option><option>Siam</option><option>Mojid</option><option>Samiul</option></select></div>
+      <div><select id="m_status" class="input"><option>Fresh</option><option>Scripting</option><option>Editing</option><option>Correction</option><option>Final Delivery</option><option>Completed</option></select></div>
+      <div style="grid-column:1/-1"><input id="m_notes" class="input" placeholder="Notes"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="small" onclick="closeOrderModal()" style="background:#ef4444">Cancel</button>
+    <button class="button" onclick="saveOrderModal()">Save Order</button>
+  </div>
+</div></div>
+
+<!-- Team Modal -->
+<div id="teamModal" class="modal"><div class="modal-box">
+  <div class="modal-body">
+    <h3>Add Team Member</h3>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="t_name" class="input" placeholder="Name">
+      <input id="t_phone" class="input" placeholder="Phone">
+      <input id="t_email" class="input" placeholder="Email">
+      <select id="t_role" class="input"><option>Editor</option><option>Manager</option></select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="small" onclick="closeTeamModal()" style="background:#ef4444">Cancel</button>
+    <button class="button" onclick="saveTeamMember()">Add</button>
+  </div>
+</div></div>
 
 <script>
-/* =========================
-   CONFIG — set your API URL
-   ========================= */
-const API_BASE = "https://script.google.com/macros/s/AKfycbxnOWe21GMKv48n2c5Uus7nVFItzTXec0EndLN8btOyu-TXn5JioYufwboiof1iKck4Wg/exec"; // ← Deploy Apps Script Web App URL here
-let EXCHANGE_RATE = 120.50; // BDT per 1 USD — update as needed
+/* ========================
+   CONFIG
+   ======================== */
+let API_BASE = ""; // <-- PASTE YOUR Apps Script Web App URL HERE (deploy as Web App: Anyone)
+let EXCHANGE_RATE = 120.5; // BDT per USD
+const DEMO_PASSWORD = "motioncraft2023";
 
-/* App state */
-let orders = [];
-let editors = ["Siam","Mojid","Samiul"];
+/* State */
+let authed = false;
+let orders = [], transactions = [], team = [];
 
-/* ---------- UTILITIES ---------- */
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function monthIndex(name){ const m=["January","February","March","April","May","June","July","August","September","October","November","December"]; return m.indexOf(name); }
-function formatMoney(amount, currency){
-  amount = Number(amount) || 0;
-  if(currency === 'USD') return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(amount);
-  // BDT fallback - show without decimals
-  return new Intl.NumberFormat('en-BD',{style:'currency',currency:'BDT',maximumFractionDigits:0}).format(amount);
-}
-function convert(amount, from, to){
-  amount = Number(amount) || 0;
-  if(from === to) return amount;
-  if(from === 'USD' && to === 'BDT') return amount * EXCHANGE_RATE;
-  if(from === 'BDT' && to === 'USD') return amount / EXCHANGE_RATE;
-  return amount;
-}
-function formatPhoneForWa(num){
-  if(!num) return '';
-  let n = String(num).trim();
-  n = n.replace(/\s+/g,'');
-  // if starts with 0 and looks BD (11 digits), add 88
-  if(/^0\d{10}$/.test(n)) n = '+88'+n;
-  // remove + for wa.me
-  if(n.startsWith('+')) n = n.slice(1);
-  n = n.replace(/\D/g,'');
-  return n;
-}
-
-/* ---------- LOAD ORDERS (GET) ---------- */
-async function loadOrders(){
-  try{
-    // Expecting doGet returns JSON array of orders
-    const res = await fetch(API_BASE);
-    const data = await res.json();
-    // normalize fields (handle various naming)
-    orders = (Array.isArray(data) ? data : []).map(o=>({
-      order_id: o.order_id || o.id || o.ID || ('MC-'+Math.floor(Math.random()*900000)),
-      client: o.client || o.client_name || o.ClientName || o.Client || '',
-      phone: o.phone || o.client_phone || o.ClientPhone || '',
-      service: o.service || o.service_type || o.ServiceType || '',
-      status: o.status || o.Status || 'Fresh',
-      editor: o.editor || o.assigned_editor || o.AssignedEditor || '',
-      price: Number(o.price || o.Price || 0),
-      currency: o.currency || o.Currency || 'BDT',
-      editor_budget: Number(o.editor_budget || o.editorBudget || o.EditorBudget || 0),
-      month: o.month || (new Date(o.date || o.created_at || o.CreatedAt || Date.now())).toLocaleString('en-US',{month:'long'}),
-      date: o.date || o.created_at || o.CreatedAt || (new Date()).toISOString(),
-      notes: o.notes || ''
-    }));
-  }catch(err){
-    console.warn('Failed to load from API, using sample data.',err);
-    // fallback sample data
-    orders = [
-      { order_id:'MC-1001', client:'Rafi Hossain', phone:'+8801712345678', service:'Facebook Ad Edit', status:'Editing', editor:'Siam', price:4500, currency:'BDT', editor_budget:1000, month:new Date().toLocaleString('en-US',{month:'long'}), date:new Date().toISOString()},
-      { order_id:'MC-1002', client:'Sara Ahmed', phone:'+8801911122233', service:'Promo 30s', status:'Final Delivery', editor:'Mojid', price:40, currency:'USD', editor_budget:10, month:new Date().toLocaleString('en-US',{month:'long'}), date:new Date().toISOString()}
-    ];
-  }
-  populateFilters();
-  renderAll();
-}
-
-/* ---------- POPULATE FILTERS ---------- */
-function populateFilters(){
-  const monthSet = new Set(orders.map(o=>o.month));
-  const months = Array.from(monthSet);
-  const fm = document.getElementById('filterMonth');
-  fm.innerHTML = '<option value="">All Months</option>' + months.map(m=>`<option value="${m}">${m}</option>`).join('');
-  // editors
-  const editorSet = new Set(editors.concat(orders.map(o=>o.editor).filter(Boolean)));
-  const fe = document.getElementById('filterEditor');
-  fe.innerHTML = '<option value="">All Editors</option>' + Array.from(editorSet).map(e=>`<option value="${e}">${e}</option>`).join('');
-  document.getElementById('teamCount').innerText = editorSet.size;
-}
-
-/* ---------- RENDER ALL ---------- */
-function renderAll(){
-  const tbody = document.querySelector('#ordersTable tbody');
-  tbody.innerHTML = '';
-  const selMonth = document.getElementById('filterMonth').value;
-  const selEditor = document.getElementById('filterEditor').value;
-  const displayCurrency = document.getElementById('displayCurrency').value;
-  const search = document.getElementById('searchBox').value.trim().toLowerCase();
-
-  // apply filters
-  const filtered = orders.filter(o=>{
-    if(selMonth && o.month !== selMonth) return false;
-    if(selEditor && o.editor !== selEditor) return false;
-    if(search){
-      if(!(`${o.order_id} ${o.client}`).toLowerCase().includes(search)) return false;
-    }
-    return true;
-  });
-
-  // summary
-  const total = orders.length;
-  const active = orders.filter(o=> o.status !== 'Completed').length;
-  const pending = orders.filter(o=> (o.payment_status === 'Pending' || !o.payment_status) && o.status !== 'Completed').length;
-  document.getElementById('totalOrders').innerText = total;
-  document.getElementById('activeOrders').innerText = active + ' active';
-  document.getElementById('pendingPayments').innerText = pending;
-
-  // this month income (converted to displayCurrency)
-  const nowMonth = (new Date()).toLocaleString('en-US',{month:'long'});
-  let monthIncome = 0;
-  orders.forEach(o=>{ if(o.month === nowMonth) monthIncome += convert(o.price,o.currency,displayCurrency) });
-  document.getElementById('thisMonthIncome').innerText = (displayCurrency==='BDT' ? Math.round(monthIncome)+' BDT' : '$'+monthIncome.toFixed(2));
-
-  // render rows
-  filtered.forEach(o=>{
-    const tr = document.createElement('tr');
-    const priceDisplay = formatMoney(convert(o.price,o.currency,displayCurrency), displayCurrency);
-    const editorBudgetDisplay = formatMoney(convert(o.editor_budget||0,o.currency,displayCurrency), displayCurrency);
-    const phoneLink = formatPhoneForWa(o.phone);
-    // overdue detection: if order month earlier than current and not completed
-    const isOverdue = monthIndex(o.month) < monthIndex(nowMonth) && o.status !== 'Completed';
-    if(isOverdue) tr.classList.add('overdue');
-    tr.innerHTML = `
-      <td>${escapeHtml(o.order_id)}</td>
-      <td>${escapeHtml(o.client)}</td>
-      <td>${escapeHtml(o.phone)}</td>
-      <td>${escapeHtml(o.service)}</td>
-      <td>${priceDisplay}<div class="small-kv">(${o.currency})</div></td>
-      <td>${editorBudgetDisplay}</td>
-      <td>${escapeHtml(o.editor || 'Unassigned')}</td>
-      <td>${escapeHtml(o.status)}</td>
-      <td>${escapeHtml(o.month)}</td>
-      <td><button class="small-btn green" onclick="openWhatsApp('${phoneLink}','Hi ${encodeURIComponent(o.client||'')}, regarding your order ${o.order_id}')">WA</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // team workload
-  renderTeamWorkload(selMonth || nowMonth, displayCurrency);
-  // monthly summary
-  renderMonthSummary(displayCurrency);
-}
-
-/* ---------- TEAM WORKLOAD ---------- */
-function renderTeamWorkload(monthName, displayCurrency){
-  const container = document.getElementById('teamList');
-  container.innerHTML = '';
-  const teamSet = new Set(editors.concat(orders.map(o=>o.editor).filter(Boolean)));
-  Array.from(teamSet).forEach(name=>{
-    const memberOrders = orders.filter(o=> o.editor === name && (!monthName || o.month === monthName));
-    const count = memberOrders.length;
-    let budgetSum = 0, priceSum = 0;
-    memberOrders.forEach(o=>{ budgetSum += convert(o.editor_budget||0,o.currency,displayCurrency); priceSum += convert(o.price||0,o.currency,displayCurrency); });
-    const div = document.createElement('div');
-    div.style.display='flex';
-    div.style.justifyContent='space-between';
-    div.style.alignItems='center';
-    div.style.marginBottom='10px';
-    div.innerHTML = `<div><strong>${name||'Unassigned'}</strong><div class="small-kv">${count} tasks in ${monthName}</div></div>
-      <div style="text-align:right"><div style="font-weight:700">${displayCurrency==='BDT'?Math.round(budgetSum)+' BDT':'$'+budgetSum.toFixed(2)}</div><div class="small-kv">Total price: ${displayCurrency==='BDT'?Math.round(priceSum)+' BDT':'$'+priceSum.toFixed(2)}</div></div>`;
-    container.appendChild(div);
-  });
-  document.getElementById('teamCount').innerText = teamSet.size;
-}
-
-/* ---------- MONTH SUMMARY ---------- */
-function renderMonthSummary(displayCurrency){
-  const container = document.getElementById('monthSummary');
-  container.innerHTML = '';
-  const map = {};
-  orders.forEach(o=>{
-    if(!map[o.month]) map[o.month] = {count:0, incomeBDT:0, incomeUSD:0};
-    map[o.month].count++;
-    if(o.currency === 'BDT') map[o.month].incomeBDT += Number(o.price||0); else map[o.month].incomeUSD += Number(o.price||0);
-  });
-  const keys = Object.keys(map).sort((a,b)=> monthIndex(b)-monthIndex(a));
-  keys.forEach(m=>{
-    const obj = map[m];
-    let incomeDisplay = '';
-    if(document.getElementById('displayCurrency').value === 'BDT'){
-      const income = obj.incomeBDT + obj.incomeUSD * EXCHANGE_RATE;
-      incomeDisplay = Math.round(income) + ' BDT';
-    } else {
-      const income = obj.incomeUSD + obj.incomeBDT / EXCHANGE_RATE;
-      incomeDisplay = '$' + income.toFixed(2);
-    }
-    const row = document.createElement('div');
-    row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.style.borderBottom='1px solid #f3f4f6';
-    row.innerHTML = `<div><strong>${m}</strong><div class="small-kv">${obj.count} orders</div></div><div style="text-align:right">${incomeDisplay}</div>`;
-    container.appendChild(row);
-  });
-}
-
-/* ---------- SUBMIT ORDER (POST) ---------- */
-async function submitOrder(){
-  const payload = {
-    type: 'addOrder',
-    client: document.getElementById('i_client').value.trim(),
-    phone: document.getElementById('i_phone').value.trim(),
-    service: document.getElementById('i_service').value.trim(),
-    status: document.getElementById('i_status').value,
-    editor: document.getElementById('i_editor').value,
-    price: Number(document.getElementById('i_price').value) || 0,
-    currency: document.getElementById('i_currency').value,
-    editor_budget: Number(document.getElementById('i_editor_budget').value) || 0,
-    notes: document.getElementById('i_notes').value.trim(),
-    order_id: document.getElementById('i_order_id').value.trim() || undefined
-  };
-
-  if(!payload.client || !payload.phone){
-    alert('Please enter client name and phone.');
-    return;
-  }
-
-  // disable body scroll while saving optional
-  try{
-    const res = await fetch(API_BASE, { method:'POST', body: JSON.stringify(payload) });
-    const data = await res.json();
-    if(data && data.success){
-      alert('Order saved — ID: ' + (data.order_id || payload.order_id || 'saved'));
-    } else {
-      alert('Saved (server response unclear). Refreshing.');
-    }
-    closeModal();
-    await loadOrders();
-  }catch(err){
-    console.error(err);
-    alert('Failed to save order. Check API URL & console.');
+/* ---------- LOGIN ---------- */
+function doLogin(){
+  const pass = document.getElementById('loginPass').value;
+  if(pass === DEMO_PASSWORD){
+    authed = true;
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('mainUI').style.display = 'block';
+    initApp();
+  } else {
+    // try if API configured and no-demo required, accept any for now?
+    alert('Wrong password. Try demo password or configure API.');
   }
 }
-
-/* ---------- OPEN/CLOSE MODAL (and body scroll lock) ---------- */
-function openModal(){
-  document.getElementById('modal').style.display = 'flex';
-  document.body.classList.add('noscroll');
+function fillDemo(){
+  authed = true;
+  document.getElementById('loginCard').style.display = 'none';
+  document.getElementById('mainUI').style.display = 'block';
+  API_BASE = ""; // keep empty fallback
+  initApp();
 }
-function closeModal(){
-  document.getElementById('modal').style.display = 'none';
-  document.body.classList.remove('noscroll');
-}
+document.getElementById('logoutBtn').addEventListener('click', ()=> location.reload());
 
-/* ---------- WHATSAPP OPEN ---------- */
-function openWhatsApp(num, text){
-  if(!num){ alert('No phone number'); return; }
-  const url = `https://wa.me/${num}?text=${encodeURIComponent(text||'')}`;
-  window.open(url,'_blank');
-}
+/* Dark toggle */
+document.getElementById('darkToggle').addEventListener('click', ()=>{
+  document.body.classList.toggle('dark');
+});
 
-/* ---------- INIT ---------- */
-(function init(){
-  // populate filter month (current + prev 11 months)
+/* ---------- INIT APP ---------- */
+function initApp(){
+  // populate months selector (curr + prev 11)
   const sel = document.getElementById('filterMonth');
   const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const now = new Date();
@@ -502,9 +281,312 @@ function openWhatsApp(num, text){
     opts.push(`<option value="${monthNames[d.getMonth()]}">${monthNames[d.getMonth()]} ${d.getFullYear()}</option>`);
   }
   sel.innerHTML = opts.join('');
+  // fetch data
+  loadAll();
+}
 
-  // load orders
-  loadOrders();
+/* ---------- API HELPERS ---------- */
+async function apiGet(sheet){
+  if(!API_BASE) return Promise.resolve([]); 
+  try{
+    const res = await fetch(API_BASE + "?sheet=" + encodeURIComponent(sheet));
+    return await res.json();
+  }catch(e){
+    console.warn("GET failed",e);
+    return [];
+  }
+}
+async function apiPost(body){
+  if(!API_BASE) return Promise.resolve({success:true}); // local demo: pretend success
+  try{
+    const res = await fetch(API_BASE, { method:'POST', body: JSON.stringify(body)});
+    return await res.json();
+  }catch(e){
+    console.error('POST failed',e);
+    return { success:false, error: e.toString() };
+  }
+}
+
+/* ---------- LOAD ALL ---------- */
+async function loadAll(){
+  [orders, team, transactions] = await Promise.all([apiGet('Orders'), apiGet('Team'), apiGet('Transactions')]);
+  // normalize rows if needed
+  if(!Array.isArray(orders)) orders = [];
+  if(!Array.isArray(team)) team = [];
+  if(!Array.isArray(transactions)) transactions = [];
+  renderAll();
+  renderTransactions();
+}
+
+/* ---------- RENDER ---------- */
+function renderAll(){
+  // normalize orders mapping
+  // map fields to expected
+  const norm = orders.map(o=>({
+    order_id: o.order_id || o.id || o.ID || o[Object.keys(o)[0]] || '',
+    client: o.client || o.client_name || o.Client || '',
+    phone: o.phone || o.client_phone || o.ClientPhone || '',
+    service: o.service || o.service_type || '',
+    status: o.status || 'Fresh',
+    editor: o.editor || o.assigned_editor || '',
+    price: Number(o.price || 0),
+    currency: o.currency || 'BDT',
+    editor_budget: Number(o.editor_budget || 0),
+    month: o.month || (new Date(o.date||Date.now())).toLocaleString('en-US',{month:'long'}),
+    paid_amount: Number(o.paid_amount || 0)
+  }));
+  // store back
+  orders = norm;
+
+  // populate orders table with filters
+  const tbody = document.querySelector('#ordersTable tbody');
+  tbody.innerHTML = '';
+  const selMonth = document.getElementById('filterMonth').value;
+  const selEditor = document.getElementById('filterEditor').value;
+  const displayCurrency = document.getElementById('displayCurrency').value;
+  const search = document.getElementById('searchBox').value.trim().toLowerCase();
+
+  const filtered = orders.filter(o=>{
+    if(selMonth && o.month !== selMonth) return false;
+    if(selEditor && o.editor !== selEditor) return false;
+    if(search && !(`${o.order_id} ${o.client}`).toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  filtered.forEach(o=>{
+    const priceDisp = formatMoney(convert(o.price,o.currency,displayCurrency), displayCurrency);
+    const paidDisp = formatMoney(convert(o.paid_amount||0,o.currency,displayCurrency), displayCurrency);
+    const editorBudgetDisp = formatMoney(convert(o.editor_budget||0,o.currency,displayCurrency), displayCurrency);
+    const phone = formatPhoneForWa(o.phone);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(o.order_id)}</td>
+      <td>${escapeHtml(o.client||'')}</td>
+      <td>${escapeHtml(o.phone||'')}</td>
+      <td>${escapeHtml(o.service||'')}</td>
+      <td>${priceDisp}</td>
+      <td>${paidDisp}</td>
+      <td>${editorBudgetDisp}</td>
+      <td>${escapeHtml(o.editor||'Unassigned')}</td>
+      <td>${escapeHtml(o.status)}</td>
+      <td>${escapeHtml(o.month)}</td>
+      <td><button class="small" onclick="openWA('${phone}','Hi ${encodeURIComponent(o.client||'')}, regarding ${o.order_id}')">WA</button></td>
+      <td>
+        <button class="small" onclick="openOrderEdit('${escapeHtml(o.order_id)}')">Edit</button>
+        <button class="small" onclick="openPaymentModal('${escapeHtml(o.order_id)}')">Pay</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // summary numbers
+  document.getElementById('totalOrders').innerText = orders.length;
+  document.getElementById('activeOrders').innerText = orders.filter(x=>x.status!=='Completed').length + ' active';
+  document.getElementById('pendingPayments').innerText = orders.filter(x=>(x.price-(x.paid_amount||0))>0).length;
+  // populate editors filter
+  const editorSet = new Set(team.map(t=>t.name).filter(Boolean).concat(orders.map(o=>o.editor).filter(Boolean)));
+  const fe = document.getElementById('filterEditor'); fe.innerHTML = '<option value="">All Editors</option>' + Array.from(editorSet).map(e=>`<option>${e}</option>`).join('');
+  document.getElementById('teamCount').innerText = Array.from(editorSet).length;
+
+  // team workload
+  renderTeamWorkload(document.getElementById('filterMonth').value||new Date().toLocaleString('en-US',{month:'long'}), displayCurrency);
+
+  // month summary
+  renderMonthSummary(displayCurrency);
+}
+
+function renderTeamWorkload(monthName, displayCurrency){
+  const container = document.getElementById('teamList');
+  container.innerHTML = '';
+  const teamNames = Array.from(new Set(team.map(t=>t.name).concat(orders.map(o=>o.editor))));
+  teamNames.forEach(name=>{
+    const memberOrders = orders.filter(o=>o.editor === name && (!monthName || o.month === monthName));
+    const count = memberOrders.length;
+    let budgetSum=0, priceSum=0, paidSum=0;
+    memberOrders.forEach(o=>{
+      budgetSum += convert(o.editor_budget||0,o.currency,displayCurrency);
+      priceSum += convert(o.price||0,o.currency,displayCurrency);
+      paidSum += convert(o.paid_amount||0,o.currency,displayCurrency);
+    });
+    const div = document.createElement('div');
+    div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginBottom='8px';
+    div.innerHTML = `<div><strong>${name||'Unassigned'}</strong><div class="small-kv">${count} jobs</div></div>
+      <div style="text-align:right"><div style="font-weight:700">${displayCurrency==='BDT'?Math.round(priceSum)+' BDT':'$'+priceSum.toFixed(2)}</div><div class="small-kv">Paid: ${displayCurrency==='BDT'?Math.round(paidSum)+' BDT':'$'+paidSum.toFixed(2)}</div></div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderMonthSummary(displayCurrency){
+  const container = document.getElementById('monthSummary'); container.innerHTML='';
+  const map = {};
+  orders.forEach(o=>{
+    if(!map[o.month]) map[o.month] = {count:0, incomeBDT:0, incomeUSD:0};
+    map[o.month].count++;
+    if(o.currency==='BDT') map[o.month].incomeBDT += Number(o.price||0); else map[o.month].incomeUSD += Number(o.price||0);
+  });
+  Object.keys(map).sort((a,b)=>monthIndex(b)-monthIndex(a)).forEach(m=>{
+    const obj = map[m];
+    let incomeDisplay='';
+    if(document.getElementById('displayCurrency').value === 'BDT'){
+      const inc = Math.round(obj.incomeBDT + obj.incomeUSD * EXCHANGE_RATE);
+      incomeDisplay = inc + ' BDT';
+    } else {
+      const inc = (obj.incomeUSD + obj.incomeBDT / EXCHANGE_RATE).toFixed(2);
+      incomeDisplay = '$' + inc;
+    }
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.style.borderBottom='1px solid #f3f4f6';
+    row.innerHTML = `<div><strong>${m}</strong><div class="small-kv">${obj.count} orders</div></div><div style="text-align:right">${incomeDisplay}</div>`;
+    container.appendChild(row);
+  });
+}
+
+/* ---------- TRANSACTIONS ---------- */
+function renderTransactions(){
+  const tbody = document.querySelector('#txTable tbody'); tbody.innerHTML='';
+  transactions.forEach(tx=>{
+    const tr = document.createElement('tr');
+    const amount = tx.amount || tx.Amount || 0;
+    tr.innerHTML = `<td>${tx.tx_id||tx.TX||''}</td><td>${tx.type||tx.tx_type||''}</td><td>${tx.related_order||''}</td><td>${tx.related_editor||''}</td><td>${tx.related_client||''}</td><td>${amount}</td><td>${tx.currency||''}</td><td>${tx.date?new Date(tx.date).toLocaleString():''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- ADD TRANSACTION ---------- */
+async function addTransaction(){
+  const obj = {
+    type:'addTransaction',
+    tx_type: document.getElementById('tx_type').value,
+    related_order: document.getElementById('tx_order').value.trim(),
+    related_editor: document.getElementById('tx_editor').value.trim(),
+    related_client: document.getElementById('tx_client').value.trim(),
+    amount: Number(document.getElementById('tx_amount').value) || 0,
+    currency: document.getElementById('tx_currency').value,
+    note: document.getElementById('tx_note').value
+  };
+  const res = await apiPost(obj);
+  if(res && res.success){ alert('Transaction added'); transactions.unshift({tx_id: res.tx_id||'TX', type: obj.tx_type, related_order: obj.related_order, related_editor: obj.related_editor, related_client: obj.related_client, amount: obj.amount, currency: obj.currency, date: new Date().toISOString()}); renderTransactions(); loadAll(); }
+  else alert('Failed to add tx');
+}
+
+/* ---------- ORDER MODAL HANDLERS ---------- */
+function openOrderModal(){ document.getElementById('orderModal').style.display='flex'; document.body.classList.add('noscroll'); }
+function closeOrderModal(){ document.getElementById('orderModal').style.display='none'; document.body.classList.remove('noscroll'); }
+
+async function saveOrderModal(){
+  const payload = {
+    type:'addOrder',
+    client: document.getElementById('m_client').value.trim(),
+    phone: document.getElementById('m_phone').value.trim(),
+    service: document.getElementById('m_service').value.trim(),
+    status: document.getElementById('m_status').value,
+    editor: document.getElementById('m_editor').value,
+    price: Number(document.getElementById('m_price').value) || 0,
+    currency: document.getElementById('m_currency').value,
+    editor_budget: Number(document.getElementById('m_editor_budget').value) || 0,
+    paid_amount: Number(document.getElementById('m_paid').value) || 0,
+    notes: document.getElementById('m_notes').value.trim(),
+    order_id: document.getElementById('m_order_id').value.trim() || undefined
+  };
+  if(!payload.client || !payload.phone){ alert('Client & phone required'); return; }
+  const res = await apiPost(payload);
+  if(res && res.success){ alert('Order saved: ' + (res.order_id||payload.order_id||'')); closeOrderModal(); await loadAll(); } else { alert('Failed to save order'); }
+}
+
+/* ---------- EDIT / PAY FLOW (simple) ---------- */
+function openOrderEdit(orderId){
+  const o = orders.find(x=>x.order_id === orderId);
+  if(!o) return alert('Order not found');
+  // prefill modal
+  document.getElementById('m_order_id').value = o.order_id;
+  document.getElementById('m_client').value = o.client;
+  document.getElementById('m_phone').value = o.phone;
+  document.getElementById('m_service').value = o.service;
+  document.getElementById('m_price').value = o.price;
+  document.getElementById('m_currency').value = o.currency;
+  document.getElementById('m_editor_budget').value = o.editor_budget;
+  document.getElementById('m_editor').value = o.editor;
+  document.getElementById('m_status').value = o.status;
+  document.getElementById('m_paid').value = o.paid_amount || 0;
+  document.getElementById('m_notes').value = o.notes || '';
+  openOrderModal();
+}
+
+function openPaymentModal(orderId){
+  const amt = prompt('Enter payment amount (same currency as order):');
+  if(!amt) return;
+  const o = orders.find(x=>x.order_id === orderId);
+  if(!o) return alert('Order not found');
+  const payload = {
+    type:'addTransaction',
+    tx_type:'payment',
+    related_order: orderId,
+    related_editor: o.editor || '',
+    related_client: o.client || '',
+    amount: Number(amt) || 0,
+    currency: o.currency || 'BDT',
+    note: 'Payment for ' + orderId
+  };
+  apiPost(payload).then(res=>{
+    if(res && res.success){ alert('Payment recorded'); loadAll(); } else alert('Failed to record');
+  });
+}
+
+/* ---------- TEAM MODAL ---------- */
+function openTeamModal(){ document.getElementById('teamModal').style.display='flex'; document.body.classList.add('noscroll'); }
+function closeTeamModal(){ document.getElementById('teamModal').style.display='none'; document.body.classList.remove('noscroll'); }
+async function saveTeamMember(){
+  const payload = { type:'addTeam', name: document.getElementById('t_name').value.trim(), phone: document.getElementById('t_phone').value.trim(), email: document.getElementById('t_email').value.trim(), role: document.getElementById('t_role').value };
+  const res = await apiPost(payload);
+  if(res && res.success){ alert('Team member added'); closeTeamModal(); await loadAll(); } else alert('Failed to add team');
+}
+
+/* ---------- UTILS: money, phone, export ---------- */
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function monthIndex(name){ const m=["January","February","March","April","May","June","July","August","September","October","November","December"]; return m.indexOf(name); }
+function formatMoney(amount, currency){ amount = Number(amount)||0; if(currency==='USD') return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(amount); return new Intl.NumberFormat('en-BD',{style:'currency',currency:'BDT',maximumFractionDigits:0}).format(amount); }
+function convert(amount, from, to){ amount = Number(amount)||0; if(from===to) return amount; if(from==='USD'&&to==='BDT') return amount * EXCHANGE_RATE; if(from==='BDT'&&to==='USD') return amount / EXCHANGE_RATE; return amount; }
+function formatPhoneForWa(num){ if(!num) return ''; let n=String(num).trim().replace(/\s+/g,''); if(/^0\d{10}$/.test(n)) n='+88'+n; if(n.startsWith('+')) n=n.slice(1); n=n.replace(/\D/g,''); return n; }
+function openWA(num,text){ if(!num) { alert('No phone'); return; } window.open('https://wa.me/'+num+'?text='+encodeURIComponent(text||''),'_blank'); }
+
+/* ---------- CSV export ---------- */
+function exportCSV(){
+  let csv = 'order_id,client,phone,service,price,currency,paid,editor,editor_budget,status,month\\n';
+  orders.forEach(o=>{
+    csv += `${o.order_id},"${o.client}",${o.phone},${o.service},${o.price},${o.currency},${o.paid_amount||0},${o.editor},${o.editor_budget||0},${o.status},${o.month}\\n`;
+  });
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='orders.csv'; a.click(); URL.revokeObjectURL(url);
+}
+
+/* ---------- Profit calc ---------- */
+function calcProfit(){
+  const income = Number(document.getElementById('pc_income').value)||0;
+  const incomeCur = document.getElementById('pc_income_cur').value;
+  const expense = Number(document.getElementById('pc_expense').value)||0;
+  const expenseCur = document.getElementById('pc_expense_cur').value;
+  let incBDT = incomeCur==='BDT'?income:income*EXCHANGE_RATE;
+  let expBDT = expenseCur==='BDT'?expense:expense*EXCHANGE_RATE;
+  const profitBDT = incBDT - expBDT;
+  document.getElementById('profitResult').innerHTML = `Profit: ${Math.round(profitBDT)} BDT (${(profitBDT/EXCHANGE_RATE).toFixed(2)} USD)`;
+}
+
+/* ---------- Helpers used in many places ---------- */
+function monthIndex(name){ const m=["January","February","March","April","May","June","July","August","September","October","November","December"]; return m.indexOf(name); }
+
+/* ---------- openWA wrapper ---------- */
+function openWA(phone,text){ if(!phone) { alert('No phone'); return; } window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(text),'_blank'); }
+
+/* ---------- INIT ---------- */
+(function(){
+  // hook buttons: login handled separately
+  document.getElementById('displayCurrency').addEventListener('change', renderAll);
+  document.getElementById('filterMonth').addEventListener('change', renderAll);
+  document.getElementById('filterEditor').addEventListener('change', renderAll);
+  // set API_BASE placeholder instruction if empty
+  if(!API_BASE) {
+    console.warn('API_BASE not set. Dashboard will run in demo/local mode. To enable full DB, paste your Apps Script WebApp URL into API_BASE variable in this file.');
+  } else {
+    // immediate load when authed
+  }
 })();
 </script>
 
