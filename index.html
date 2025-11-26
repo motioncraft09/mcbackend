@@ -11,7 +11,7 @@
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--accent);}
-.header{background:#fff;padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.header{background:#fff;padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;flex-wrap:wrap}
 .header h1{margin:0;font-size:18px}
 .container{max-width:1200px;margin:18px auto;padding:0 16px}
 .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
@@ -34,7 +34,7 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 .modal-body{padding:16px;overflow:auto}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:800px){.form-grid{grid-template-columns:1fr}}
-.modal-footer{padding:12px 16px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px}
+.modal-footer{padding:12px 16px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .noscroll{overflow:hidden}
 .dark{background:#0b1020;color:#e6eef8}
 .dark .card{background:#071026}
@@ -43,16 +43,22 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
 .csv-btn{background:#06b6d4;color:#fff;border:0;padding:6px 8px;border-radius:8px}
+@media(max-width:600px){
+  .header{flex-direction:column;align-items:flex-start;gap:8px}
+  .controls{flex-direction:column}
+  .controls > div{width:100%;}
+  .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div style="display:flex;gap:12px;align-items:center">
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
     <h1>Motioncraft — Owner Dashboard</h1>
     <span class="small-kv">Admin</span>
   </div>
-  <div style="display:flex;gap:8px;align-items:center">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <button id="darkToggle" class="small">Dark</button>
     <button id="logoutBtn" class="small">Logout</button>
   </div>
@@ -60,16 +66,16 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 
 <div class="container" id="app">
 
-  <!-- LOGIN UI (shown if not authed) -->
+  <!-- LOGIN UI -->
   <div id="loginCard" class="card" style="max-width:420px;margin:40px auto">
     <h3>Admin Login</h3>
     <div class="kv">Enter dashboard password</div>
     <input id="loginPass" class="input" placeholder="password" style="width:100%;margin-top:8px;margin-bottom:12px">
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="button" onclick="doLogin()">Login</button>
       <button class="button" onclick="fillDemo()">Demo (no API)</button>
     </div>
-    <div class="small-kv" style="margin-top:8px">Default demo password: <strong>$</strong></div>
+    <div class="small-kv" style="margin-top:8px">Default demo password: <strong>hasib123$</strong></div>
   </div>
 
   <!-- MAIN UI -->
@@ -116,7 +122,7 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 
       <input id="searchBox" class="input" placeholder="Search order ID or client" oninput="renderAll()">
 
-      <div style="margin-left:auto;display:flex;gap:8px">
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
         <button class="csv-btn" onclick="exportCSV()">Export CSV</button>
         <button class="small" onclick="openTeamModal()">Add Team</button>
       </div>
@@ -150,11 +156,11 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 
         <div class="card">
           <h3 style="margin-top:0">Profit Calculator</h3>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
             <input id="pc_income" class="input" placeholder="Income amount">
             <select id="pc_income_cur" class="input"><option>BDT</option><option>USD</option></select>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
             <input id="pc_expense" class="input" placeholder="Expense amount">
             <select id="pc_expense_cur" class="input"><option>BDT</option><option>USD</option></select>
           </div>
@@ -167,7 +173,7 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
     <!-- Transactions / Payments manager -->
     <div style="margin-top:12px" class="card">
       <h3 style="margin-top:0">Transactions (Payments & Expenses)</h3>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
         <select id="tx_type" class="input"><option value="payment">Payment</option><option value="expense">Expense</option></select>
         <input id="tx_order" class="input" placeholder="Related Order ID (optional)">
         <input id="tx_editor" class="input" placeholder="Editor (optional)">
@@ -189,7 +195,7 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
   </div>
 </div>
 
-<!-- Order Modal -->
+<!-- ORDER MODAL -->
 <div id="orderModal" class="modal"><div class="modal-box">
   <div class="modal-body">
     <h3>New Order</h3>
@@ -213,11 +219,11 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
   </div>
 </div></div>
 
-<!-- Team Modal -->
+<!-- TEAM MODAL -->
 <div id="teamModal" class="modal"><div class="modal-box">
   <div class="modal-body">
     <h3>Add Team Member</h3>
-    <div style="display:flex;gap:8px;margin-top:8px">
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
       <input id="t_name" class="input" placeholder="Name">
       <input id="t_phone" class="input" placeholder="Phone">
       <input id="t_email" class="input" placeholder="Email">
@@ -231,18 +237,15 @@ th{background:#fafafa;color:var(--muted);font-weight:600}
 </div></div>
 
 <script>
-/* ========================
-   CONFIG
-   ======================== */
-let API_BASE = "https://script.google.com/macros/s/AKfycbwmXWtfAaE2TOtTYHeyhqHzou5YMHGwTsr9NCYIPgQRfFYS_p7dZK3AY3-rnyTpRBzSEA/exec"; // <-- PASTE YOUR Apps Script Web App URL HERE (deploy as Web App: Anyone)
-let EXCHANGE_RATE = 120.5; // BDT per USD
+// ---------- CONFIG ----------
+let API_BASE = ""; // Your Apps Script Web App URL
+let EXCHANGE_RATE = 120.5;
 const DEMO_PASSWORD = "hasib123$";
 
-/* State */
 let authed = false;
 let orders = [], transactions = [], team = [];
 
-/* ---------- LOGIN ---------- */
+// ---------- LOGIN ----------
 function doLogin(){
   const pass = document.getElementById('loginPass').value;
   if(pass === DEMO_PASSWORD){
@@ -250,28 +253,20 @@ function doLogin(){
     document.getElementById('loginCard').style.display = 'none';
     document.getElementById('mainUI').style.display = 'block';
     initApp();
-  } else {
-    // try if API configured and no-demo required, accept any for now?
-    alert('Wrong password. Try demo password or configure API.');
-  }
+  } else alert('Wrong password. Try demo password or configure API.');
 }
 function fillDemo(){
   authed = true;
   document.getElementById('loginCard').style.display = 'none';
   document.getElementById('mainUI').style.display = 'block';
-  API_BASE = ""; // keep empty fallback
+  API_BASE = "";
   initApp();
 }
 document.getElementById('logoutBtn').addEventListener('click', ()=> location.reload());
+document.getElementById('darkToggle').addEventListener('click', ()=> document.body.classList.toggle('dark'));
 
-/* Dark toggle */
-document.getElementById('darkToggle').addEventListener('click', ()=>{
-  document.body.classList.toggle('dark');
-});
-
-/* ---------- INIT APP ---------- */
+// ---------- INIT ----------
 function initApp(){
-  // populate months selector (curr + prev 11)
   const sel = document.getElementById('filterMonth');
   const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const now = new Date();
@@ -281,64 +276,39 @@ function initApp(){
     opts.push(`<option value="${monthNames[d.getMonth()]}">${monthNames[d.getMonth()]} ${d.getFullYear()}</option>`);
   }
   sel.innerHTML = opts.join('');
-  // fetch data
   loadAll();
 }
 
-/* ---------- API HELPERS ---------- */
-async function apiGet(sheet){
-  if(!API_BASE) return Promise.resolve([]); 
-  try{
-    const res = await fetch(API_BASE + "?sheet=" + encodeURIComponent(sheet));
-    return await res.json();
-  }catch(e){
-    console.warn("GET failed",e);
-    return [];
-  }
-}
-async function apiPost(body){
-  if(!API_BASE) return Promise.resolve({success:true}); // local demo: pretend success
-  try{
-    const res = await fetch(API_BASE, { method:'POST', body: JSON.stringify(body)});
-    return await res.json();
-  }catch(e){
-    console.error('POST failed',e);
-    return { success:false, error: e.toString() };
-  }
-}
+// ---------- API HELPERS ----------
+async function apiGet(sheet){ if(!API_BASE) return Promise.resolve([]); try{ const res = await fetch(API_BASE+"?sheet="+encodeURIComponent(sheet)); return await res.json(); }catch(e){ console.warn("GET failed",e); return []; } }
+async function apiPost(body){ if(!API_BASE) return Promise.resolve({success:true}); try{ const res = await fetch(API_BASE,{method:'POST',body:JSON.stringify(body)}); return await res.json(); }catch(e){ console.error('POST failed',e); return { success:false,error:e.toString() }; } }
 
-/* ---------- LOAD ALL ---------- */
+// ---------- LOAD & RENDER ----------
 async function loadAll(){
   [orders, team, transactions] = await Promise.all([apiGet('Orders'), apiGet('Team'), apiGet('Transactions')]);
-  // normalize rows if needed
-  if(!Array.isArray(orders)) orders = [];
-  if(!Array.isArray(team)) team = [];
-  if(!Array.isArray(transactions)) transactions = [];
+  orders = Array.isArray(orders)?orders:[];
+  team = Array.isArray(team)?team:[];
+  transactions = Array.isArray(transactions)?transactions:[];
   renderAll();
   renderTransactions();
 }
 
-/* ---------- RENDER ---------- */
 function renderAll(){
-  // normalize orders mapping
-  // map fields to expected
   const norm = orders.map(o=>({
-    order_id: o.order_id || o.id || o.ID || o[Object.keys(o)[0]] || '',
-    client: o.client || o.client_name || o.Client || '',
-    phone: o.phone || o.client_phone || o.ClientPhone || '',
-    service: o.service || o.service_type || '',
-    status: o.status || 'Fresh',
-    editor: o.editor || o.assigned_editor || '',
-    price: Number(o.price || 0),
-    currency: o.currency || 'BDT',
-    editor_budget: Number(o.editor_budget || 0),
-    month: o.month || (new Date(o.date||Date.now())).toLocaleString('en-US',{month:'long'}),
-    paid_amount: Number(o.paid_amount || 0)
+    order_id: o.order_id||o.id||o.ID||'',
+    client: o.client||o.client_name||'',
+    phone: o.phone||o.client_phone||'',
+    service: o.service||o.service_type||'',
+    status: o.status||'Fresh',
+    editor: o.editor||'',
+    price: Number(o.price||0),
+    currency: o.currency||'BDT',
+    editor_budget: Number(o.editor_budget||0),
+    month: o.month||(new Date(o.date||Date.now())).toLocaleString('en-US',{month:'long'}),
+    paid_amount: Number(o.paid_amount||0)
   }));
-  // store back
   orders = norm;
 
-  // populate orders table with filters
   const tbody = document.querySelector('#ordersTable tbody');
   tbody.innerHTML = '';
   const selMonth = document.getElementById('filterMonth').value;
@@ -349,246 +319,175 @@ function renderAll(){
   const filtered = orders.filter(o=>{
     if(selMonth && o.month !== selMonth) return false;
     if(selEditor && o.editor !== selEditor) return false;
-    if(search && !(`${o.order_id} ${o.client}`).toLowerCase().includes(search)) return false;
+    if(search && !(o.client.toLowerCase().includes(search)||o.order_id.toLowerCase().includes(search))) return false;
     return true;
   });
 
-  filtered.forEach(o=>{
-    const priceDisp = formatMoney(convert(o.price,o.currency,displayCurrency), displayCurrency);
-    const paidDisp = formatMoney(convert(o.paid_amount||0,o.currency,displayCurrency), displayCurrency);
-    const editorBudgetDisp = formatMoney(convert(o.editor_budget||0,o.currency,displayCurrency), displayCurrency);
-    const phone = formatPhoneForWa(o.phone);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${escapeHtml(o.order_id)}</td>
-      <td>${escapeHtml(o.client||'')}</td>
-      <td>${escapeHtml(o.phone||'')}</td>
-      <td>${escapeHtml(o.service||'')}</td>
-      <td>${priceDisp}</td>
-      <td>${paidDisp}</td>
-      <td>${editorBudgetDisp}</td>
-      <td>${escapeHtml(o.editor||'Unassigned')}</td>
-      <td>${escapeHtml(o.status)}</td>
-      <td>${escapeHtml(o.month)}</td>
-      <td><button class="small" onclick="openWA('${phone}','Hi ${encodeURIComponent(o.client||'')}, regarding ${o.order_id}')">WA</button></td>
-      <td>
-        <button class="small" onclick="openOrderEdit('${escapeHtml(o.order_id)}')">Edit</button>
-        <button class="small" onclick="openPaymentModal('${escapeHtml(o.order_id)}')">Pay</button>
-      </td>`;
-    tbody.appendChild(tr);
+  filtered.forEach((o,i)=>{
+    let price = convertCurrency(o.price,o.currency,displayCurrency).toFixed(2);
+    let paid = convertCurrency(o.paid_amount,o.currency,displayCurrency).toFixed(2);
+    tbody.innerHTML += `<tr>
+      <td>${o.order_id}</td><td>${o.client}</td><td>${o.phone}</td><td>${o.service}</td><td>${price}</td><td>${paid}</td><td>${o.editor_budget}</td><td>${o.editor}</td><td>${o.status}</td><td>${o.month}</td>
+      <td>${o.phone?`<a target="_blank" href="https://wa.me/${o.phone.replace(/\D/g,'')}">WA</a>`:''}</td>
+      <td><button class="small" onclick="editOrder(${i})">Edit</button></td>
+    </tr>`;
   });
 
-  // summary numbers
+  // UPDATE SUMMARY
   document.getElementById('totalOrders').innerText = orders.length;
-  document.getElementById('activeOrders').innerText = orders.filter(x=>x.status!=='Completed').length + ' active';
-  document.getElementById('pendingPayments').innerText = orders.filter(x=>(x.price-(x.paid_amount||0))>0).length;
-  // populate editors filter
-  const editorSet = new Set(team.map(t=>t.name).filter(Boolean).concat(orders.map(o=>o.editor).filter(Boolean)));
-  const fe = document.getElementById('filterEditor'); fe.innerHTML = '<option value="">All Editors</option>' + Array.from(editorSet).map(e=>`<option>${e}</option>`).join('');
-  document.getElementById('teamCount').innerText = Array.from(editorSet).length;
+  document.getElementById('activeOrders').innerText = orders.filter(o=>o.status!=='Completed').length+' active';
+  let pending = orders.reduce((a,o)=>a+Math.max(0,o.price-o.paid_amount),0);
+  document.getElementById('pendingPayments').innerText = pending.toFixed(2)+' '+displayCurrency;
+  document.getElementById('teamCount').innerText = team.length;
 
-  // team workload
-  renderTeamWorkload(document.getElementById('filterMonth').value||new Date().toLocaleString('en-US',{month:'long'}), displayCurrency);
+  // TEAM DROPDOWN
+  const editorSel = document.getElementById('filterEditor');
+  const editors = ['','Siam','Mojid','Samiul'];
+  editorSel.innerHTML = editors.map(e=>`<option value="${e}">${e||'All Editors'}</option>`).join('');
 
-  // month summary
-  renderMonthSummary(displayCurrency);
+  // TEAM WORKLOAD
+  renderTeam();
+  renderMonthSummary();
 }
 
-function renderTeamWorkload(monthName, displayCurrency){
-  const container = document.getElementById('teamList');
-  container.innerHTML = '';
-  const teamNames = Array.from(new Set(team.map(t=>t.name).concat(orders.map(o=>o.editor))));
-  teamNames.forEach(name=>{
-    const memberOrders = orders.filter(o=>o.editor === name && (!monthName || o.month === monthName));
-    const count = memberOrders.length;
-    let budgetSum=0, priceSum=0, paidSum=0;
-    memberOrders.forEach(o=>{
-      budgetSum += convert(o.editor_budget||0,o.currency,displayCurrency);
-      priceSum += convert(o.price||0,o.currency,displayCurrency);
-      paidSum += convert(o.paid_amount||0,o.currency,displayCurrency);
-    });
-    const div = document.createElement('div');
-    div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginBottom='8px';
-    div.innerHTML = `<div><strong>${name||'Unassigned'}</strong><div class="small-kv">${count} jobs</div></div>
-      <div style="text-align:right"><div style="font-weight:700">${displayCurrency==='BDT'?Math.round(priceSum)+' BDT':'$'+priceSum.toFixed(2)}</div><div class="small-kv">Paid: ${displayCurrency==='BDT'?Math.round(paidSum)+' BDT':'$'+paidSum.toFixed(2)}</div></div>`;
-    container.appendChild(div);
-  });
+// ---------- UTILS ----------
+function convertCurrency(amount,from,to){
+  if(from===to) return amount;
+  if(from==='BDT' && to==='USD') return amount/EXCHANGE_RATE;
+  if(from==='USD' && to==='BDT') return amount*EXCHANGE_RATE;
+  return amount;
 }
 
-function renderMonthSummary(displayCurrency){
-  const container = document.getElementById('monthSummary'); container.innerHTML='';
-  const map = {};
-  orders.forEach(o=>{
-    if(!map[o.month]) map[o.month] = {count:0, incomeBDT:0, incomeUSD:0};
-    map[o.month].count++;
-    if(o.currency==='BDT') map[o.month].incomeBDT += Number(o.price||0); else map[o.month].incomeUSD += Number(o.price||0);
-  });
-  Object.keys(map).sort((a,b)=>monthIndex(b)-monthIndex(a)).forEach(m=>{
-    const obj = map[m];
-    let incomeDisplay='';
-    if(document.getElementById('displayCurrency').value === 'BDT'){
-      const inc = Math.round(obj.incomeBDT + obj.incomeUSD * EXCHANGE_RATE);
-      incomeDisplay = inc + ' BDT';
-    } else {
-      const inc = (obj.incomeUSD + obj.incomeBDT / EXCHANGE_RATE).toFixed(2);
-      incomeDisplay = '$' + inc;
-    }
-    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.style.borderBottom='1px solid #f3f4f6';
-    row.innerHTML = `<div><strong>${m}</strong><div class="small-kv">${obj.count} orders</div></div><div style="text-align:right">${incomeDisplay}</div>`;
-    container.appendChild(row);
-  });
-}
-
-/* ---------- TRANSACTIONS ---------- */
-function renderTransactions(){
-  const tbody = document.querySelector('#txTable tbody'); tbody.innerHTML='';
-  transactions.forEach(tx=>{
-    const tr = document.createElement('tr');
-    const amount = tx.amount || tx.Amount || 0;
-    tr.innerHTML = `<td>${tx.tx_id||tx.TX||''}</td><td>${tx.type||tx.tx_type||''}</td><td>${tx.related_order||''}</td><td>${tx.related_editor||''}</td><td>${tx.related_client||''}</td><td>${amount}</td><td>${tx.currency||''}</td><td>${tx.date?new Date(tx.date).toLocaleString():''}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ---------- ADD TRANSACTION ---------- */
-async function addTransaction(){
-  const obj = {
-    type:'addTransaction',
-    tx_type: document.getElementById('tx_type').value,
-    related_order: document.getElementById('tx_order').value.trim(),
-    related_editor: document.getElementById('tx_editor').value.trim(),
-    related_client: document.getElementById('tx_client').value.trim(),
-    amount: Number(document.getElementById('tx_amount').value) || 0,
-    currency: document.getElementById('tx_currency').value,
-    note: document.getElementById('tx_note').value
-  };
-  const res = await apiPost(obj);
-  if(res && res.success){ alert('Transaction added'); transactions.unshift({tx_id: res.tx_id||'TX', type: obj.tx_type, related_order: obj.related_order, related_editor: obj.related_editor, related_client: obj.related_client, amount: obj.amount, currency: obj.currency, date: new Date().toISOString()}); renderTransactions(); loadAll(); }
-  else alert('Failed to add tx');
-}
-
-/* ---------- ORDER MODAL HANDLERS ---------- */
-function openOrderModal(){ document.getElementById('orderModal').style.display='flex'; document.body.classList.add('noscroll'); }
-function closeOrderModal(){ document.getElementById('orderModal').style.display='none'; document.body.classList.remove('noscroll'); }
-
-async function saveOrderModal(){
-  const payload = {
-    type:'addOrder',
-    client: document.getElementById('m_client').value.trim(),
-    phone: document.getElementById('m_phone').value.trim(),
-    service: document.getElementById('m_service').value.trim(),
-    status: document.getElementById('m_status').value,
-    editor: document.getElementById('m_editor').value,
-    price: Number(document.getElementById('m_price').value) || 0,
+// ---------- ORDER MODAL ----------
+function openOrderModal(){document.getElementById('orderModal').style.display='flex'}
+function closeOrderModal(){document.getElementById('orderModal').style.display='none'}
+function saveOrderModal(){
+  const o = {
+    order_id: document.getElementById('m_order_id').value || 'O'+(orders.length+1),
+    client: document.getElementById('m_client').value,
+    phone: document.getElementById('m_phone').value,
+    service: document.getElementById('m_service').value,
+    price: Number(document.getElementById('m_price').value),
     currency: document.getElementById('m_currency').value,
-    editor_budget: Number(document.getElementById('m_editor_budget').value) || 0,
-    paid_amount: Number(document.getElementById('m_paid').value) || 0,
-    notes: document.getElementById('m_notes').value.trim(),
-    order_id: document.getElementById('m_order_id').value.trim() || undefined
+    paid_amount: Number(document.getElementById('m_paid').value||0),
+    editor_budget: Number(document.getElementById('m_editor_budget').value||0),
+    editor: document.getElementById('m_editor').value,
+    status: document.getElementById('m_status').value,
+    notes: document.getElementById('m_notes').value,
+    month: new Date().toLocaleString('en-US',{month:'long'})
   };
-  if(!payload.client || !payload.phone){ alert('Client & phone required'); return; }
-  const res = await apiPost(payload);
-  if(res && res.success){ alert('Order saved: ' + (res.order_id||payload.order_id||'')); closeOrderModal(); await loadAll(); } else { alert('Failed to save order'); }
+  orders.push(o);
+  renderAll();
+  closeOrderModal();
 }
 
-/* ---------- EDIT / PAY FLOW (simple) ---------- */
-function openOrderEdit(orderId){
-  const o = orders.find(x=>x.order_id === orderId);
-  if(!o) return alert('Order not found');
-  // prefill modal
-  document.getElementById('m_order_id').value = o.order_id;
-  document.getElementById('m_client').value = o.client;
-  document.getElementById('m_phone').value = o.phone;
-  document.getElementById('m_service').value = o.service;
-  document.getElementById('m_price').value = o.price;
-  document.getElementById('m_currency').value = o.currency;
-  document.getElementById('m_editor_budget').value = o.editor_budget;
-  document.getElementById('m_editor').value = o.editor;
-  document.getElementById('m_status').value = o.status;
-  document.getElementById('m_paid').value = o.paid_amount || 0;
-  document.getElementById('m_notes').value = o.notes || '';
+// ---------- EDIT ORDER ----------
+function editOrder(idx){
+  const o = orders[idx];
   openOrderModal();
+  document.getElementById('m_order_id').value=o.order_id;
+  document.getElementById('m_client').value=o.client;
+  document.getElementById('m_phone').value=o.phone;
+  document.getElementById('m_service').value=o.service;
+  document.getElementById('m_price').value=o.price;
+  document.getElementById('m_currency').value=o.currency;
+  document.getElementById('m_paid').value=o.paid_amount;
+  document.getElementById('m_editor_budget').value=o.editor_budget;
+  document.getElementById('m_editor').value=o.editor;
+  document.getElementById('m_status').value=o.status;
+  document.getElementById('m_notes').value=o.notes||'';
 }
 
-function openPaymentModal(orderId){
-  const amt = prompt('Enter payment amount (same currency as order):');
-  if(!amt) return;
-  const o = orders.find(x=>x.order_id === orderId);
-  if(!o) return alert('Order not found');
-  const payload = {
-    type:'addTransaction',
-    tx_type:'payment',
-    related_order: orderId,
-    related_editor: o.editor || '',
-    related_client: o.client || '',
-    amount: Number(amt) || 0,
-    currency: o.currency || 'BDT',
-    note: 'Payment for ' + orderId
-  };
-  apiPost(payload).then(res=>{
-    if(res && res.success){ alert('Payment recorded'); loadAll(); } else alert('Failed to record');
+// ---------- TEAM ----------
+function openTeamModal(){document.getElementById('teamModal').style.display='flex'}
+function closeTeamModal(){document.getElementById('teamModal').style.display='none'}
+function saveTeamMember(){
+  team.push({
+    name: document.getElementById('t_name').value,
+    phone: document.getElementById('t_phone').value,
+    email: document.getElementById('t_email').value,
+    role: document.getElementById('t_role').value
   });
+  renderTeam();
+  closeTeamModal();
+}
+function renderTeam(){
+  const div = document.getElementById('teamList');
+  if(!team.length){div.innerHTML='No members yet.';return;}
+  div.innerHTML = '<ul>'+team.map(t=>`<li>${t.name} (${t.role})</li>`).join('')+'</ul>';
 }
 
-/* ---------- TEAM MODAL ---------- */
-function openTeamModal(){ document.getElementById('teamModal').style.display='flex'; document.body.classList.add('noscroll'); }
-function closeTeamModal(){ document.getElementById('teamModal').style.display='none'; document.body.classList.remove('noscroll'); }
-async function saveTeamMember(){
-  const payload = { type:'addTeam', name: document.getElementById('t_name').value.trim(), phone: document.getElementById('t_phone').value.trim(), email: document.getElementById('t_email').value.trim(), role: document.getElementById('t_role').value };
-  const res = await apiPost(payload);
-  if(res && res.success){ alert('Team member added'); closeTeamModal(); await loadAll(); } else alert('Failed to add team');
-}
-
-/* ---------- UTILS: money, phone, export ---------- */
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function monthIndex(name){ const m=["January","February","March","April","May","June","July","August","September","October","November","December"]; return m.indexOf(name); }
-function formatMoney(amount, currency){ amount = Number(amount)||0; if(currency==='USD') return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(amount); return new Intl.NumberFormat('en-BD',{style:'currency',currency:'BDT',maximumFractionDigits:0}).format(amount); }
-function convert(amount, from, to){ amount = Number(amount)||0; if(from===to) return amount; if(from==='USD'&&to==='BDT') return amount * EXCHANGE_RATE; if(from==='BDT'&&to==='USD') return amount / EXCHANGE_RATE; return amount; }
-function formatPhoneForWa(num){ if(!num) return ''; let n=String(num).trim().replace(/\s+/g,''); if(/^0\d{10}$/.test(n)) n='+88'+n; if(n.startsWith('+')) n=n.slice(1); n=n.replace(/\D/g,''); return n; }
-function openWA(num,text){ if(!num) { alert('No phone'); return; } window.open('https://wa.me/'+num+'?text='+encodeURIComponent(text||''),'_blank'); }
-
-/* ---------- CSV export ---------- */
-function exportCSV(){
-  let csv = 'order_id,client,phone,service,price,currency,paid,editor,editor_budget,status,month\\n';
+// ---------- MONTH SUMMARY ----------
+function renderMonthSummary(){
+  const div = document.getElementById('monthSummary');
+  const months = {};
   orders.forEach(o=>{
-    csv += `${o.order_id},"${o.client}",${o.phone},${o.service},${o.price},${o.currency},${o.paid_amount||0},${o.editor},${o.editor_budget||0},${o.status},${o.month}\\n`;
+    if(!months[o.month]) months[o.month]=0;
+    months[o.month]+=o.price;
+  });
+  div.innerHTML = Object.entries(months).map(([m,v])=>`<div>${m}: ${v.toFixed(2)} BDT</div>`).join('');
+}
+
+// ---------- PROFIT CALC ----------
+function calcProfit(){
+  let inc = Number(document.getElementById('pc_income').value||0);
+  let exp = Number(document.getElementById('pc_expense').value||0);
+  const inc_cur = document.getElementById('pc_income_cur').value;
+  const exp_cur = document.getElementById('pc_expense_cur').value;
+  inc = convertCurrency(inc,inc_cur,'BDT');
+  exp = convertCurrency(exp,exp_cur,'BDT');
+  document.getElementById('profitResult').innerText = `Profit: ${ (inc-exp).toFixed(2) } BDT`;
+}
+
+// ---------- TRANSACTIONS ----------
+function addTransaction(){
+  const tx = {
+    id: 'TX'+(transactions.length+1),
+    type: document.getElementById('tx_type').value,
+    order: document.getElementById('tx_order').value,
+    editor: document.getElementById('tx_editor').value,
+    client: document.getElementById('tx_client').value,
+    amount: Number(document.getElementById('tx_amount').value),
+    currency: document.getElementById('tx_currency').value,
+    note: document.getElementById('tx_note').value,
+    date: new Date().toLocaleString()
+  };
+  transactions.push(tx);
+  renderTransactions();
+}
+function renderTransactions(){
+  const tbody = document.querySelector('#txTable tbody');
+  tbody.innerHTML = transactions.map(tx=>{
+    return `<tr>
+      <td>${tx.id}</td>
+      <td>${tx.type}</td>
+      <td>${tx.order}</td>
+      <td>${tx.editor}</td>
+      <td>${tx.client}</td>
+      <td>${tx.amount}</td>
+      <td>${tx.currency}</td>
+      <td>${tx.date}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- CSV EXPORT ----------
+function exportCSV(){
+  let csv = 'Order ID,Client,Phone,Service,Price,Paid,EditorBudget,Editor,Status,Month\n';
+  orders.forEach(o=>{
+    csv += [o.order_id,o.client,o.phone,o.service,o.price,o.paid_amount,o.editor_budget,o.editor,o.status,o.month].join(',')+'\n';
   });
   const blob = new Blob([csv],{type:'text/csv'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='orders.csv'; a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href=url; a.download='orders.csv'; a.click();
+  URL.revokeObjectURL(url);
 }
 
-/* ---------- Profit calc ---------- */
-function calcProfit(){
-  const income = Number(document.getElementById('pc_income').value)||0;
-  const incomeCur = document.getElementById('pc_income_cur').value;
-  const expense = Number(document.getElementById('pc_expense').value)||0;
-  const expenseCur = document.getElementById('pc_expense_cur').value;
-  let incBDT = incomeCur==='BDT'?income:income*EXCHANGE_RATE;
-  let expBDT = expenseCur==='BDT'?expense:expense*EXCHANGE_RATE;
-  const profitBDT = incBDT - expBDT;
-  document.getElementById('profitResult').innerHTML = `Profit: ${Math.round(profitBDT)} BDT (${(profitBDT/EXCHANGE_RATE).toFixed(2)} USD)`;
-}
+// ---------- EVENT HANDLERS ----------
+document.getElementById('filterMonth').addEventListener('change', renderAll);
+document.getElementById('filterEditor').addEventListener('change', renderAll);
+document.getElementById('displayCurrency').addEventListener('change', renderAll);
 
-/* ---------- Helpers used in many places ---------- */
-function monthIndex(name){ const m=["January","February","March","April","May","June","July","August","September","October","November","December"]; return m.indexOf(name); }
-
-/* ---------- openWA wrapper ---------- */
-function openWA(phone,text){ if(!phone) { alert('No phone'); return; } window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(text),'_blank'); }
-
-/* ---------- INIT ---------- */
-(function(){
-  // hook buttons: login handled separately
-  document.getElementById('displayCurrency').addEventListener('change', renderAll);
-  document.getElementById('filterMonth').addEventListener('change', renderAll);
-  document.getElementById('filterEditor').addEventListener('change', renderAll);
-  // set API_BASE placeholder instruction if empty
-  if(!API_BASE) {
-    console.warn('API_BASE not set. Dashboard will run in demo/local mode. To enable full DB, paste your Apps Script WebApp URL into API_BASE variable in this file.');
-  } else {
-    // immediate load when authed
-  }
-})();
 </script>
-
 </body>
 </html>
