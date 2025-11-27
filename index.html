@@ -1,493 +1,2444 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Motioncraft — Full Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<style>
-:root{
-  --bg:#f6f7f9; --card:#fff; --muted:#6b7280; --accent:#0f172a; --success:#10b981; --danger:#ef4444;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--accent);}
-.header{background:#fff;padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;flex-wrap:wrap}
-.header h1{margin:0;font-size:18px}
-.container{max-width:1200px;margin:18px auto;padding:0 16px}
-.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-.card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
-.summary{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.sum-card{min-width:150px;flex:1;padding:12px;border-radius:10px}
-.kv{color:var(--muted);font-size:13px}
-.huge{font-size:18px;font-weight:700}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.input,select,button{padding:8px;border-radius:8px;border:1px solid #e6e9ef;font-size:14px}
-.button{background:#111;color:#fff;border:0;cursor:pointer;padding:8px 12px;border-radius:8px}
-.small{padding:6px 8px;border-radius:8px;border:0;background:#111;color:#fff}
-.table-wrap{overflow:auto;border-radius:10px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px 12px;border-bottom:1px solid #f3f4f6;text-align:left;font-size:14px}
-th{background:#fafafa;color:var(--muted);font-weight:600}
-.badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a;font-weight:700;font-size:12px}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999;padding:16px}
-.modal-box{background:#fff;width:100%;max-width:900px;border-radius:12px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
-.modal-body{padding:16px;overflow:auto}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:800px){.form-grid{grid-template-columns:1fr}}
-.modal-footer{padding:12px 16px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-.noscroll{overflow:hidden}
-.dark{background:#0b1020;color:#e6eef8}
-.dark .card{background:#071026}
-.small-kv{font-size:12px;color:var(--muted)}
-.right{margin-left:auto}
-.grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-.csv-btn{background:#06b6d4;color:#fff;border:0;padding:6px 8px;border-radius:8px}
-@media(max-width:600px){
-  .header{flex-direction:column;align-items:flex-start;gap:8px}
-  .controls{flex-direction:column}
-  .controls > div{width:100%;}
-  .grid{grid-template-columns:1fr}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motioncraft Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light theme colors */
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #4299e1;
+            --accent-light: #bee3f8;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode {
+            /* Dark theme colors */
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-card: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #63b3ed;
+            --accent-light: #2c5282;
+            --border: #4a5568;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --glass-bg: rgba(45, 55, 72, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #9f7aea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #9f7aea);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: none;
+            width: 50px;
+            height: 26px;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 3px;
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            transition: transform 0.3s;
+        }
+
+        .dark-mode .theme-toggle::after {
+            transform: translateX(24px);
+        }
+
+        .currency-toggle {
+            display: flex;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: var(--shadow);
+        }
+
+        .currency-option {
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .currency-option.active {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background-color: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-card);
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            background-color: var(--bg-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-fresh {
+            background-color: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .status-scripting {
+            background-color: #fef5e7;
+            color: #d69e2e;
+        }
+
+        .status-editing {
+            background-color: #e6fffa;
+            color: #319795;
+        }
+
+        .status-correction {
+            background-color: #fff5f5;
+            color: #e53e3e;
+        }
+
+        .status-final {
+            background-color: #f0fff4;
+            color: #38a169;
+        }
+
+        .payment-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .payment-pending {
+            background-color: #fef5e7;
+            color: #d69e2e;
+        }
+
+        .payment-paid {
+            background-color: #f0fff4;
+            color: #38a169;
+        }
+
+        .whatsapp-link {
+            color: #25D366;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select, .search-input {
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-card);
+            padding: 10px 0;
+            z-index: 1;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+            background-color: var(--bg-card);
+            padding: 15px 0;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 300px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .currency-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .currency-symbol {
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <h1>Motioncraft Management System</h1>
+            </div>
+            <div class="header-controls">
+                <div class="currency-toggle">
+                    <div class="currency-option active" data-currency="USD">USD</div>
+                    <div class="currency-option" data-currency="BDT">BDT</div>
+                </div>
+                <button class="theme-toggle" id="themeToggle"></button>
+            </div>
+        </header>
 
-<div class="header">
-  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-    <h1>Motioncraft — Owner Dashboard</h1>
-    <span class="small-kv">Admin</span>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <button id="darkToggle" class="small">Dark</button>
-    <button id="logoutBtn" class="small">Logout</button>
-  </div>
-</div>
-
-<div class="container" id="app">
-
-  <!-- LOGIN UI -->
-  <div id="loginCard" class="card" style="max-width:420px;margin:40px auto">
-    <h3>Admin Login</h3>
-    <div class="kv">Enter dashboard password</div>
-    <input id="loginPass" class="input" placeholder="password" style="width:100%;margin-top:8px;margin-bottom:12px">
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="button" onclick="doLogin()">Login</button>
-      <button class="button" onclick="fillDemo()">Demo (no API)</button>
-    </div>
-    <div class="small-kv" style="margin-top:8px">Default demo password: <strong>hasib123$</strong></div>
-  </div>
-
-  <!-- MAIN UI -->
-  <div id="mainUI" style="display:none">
-
-    <div class="summary">
-      <div class="sum-card card">
-        <div class="kv">Total Orders</div>
-        <div id="totalOrders" class="huge">0</div>
-        <div class="small-kv" id="activeOrders">0 active</div>
-      </div>
-      <div class="sum-card card">
-        <div class="kv">Pending Payments</div>
-        <div id="pendingPayments" class="huge">0</div>
-        <div class="small-kv">Orders with pending</div>
-      </div>
-      <div class="sum-card card">
-        <div class="kv">This Month Income</div>
-        <div id="thisMonthIncome" class="huge">0 BDT</div>
-        <div class="small-kv">Converted currency view</div>
-      </div>
-      <div class="sum-card card">
-        <div class="kv">Team Members</div>
-        <div id="teamCount" class="huge">0</div>
-        <div class="small-kv">Editors tracked</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button class="button" onclick="openOrderModal()">+ New Order</button>
-
-      <select id="filterMonth" class="input">
-        <option value="">All Months</option>
-      </select>
-
-      <select id="filterEditor" class="input">
-        <option value="">All Editors</option>
-      </select>
-
-      <select id="displayCurrency" class="input">
-        <option value="BDT">Display BDT</option>
-        <option value="USD">Display USD</option>
-      </select>
-
-      <input id="searchBox" class="input" placeholder="Search order ID or client" oninput="renderAll()">
-
-      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="csv-btn" onclick="exportCSV()">Export CSV</button>
-        <button class="small" onclick="openTeamModal()">Add Team</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h3 style="margin-top:0">Orders</h3>
-        <div class="table-wrap" style="margin-top:10px">
-          <table id="ordersTable">
-            <thead>
-              <tr>
-                <th>Order</th><th>Client</th><th>Phone</th><th>Service</th><th>Price</th><th>Paid</th><th>EditorBudget</th><th>Editor</th><th>Status</th><th>Month</th><th>WA</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="card">
-          <h3 style="margin-top:0">Team Workload</h3>
-          <div id="teamList"></div>
+        <div class="tabs">
+            <div class="tab active" data-tab="orders">Orders</div>
+            <div class="tab" data-tab="team">Team</div>
+            <div class="tab" data-tab="finance">Finance</div>
+            <div class="tab" data-tab="clients">Clients</div>
         </div>
 
-        <div class="card">
-          <h3 style="margin-top:0">Monthly Summary</h3>
-          <div id="monthSummary"></div>
+        <!-- Orders Dashboard -->
+        <div class="dashboard active" id="ordersDashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Order Management</h2>
+                    <button class="btn btn-primary" id="addOrderBtn">
+                        <span>+</span> Add New Order
+                    </button>
+                </div>
+
+                <div class="filter-bar">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="Fresh">Fresh</option>
+                        <option value="Scripting">Scripting</option>
+                        <option value="Editing">Editing</option>
+                        <option value="Correction">Correction</option>
+                        <option value="Final Delivery">Final Delivery</option>
+                    </select>
+                    <select class="filter-select" id="editorFilter">
+                        <option value="">All Editors</option>
+                        <option value="Siam">Siam</option>
+                        <option value="Mojid">Mojid</option>
+                        <option value="Samiul">Samiul</option>
+                    </select>
+                    <select class="filter-select" id="timeFilter">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search orders...">
+                    <button class="btn btn-secondary" id="exportCsvBtn">Export CSV</button>
+                </div>
+
+                <div class="table-container">
+                    <table id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th>Price</th>
+                                <th>Editor Payment</th>
+                                <th>Payment Status</th>
+                                <th>WhatsApp</th>
+                                <th>Editor</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-          <h3 style="margin-top:0">Profit Calculator</h3>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-            <input id="pc_income" class="input" placeholder="Income amount">
-            <select id="pc_income_cur" class="input"><option>BDT</option><option>USD</option></select>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-            <input id="pc_expense" class="input" placeholder="Expense amount">
-            <select id="pc_expense_cur" class="input"><option>BDT</option><option>USD</option></select>
-          </div>
-          <button class="button" onclick="calcProfit()">Calculate</button>
-          <div id="profitResult" style="margin-top:8px"></div>
+        <!-- Team Dashboard -->
+        <div class="dashboard" id="teamDashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Team Management</h2>
+                    <button class="btn btn-primary" id="addTeamMemberBtn">
+                        <span>+</span> Add Team Member
+                    </button>
+                </div>
+
+                <div class="stats-grid" id="teamStatsGrid">
+                    <!-- Team stats will be loaded here -->
+                </div>
+
+                <div class="table-container">
+                    <table id="teamTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>WhatsApp</th>
+                                <th>Total Projects</th>
+                                <th>This Month</th>
+                                <th>Pending</th>
+                                <th>Completed</th>
+                                <th>Total Earnings</th>
+                                <th>Pending Payments</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamTableBody">
+                            <!-- Team data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- Finance Dashboard -->
+        <div class="dashboard" id="financeDashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Financial Overview</h2>
+                    <button class="btn btn-primary" id="addExpenseBtn">
+                        <span>+</span> Add Expense
+                    </button>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="month" class="filter-select" id="monthPicker" value="">
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Income</div>
+                        <div class="stat-value" id="totalIncome">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Expense</div>
+                        <div class="stat-value" id="totalExpense">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Editor Payments</div>
+                        <div class="stat-value" id="editorPayments">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Profit</div>
+                        <div class="stat-value" id="profit">$0</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-title">Income vs Expense</div>
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">Expense Breakdown</div>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Expenses</h2>
+                    </div>
+                    <div class="table-container">
+                        <table id="expensesTable">
+                            <thead>
+                                <tr>
+                                    <th>Expense Name</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody">
+                                <!-- Expenses will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">Pending Editor Payments</h2>
+                    </div>
+                    <div class="table-container">
+                        <table id="paymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Editor</th>
+                                    <th>Project</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <!-- Payments will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Dashboard -->
+        <div class="dashboard" id="clientsDashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Client Directory</h2>
+                </div>
+
+                <div class="stats-grid" id="clientStatsGrid">
+                    <!-- Client stats will be loaded here -->
+                </div>
+
+                <div class="table-container">
+                    <table id="clientsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>WhatsApp</th>
+                                <th>Total Orders</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <!-- Clients will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Transactions / Payments manager -->
-    <div style="margin-top:12px" class="card">
-      <h3 style="margin-top:0">Transactions (Payments & Expenses)</h3>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-        <select id="tx_type" class="input"><option value="payment">Payment</option><option value="expense">Expense</option></select>
-        <input id="tx_order" class="input" placeholder="Related Order ID (optional)">
-        <input id="tx_editor" class="input" placeholder="Editor (optional)">
-        <input id="tx_client" class="input" placeholder="Client (optional)">
-        <input id="tx_amount" class="input" placeholder="Amount">
-        <select id="tx_currency" class="input"><option>BDT</option><option>USD</option></select>
-        <input id="tx_note" class="input" placeholder="Note">
-        <button class="button" onclick="addTransaction()">Add</button>
-      </div>
-
-      <div class="table-wrap">
-        <table id="txTable">
-          <thead><tr><th>TX ID</th><th>Type</th><th>Order</th><th>Editor</th><th>Client</th><th>Amount</th><th>Currency</th><th>Date</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+    <!-- Add/Edit Order Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="orderModalTitle">Add New Order</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="orderForm">
+                <input type="hidden" id="orderId">
+                <div class="form-group">
+                    <label class="form-label" for="clientName">Client Name</label>
+                    <input type="text" class="form-input" id="clientName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="projectName">Project Name</label>
+                    <input type="text" class="form-input" id="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="projectPrice">Project Price</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" class="form-input" id="projectPrice" min="0" step="0.01" required style="flex: 1;">
+                        <select class="form-select" id="projectCurrency" style="width: 100px;">
+                            <option value="USD">USD</option>
+                            <option value="BDT">BDT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editorPayment">Editor Payment</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" class="form-input" id="editorPayment" min="0" step="0.01" required style="flex: 1;">
+                        <select class="form-select" id="editorPaymentCurrency" style="width: 100px;">
+                            <option value="USD">USD</option>
+                            <option value="BDT">BDT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="whatsappNumber">WhatsApp Number</label>
+                    <input type="text" class="form-input" id="whatsappNumber" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="assignedEditor">Assigned Editor</label>
+                    <select class="form-select" id="assignedEditor" required>
+                        <option value="">Select Editor</option>
+                        <option value="Siam">Siam</option>
+                        <option value="Mojid">Mojid</option>
+                        <option value="Samiul">Samiul</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="projectStatus">Project Status</label>
+                    <select class="form-select" id="projectStatus" required>
+                        <option value="Fresh">Fresh</option>
+                        <option value="Scripting">Scripting</option>
+                        <option value="Editing">Editing</option>
+                        <option value="Correction">Correction</option>
+                        <option value="Final Delivery">Final Delivery</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="projectDate">Date</label>
+                    <input type="date" class="form-input" id="projectDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="projectNotes">Notes</label>
+                    <textarea class="form-textarea" id="projectNotes"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Order</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-  </div>
-</div>
-
-<!-- ORDER MODAL -->
-<div id="orderModal" class="modal"><div class="modal-box">
-  <div class="modal-body">
-    <h3>New Order</h3>
-    <div class="form-grid" style="margin-top:8px">
-      <div><input id="m_order_id" class="input" placeholder="Order ID (optional)"></div>
-      <div><input id="m_client" class="input" placeholder="Client name"></div>
-      <div><input id="m_phone" class="input" placeholder="+88017..."></div>
-      <div><input id="m_service" class="input" placeholder="Service"></div>
-      <div><input id="m_price" class="input" type="number" placeholder="Price"></div>
-      <div><select id="m_currency" class="input"><option>BDT</option><option>USD</option></select></div>
-      <div><input id="m_paid" class="input" type="number" placeholder="Paid amount (optional)"></div>
-      <div><input id="m_editor_budget" class="input" type="number" placeholder="Editor budget"></div>
-      <div><select id="m_editor" class="input"><option value="">Unassigned</option><option>Siam</option><option>Mojid</option><option>Samiul</option></select></div>
-      <div><select id="m_status" class="input"><option>Fresh</option><option>Scripting</option><option>Editing</option><option>Correction</option><option>Final Delivery</option><option>Completed</option></select></div>
-      <div style="grid-column:1/-1"><input id="m_notes" class="input" placeholder="Notes"></div>
+    <!-- Add/Edit Team Member Modal -->
+    <div class="modal" id="teamMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="teamMemberModalTitle">Add Team Member</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="teamMemberForm">
+                <input type="hidden" id="teamMemberId">
+                <div class="form-group">
+                    <label class="form-label" for="memberName">Name</label>
+                    <input type="text" class="form-input" id="memberName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberRole">Role</label>
+                    <select class="form-select" id="memberRole" required>
+                        <option value="">Select Role</option>
+                        <option value="Editor">Editor</option>
+                        <option value="Script Writer">Script Writer</option>
+                        <option value="Project Manager">Project Manager</option>
+                        <option value="Designer">Designer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberWhatsApp">WhatsApp Number</label>
+                    <input type="text" class="form-input" id="memberWhatsApp" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberEmail">Email</label>
+                    <input type="email" class="form-input" id="memberEmail">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberJoinDate">Join Date</label>
+                    <input type="date" class="form-input" id="memberJoinDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberStatus">Status</label>
+                    <select class="form-select" id="memberStatus" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="memberNotes">Notes</label>
+                    <textarea class="form-textarea" id="memberNotes"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Member</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button class="small" onclick="closeOrderModal()" style="background:#ef4444">Cancel</button>
-    <button class="button" onclick="saveOrderModal()">Save Order</button>
-  </div>
-</div></div>
 
-<!-- TEAM MODAL -->
-<div id="teamModal" class="modal"><div class="modal-box">
-  <div class="modal-body">
-    <h3>Add Team Member</h3>
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <input id="t_name" class="input" placeholder="Name">
-      <input id="t_phone" class="input" placeholder="Phone">
-      <input id="t_email" class="input" placeholder="Email">
-      <select id="t_role" class="input"><option>Editor</option><option>Manager</option></select>
+    <!-- Add Expense Modal -->
+    <div class="modal" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Expense</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label class="form-label" for="expenseName">Expense Name</label>
+                    <input type="text" class="form-input" id="expenseName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="expenseAmount">Amount</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" class="form-input" id="expenseAmount" min="0" step="0.01" required style="flex: 1;">
+                        <select class="form-select" id="expenseCurrency" style="width: 100px;">
+                            <option value="USD">USD</option>
+                            <option value="BDT">BDT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="expenseDate">Date</label>
+                    <input type="date" class="form-input" id="expenseDate" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Expense</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button class="small" onclick="closeTeamModal()" style="background:#ef4444">Cancel</button>
-    <button class="button" onclick="saveTeamMember()">Add</button>
-  </div>
-</div></div>
 
-<script>
-// ---------- CONFIG ----------
-let API_BASE = ""; // Your Apps Script Web App URL
-let EXCHANGE_RATE = 120.5;
-const DEMO_PASSWORD = "hasib123$";
+    <script>
+        // API Configuration - CORRECTED API IDs (just the ID part, not full URL)
+        const ORDERS_API_ID = '4n4f5dqo0iezd';
+        const EXPENSES_API_ID = 'b4nfkl0gkrr0y';
+        const TEAM_MEMBERS_API_ID = 'h3kh1avvk0fj7';
 
-let authed = false;
-let orders = [], transactions = [], team = [];
+        const ORDERS_BASE_URL = `https://sheetdb.io/api/v1/${ORDERS_API_ID}`;
+        const EXPENSES_BASE_URL = `https://sheetdb.io/api/v1/${EXPENSES_API_ID}`;
+        const TEAM_MEMBERS_BASE_URL = `https://sheetdb.io/api/v1/${TEAM_MEMBERS_API_ID}`;
+        const EXCHANGE_RATE = 110; // 1 USD = 110 BDT
 
-// ---------- LOGIN ----------
-function doLogin(){
-  const pass = document.getElementById('loginPass').value;
-  if(pass === DEMO_PASSWORD){
-    authed = true;
-    document.getElementById('loginCard').style.display = 'none';
-    document.getElementById('mainUI').style.display = 'block';
-    initApp();
-  } else alert('Wrong password. Try demo password or configure API.');
-}
-function fillDemo(){
-  authed = true;
-  document.getElementById('loginCard').style.display = 'none';
-  document.getElementById('mainUI').style.display = 'block';
-  API_BASE = "";
-  initApp();
-}
-document.getElementById('logoutBtn').addEventListener('click', ()=> location.reload());
-document.getElementById('darkToggle').addEventListener('click', ()=> document.body.classList.toggle('dark'));
+        // Global state
+        let orders = [];
+        let expenses = [];
+        let teamMembers = [];
+        let currentEditingId = null;
+        let currentCurrency = 'USD';
 
-// ---------- INIT ----------
-function initApp(){
-  const sel = document.getElementById('filterMonth');
-  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  const now = new Date();
-  const opts = ['<option value="">All Months</option>'];
-  for(let i=0;i<12;i++){
-    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
-    opts.push(`<option value="${monthNames[d.getMonth()]}">${monthNames[d.getMonth()]} ${d.getFullYear()}</option>`);
-  }
-  sel.innerHTML = opts.join('');
-  loadAll();
-}
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const currencyOptions = document.querySelectorAll('.currency-option');
+        const tabs = document.querySelectorAll('.tab');
+        const dashboards = document.querySelectorAll('.dashboard');
+        const ordersTableBody = document.getElementById('ordersTableBody');
+        const teamTableBody = document.getElementById('teamTableBody');
+        const clientsTableBody = document.getElementById('clientsTableBody');
+        const expensesTableBody = document.getElementById('expensesTableBody');
+        const paymentsTableBody = document.getElementById('paymentsTableBody');
+        const orderModal = document.getElementById('orderModal');
+        const teamMemberModal = document.getElementById('teamMemberModal');
+        const expenseModal = document.getElementById('expenseModal');
+        const orderForm = document.getElementById('orderForm');
+        const teamMemberForm = document.getElementById('teamMemberForm');
+        const expenseForm = document.getElementById('expenseForm');
+        const addOrderBtn = document.getElementById('addOrderBtn');
+        const addTeamMemberBtn = document.getElementById('addTeamMemberBtn');
+        const addExpenseBtn = document.getElementById('addExpenseBtn');
+        const closeModalBtns = document.querySelectorAll('.close-modal');
+        const statusFilter = document.getElementById('statusFilter');
+        const editorFilter = document.getElementById('editorFilter');
+        const timeFilter = document.getElementById('timeFilter');
+        const searchInput = document.getElementById('searchInput');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const monthPicker = document.getElementById('monthPicker');
+        const totalIncomeEl = document.getElementById('totalIncome');
+        const totalExpenseEl = document.getElementById('totalExpense');
+        const editorPaymentsEl = document.getElementById('editorPayments');
+        const profitEl = document.getElementById('profit');
 
-// ---------- API HELPERS ----------
-async function apiGet(sheet){ if(!API_BASE) return Promise.resolve([]); try{ const res = await fetch(API_BASE+"?sheet="+encodeURIComponent(sheet)); return await res.json(); }catch(e){ console.warn("GET failed",e); return []; } }
-async function apiPost(body){ if(!API_BASE) return Promise.resolve({success:true}); try{ const res = await fetch(API_BASE,{method:'POST',body:JSON.stringify(body)}); return await res.json(); }catch(e){ console.error('POST failed',e); return { success:false,error:e.toString() }; } }
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
 
-// ---------- LOAD & RENDER ----------
-async function loadAll(){
-  [orders, team, transactions] = await Promise.all([apiGet('Orders'), apiGet('Team'), apiGet('Transactions')]);
-  orders = Array.isArray(orders)?orders:[];
-  team = Array.isArray(team)?team:[];
-  transactions = Array.isArray(transactions)?transactions:[];
-  renderAll();
-  renderTransactions();
-}
+        // Initialize the application
+        function initApp() {
+            // Set current month as default
+            const now = new Date();
+            monthPicker.value = now.toISOString().slice(0, 7);
+            
+            // Load data from localStorage if available
+            loadFromLocalStorage();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load data from API
+            loadData();
+        }
 
-function renderAll(){
-  const norm = orders.map(o=>({
-    order_id: o.order_id||o.id||o.ID||'',
-    client: o.client||o.client_name||'',
-    phone: o.phone||o.client_phone||'',
-    service: o.service||o.service_type||'',
-    status: o.status||'Fresh',
-    editor: o.editor||'',
-    price: Number(o.price||0),
-    currency: o.currency||'BDT',
-    editor_budget: Number(o.editor_budget||0),
-    month: o.month||(new Date(o.date||Date.now())).toLocaleString('en-US',{month:'long'}),
-    paid_amount: Number(o.paid_amount||0)
-  }));
-  orders = norm;
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Currency toggle
+            currencyOptions.forEach(option => {
+                option.addEventListener('click', () => switchCurrency(option.dataset.currency));
+            });
+            
+            // Tab navigation
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            
+            // Modal controls
+            addOrderBtn.addEventListener('click', () => openOrderModal());
+            addTeamMemberBtn.addEventListener('click', () => openTeamMemberModal());
+            addExpenseBtn.addEventListener('click', () => openExpenseModal());
+            
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', closeModals);
+            });
+            
+            // Form submissions
+            orderForm.addEventListener('submit', handleOrderSubmit);
+            teamMemberForm.addEventListener('submit', handleTeamMemberSubmit);
+            expenseForm.addEventListener('submit', handleExpenseSubmit);
+            
+            // Filters and search
+            statusFilter.addEventListener('change', filterOrders);
+            editorFilter.addEventListener('change', filterOrders);
+            timeFilter.addEventListener('change', filterOrders);
+            searchInput.addEventListener('input', filterOrders);
+            monthPicker.addEventListener('change', updateFinance);
+            
+            // Export CSV
+            exportCsvBtn.addEventListener('click', exportOrdersToCSV);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === orderModal) closeModals();
+                if (e.target === teamMemberModal) closeModals();
+                if (e.target === expenseModal) closeModals();
+            });
+        }
 
-  const tbody = document.querySelector('#ordersTable tbody');
-  tbody.innerHTML = '';
-  const selMonth = document.getElementById('filterMonth').value;
-  const selEditor = document.getElementById('filterEditor').value;
-  const displayCurrency = document.getElementById('displayCurrency').value;
-  const search = document.getElementById('searchBox').value.trim().toLowerCase();
+        // Toggle between light and dark mode
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
 
-  const filtered = orders.filter(o=>{
-    if(selMonth && o.month !== selMonth) return false;
-    if(selEditor && o.editor !== selEditor) return false;
-    if(search && !(o.client.toLowerCase().includes(search)||o.order_id.toLowerCase().includes(search))) return false;
-    return true;
-  });
+        // Switch between currencies
+        function switchCurrency(currency) {
+            currentCurrency = currency;
+            localStorage.setItem('currency', currency);
+            
+            // Update active currency option
+            currencyOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.currency === currency);
+            });
+            
+            // Refresh all displays
+            renderOrders();
+            renderTeamStats();
+            updateFinance();
+            renderClients();
+        }
 
-  filtered.forEach((o,i)=>{
-    let price = convertCurrency(o.price,o.currency,displayCurrency).toFixed(2);
-    let paid = convertCurrency(o.paid_amount,o.currency,displayCurrency).toFixed(2);
-    tbody.innerHTML += `<tr>
-      <td>${o.order_id}</td><td>${o.client}</td><td>${o.phone}</td><td>${o.service}</td><td>${price}</td><td>${paid}</td><td>${o.editor_budget}</td><td>${o.editor}</td><td>${o.status}</td><td>${o.month}</td>
-      <td>${o.phone?`<a target="_blank" href="https://wa.me/${o.phone.replace(/\D/g,'')}">WA</a>`:''}</td>
-      <td><button class="small" onclick="editOrder(${i})">Edit</button></td>
-    </tr>`;
-  });
+        // Format currency based on current selection
+        function formatCurrency(amount, currency) {
+            let convertedAmount = parseFloat(amount || 0);
+            
+            // Convert if needed
+            if (currency && currency !== currentCurrency) {
+                if (currency === 'USD' && currentCurrency === 'BDT') {
+                    convertedAmount = convertedAmount * EXCHANGE_RATE;
+                } else if (currency === 'BDT' && currentCurrency === 'USD') {
+                    convertedAmount = convertedAmount / EXCHANGE_RATE;
+                }
+            }
+            
+            const symbol = currentCurrency === 'USD' ? '$' : '৳';
+            return `${symbol}${convertedAmount.toFixed(2)}`;
+        }
 
-  // UPDATE SUMMARY
-  document.getElementById('totalOrders').innerText = orders.length;
-  document.getElementById('activeOrders').innerText = orders.filter(o=>o.status!=='Completed').length+' active';
-  let pending = orders.reduce((a,o)=>a+Math.max(0,o.price-o.paid_amount),0);
-  document.getElementById('pendingPayments').innerText = pending.toFixed(2)+' '+displayCurrency;
-  document.getElementById('teamCount').innerText = team.length;
+        // Switch between dashboard tabs
+        function switchTab(tabName) {
+            // Update active tab
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            // Show active dashboard
+            dashboards.forEach(dashboard => {
+                dashboard.classList.toggle('active', dashboard.id === `${tabName}Dashboard`);
+            });
+            
+            // Refresh data for the active tab
+            if (tabName === 'orders') {
+                renderOrders();
+            } else if (tabName === 'team') {
+                renderTeamStats();
+            } else if (tabName === 'finance') {
+                updateFinance();
+            } else if (tabName === 'clients') {
+                renderClients();
+            }
+        }
 
-  // TEAM DROPDOWN
-  const editorSel = document.getElementById('filterEditor');
-  const editors = ['','Siam','Mojid','Samiul'];
-  editorSel.innerHTML = editors.map(e=>`<option value="${e}">${e||'All Editors'}</option>`).join('');
+        // Load data from API
+        async function loadData() {
+            showLoading('ordersTableBody');
+            showLoading('teamTableBody');
+            showLoading('clientsTableBody');
+            showLoading('expensesTableBody');
+            showLoading('paymentsTableBody');
+            
+            try {
+                // Load orders
+                const ordersResponse = await fetch(`${ORDERS_BASE_URL}`);
+                if (ordersResponse.ok) {
+                    const data = await ordersResponse.json();
+                    if (data && Array.isArray(data)) {
+                        orders = data;
+                        saveToLocalStorage('orders', orders);
+                    } else {
+                        throw new Error('Invalid orders data format');
+                    }
+                } else {
+                    throw new Error(`Failed to load orders: ${ordersResponse.status}`);
+                }
+                
+                // Load expenses
+                const expensesResponse = await fetch(`${EXPENSES_BASE_URL}`);
+                if (expensesResponse.ok) {
+                    const data = await expensesResponse.json();
+                    if (data && Array.isArray(data)) {
+                        expenses = data;
+                        saveToLocalStorage('expenses', expenses);
+                    } else {
+                        throw new Error('Invalid expenses data format');
+                    }
+                } else {
+                    throw new Error(`Failed to load expenses: ${expensesResponse.status}`);
+                }
+                
+                // Load team members
+                const teamResponse = await fetch(`${TEAM_MEMBERS_BASE_URL}`);
+                if (teamResponse.ok) {
+                    const data = await teamResponse.json();
+                    if (data && Array.isArray(data)) {
+                        teamMembers = data;
+                        saveToLocalStorage('team_members', teamMembers);
+                    } else {
+                        throw new Error('Invalid team members data format');
+                    }
+                } else {
+                    throw new Error(`Failed to load team members: ${teamResponse.status}`);
+                }
+                
+                // Update all dashboards
+                renderOrders();
+                renderTeamStats();
+                updateFinance();
+                renderClients();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading data from API. Using cached data if available.');
+                
+                // Use cached data if API fails
+                if (orders.length === 0) {
+                    orders = getFromLocalStorage('orders') || [];
+                    renderOrders();
+                }
+                
+                if (expenses.length === 0) {
+                    expenses = getFromLocalStorage('expenses') || [];
+                    updateFinance();
+                }
+                
+                if (teamMembers.length === 0) {
+                    teamMembers = getFromLocalStorage('team_members') || [];
+                }
+                
+                renderTeamStats();
+                renderClients();
+            }
+        }
 
-  // TEAM WORKLOAD
-  renderTeam();
-  renderMonthSummary();
-}
+        // Save data to localStorage
+        function saveToLocalStorage(key, data) {
+            localStorage.setItem(`motioncraft_${key}`, JSON.stringify(data));
+        }
 
-// ---------- UTILS ----------
-function convertCurrency(amount,from,to){
-  if(from===to) return amount;
-  if(from==='BDT' && to==='USD') return amount/EXCHANGE_RATE;
-  if(from==='USD' && to==='BDT') return amount*EXCHANGE_RATE;
-  return amount;
-}
+        // Load data from localStorage
+        function loadFromLocalStorage() {
+            const savedOrders = localStorage.getItem('motioncraft_orders');
+            const savedExpenses = localStorage.getItem('motioncraft_expenses');
+            const savedTeamMembers = localStorage.getItem('motioncraft_team_members');
+            const savedTheme = localStorage.getItem('theme');
+            const savedCurrency = localStorage.getItem('currency');
+            
+            if (savedOrders) {
+                try {
+                    orders = JSON.parse(savedOrders);
+                } catch (e) {
+                    console.error('Error parsing saved orders:', e);
+                    orders = [];
+                }
+            }
+            
+            if (savedExpenses) {
+                try {
+                    expenses = JSON.parse(savedExpenses);
+                } catch (e) {
+                    console.error('Error parsing saved expenses:', e);
+                    expenses = [];
+                }
+            }
+            
+            if (savedTeamMembers) {
+                try {
+                    teamMembers = JSON.parse(savedTeamMembers);
+                } catch (e) {
+                    console.error('Error parsing saved team members:', e);
+                    teamMembers = [];
+                }
+            }
+            
+            if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+            if (savedCurrency) currentCurrency = savedCurrency;
+            
+            // Update currency UI
+            currencyOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.currency === currentCurrency);
+            });
+        }
 
-// ---------- ORDER MODAL ----------
-function openOrderModal(){document.getElementById('orderModal').style.display='flex'}
-function closeOrderModal(){document.getElementById('orderModal').style.display='none'}
-function saveOrderModal(){
-  const o = {
-    order_id: document.getElementById('m_order_id').value || 'O'+(orders.length+1),
-    client: document.getElementById('m_client').value,
-    phone: document.getElementById('m_phone').value,
-    service: document.getElementById('m_service').value,
-    price: Number(document.getElementById('m_price').value),
-    currency: document.getElementById('m_currency').value,
-    paid_amount: Number(document.getElementById('m_paid').value||0),
-    editor_budget: Number(document.getElementById('m_editor_budget').value||0),
-    editor: document.getElementById('m_editor').value,
-    status: document.getElementById('m_status').value,
-    notes: document.getElementById('m_notes').value,
-    month: new Date().toLocaleString('en-US',{month:'long'})
-  };
-  orders.push(o);
-  renderAll();
-  closeOrderModal();
-}
+        // Get data from localStorage
+        function getFromLocalStorage(key) {
+            const data = localStorage.getItem(`motioncraft_${key}`);
+            try {
+                return data ? JSON.parse(data) : null;
+            } catch (e) {
+                console.error(`Error parsing ${key} from localStorage:`, e);
+                return null;
+            }
+        }
 
-// ---------- EDIT ORDER ----------
-function editOrder(idx){
-  const o = orders[idx];
-  openOrderModal();
-  document.getElementById('m_order_id').value=o.order_id;
-  document.getElementById('m_client').value=o.client;
-  document.getElementById('m_phone').value=o.phone;
-  document.getElementById('m_service').value=o.service;
-  document.getElementById('m_price').value=o.price;
-  document.getElementById('m_currency').value=o.currency;
-  document.getElementById('m_paid').value=o.paid_amount;
-  document.getElementById('m_editor_budget').value=o.editor_budget;
-  document.getElementById('m_editor').value=o.editor;
-  document.getElementById('m_status').value=o.status;
-  document.getElementById('m_notes').value=o.notes||'';
-}
+        // Show loading indicator
+        function showLoading(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="loading">
+                            <div class="spinner"></div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
 
-// ---------- TEAM ----------
-function openTeamModal(){document.getElementById('teamModal').style.display='flex'}
-function closeTeamModal(){document.getElementById('teamModal').style.display='none'}
-function saveTeamMember(){
-  team.push({
-    name: document.getElementById('t_name').value,
-    phone: document.getElementById('t_phone').value,
-    email: document.getElementById('t_email').value,
-    role: document.getElementById('t_role').value
-  });
-  renderTeam();
-  closeTeamModal();
-}
-function renderTeam(){
-  const div = document.getElementById('teamList');
-  if(!team.length){div.innerHTML='No members yet.';return;}
-  div.innerHTML = '<ul>'+team.map(t=>`<li>${t.name} (${t.role})</li>`).join('')+'</ul>';
-}
+        // Render orders table
+        function renderOrders(filteredOrders = null) {
+            const ordersToRender = filteredOrders || orders;
+            
+            if (ordersToRender.length === 0) {
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <div>No orders found</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            ordersTableBody.innerHTML = ordersToRender.map(order => `
+                <tr>
+                    <td>${order.clientName || 'N/A'}</td>
+                    <td>${order.projectName || 'N/A'}</td>
+                    <td>
+                        <div class="currency-display">
+                            <span class="currency-symbol">${formatCurrency(order.projectPrice || 0, order.currency || 'USD')}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="currency-display">
+                            <span class="currency-symbol">${formatCurrency(order.editorPayment || 0, order.editorPaymentCurrency || 'USD')}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="payment-status ${order.paymentStatus === 'Paid' ? 'payment-paid' : 'payment-pending'}">
+                            ${order.paymentStatus || 'Pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="https://wa.me/${order.whatsappNumber || ''}?text=Hello Motioncraft" 
+                           target="_blank" class="whatsapp-link">
+                            📱 Chat
+                        </a>
+                    </td>
+                    <td>${order.assignedEditor || 'N/A'}</td>
+                    <td>
+                        <span class="status status-${(order.projectStatus || 'Fresh').toLowerCase().replace(' ', '-')}">
+                            ${order.projectStatus || 'Fresh'}
+                        </span>
+                    </td>
+                    <td>${formatDate(order.projectDate)}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-small edit-order" data-id="${order.id}">
+                            Edit
+                        </button>
+                        ${order.paymentStatus !== 'Paid' ? `
+                        <button class="btn btn-success btn-small mark-paid" data-id="${order.id}">
+                            Mark Paid
+                        </button>
+                        ` : ''}
+                        <button class="btn btn-danger btn-small delete-order" data-id="${order.id}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-order').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.dataset.id;
+                    openOrderModal(orderId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-order').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.dataset.id;
+                    deleteOrder(orderId);
+                });
+            });
+            
+            // Add event listeners to mark paid buttons
+            document.querySelectorAll('.mark-paid').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.dataset.id;
+                    markPaymentAsPaid(orderId);
+                });
+            });
+        }
 
-// ---------- MONTH SUMMARY ----------
-function renderMonthSummary(){
-  const div = document.getElementById('monthSummary');
-  const months = {};
-  orders.forEach(o=>{
-    if(!months[o.month]) months[o.month]=0;
-    months[o.month]+=o.price;
-  });
-  div.innerHTML = Object.entries(months).map(([m,v])=>`<div>${m}: ${v.toFixed(2)} BDT</div>`).join('');
-}
+        // Mark payment as paid
+        async function markPaymentAsPaid(orderId) {
+            if (!confirm('Are you sure you want to mark this payment as paid?')) return;
+            
+            try {
+                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: {
+                            paymentStatus: 'Paid',
+                            paymentDate: new Date().toISOString().slice(0, 10)
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    const index = orders.findIndex(o => o.id === orderId);
+                    if (index !== -1) {
+                        orders[index].paymentStatus = 'Paid';
+                        orders[index].paymentDate = new Date().toISOString().slice(0, 10);
+                        saveToLocalStorage('orders', orders);
+                        renderOrders();
+                        renderTeamStats();
+                        updateFinance();
+                    }
+                } else {
+                    throw new Error('Failed to mark payment as paid');
+                }
+            } catch (error) {
+                console.error('Error marking payment as paid:', error);
+                alert('Error marking payment as paid. Data saved locally.');
+                
+                // Fallback: Save locally
+                const index = orders.findIndex(o => o.id === orderId);
+                if (index !== -1) {
+                    orders[index].paymentStatus = 'Paid';
+                    orders[index].paymentDate = new Date().toISOString().slice(0, 10);
+                    saveToLocalStorage('orders', orders);
+                    renderOrders();
+                    renderTeamStats();
+                    updateFinance();
+                }
+            }
+        }
 
-// ---------- PROFIT CALC ----------
-function calcProfit(){
-  let inc = Number(document.getElementById('pc_income').value||0);
-  let exp = Number(document.getElementById('pc_expense').value||0);
-  const inc_cur = document.getElementById('pc_income_cur').value;
-  const exp_cur = document.getElementById('pc_expense_cur').value;
-  inc = convertCurrency(inc,inc_cur,'BDT');
-  exp = convertCurrency(exp,exp_cur,'BDT');
-  document.getElementById('profitResult').innerText = `Profit: ${ (inc-exp).toFixed(2) } BDT`;
-}
+        // Filter orders based on selected criteria
+        function filterOrders() {
+            const status = statusFilter.value;
+            const editor = editorFilter.value;
+            const timePeriod = timeFilter.value;
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            let filtered = orders;
+            
+            // Filter by status
+            if (status) {
+                filtered = filtered.filter(order => order.projectStatus === status);
+            }
+            
+            // Filter by editor
+            if (editor) {
+                filtered = filtered.filter(order => order.assignedEditor === editor);
+            }
+            
+            // Filter by time period
+            if (timePeriod) {
+                const now = new Date();
+                let startDate;
+                
+                if (timePeriod === 'today') {
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                } else if (timePeriod === 'week') {
+                    const day = now.getDay();
+                    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+                    startDate = new Date(now.setDate(diff));
+                } else if (timePeriod === 'month') {
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                }
+                
+                filtered = filtered.filter(order => {
+                    const orderDate = new Date(order.projectDate);
+                    return orderDate >= startDate;
+                });
+            }
+            
+            // Filter by search term
+            if (searchTerm) {
+                filtered = filtered.filter(order => 
+                    (order.clientName || '').toLowerCase().includes(searchTerm) ||
+                    (order.projectName || '').toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderOrders(filtered);
+        }
 
-// ---------- TRANSACTIONS ----------
-function addTransaction(){
-  const tx = {
-    id: 'TX'+(transactions.length+1),
-    type: document.getElementById('tx_type').value,
-    order: document.getElementById('tx_order').value,
-    editor: document.getElementById('tx_editor').value,
-    client: document.getElementById('tx_client').value,
-    amount: Number(document.getElementById('tx_amount').value),
-    currency: document.getElementById('tx_currency').value,
-    note: document.getElementById('tx_note').value,
-    date: new Date().toLocaleString()
-  };
-  transactions.push(tx);
-  renderTransactions();
-}
-function renderTransactions(){
-  const tbody = document.querySelector('#txTable tbody');
-  tbody.innerHTML = transactions.map(tx=>{
-    return `<tr>
-      <td>${tx.id}</td>
-      <td>${tx.type}</td>
-      <td>${tx.order}</td>
-      <td>${tx.editor}</td>
-      <td>${tx.client}</td>
-      <td>${tx.amount}</td>
-      <td>${tx.currency}</td>
-      <td>${tx.date}</td>
-    </tr>`;
-  }).join('');
-}
+        // Open order modal for adding or editing
+        function openOrderModal(orderId = null) {
+            const modalTitle = document.getElementById('orderModalTitle');
+            const form = document.getElementById('orderForm');
+            
+            if (orderId) {
+                // Edit mode
+                modalTitle.textContent = 'Edit Order';
+                currentEditingId = orderId;
+                
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    document.getElementById('orderId').value = order.id;
+                    document.getElementById('clientName').value = order.clientName || '';
+                    document.getElementById('projectName').value = order.projectName || '';
+                    document.getElementById('projectPrice').value = order.projectPrice || '';
+                    document.getElementById('projectCurrency').value = order.currency || 'USD';
+                    document.getElementById('editorPayment').value = order.editorPayment || '';
+                    document.getElementById('editorPaymentCurrency').value = order.editorPaymentCurrency || 'USD';
+                    document.getElementById('whatsappNumber').value = order.whatsappNumber || '';
+                    document.getElementById('assignedEditor').value = order.assignedEditor || '';
+                    document.getElementById('projectStatus').value = order.projectStatus || 'Fresh';
+                    document.getElementById('projectDate').value = order.projectDate || '';
+                    document.getElementById('projectNotes').value = order.notes || '';
+                }
+            } else {
+                // Add mode
+                modalTitle.textContent = 'Add New Order';
+                currentEditingId = null;
+                form.reset();
+                document.getElementById('projectCurrency').value = 'USD';
+                document.getElementById('editorPaymentCurrency').value = 'USD';
+                document.getElementById('projectDate').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('projectStatus').value = 'Fresh';
+            }
+            
+            orderModal.classList.add('active');
+        }
 
-// ---------- CSV EXPORT ----------
-function exportCSV(){
-  let csv = 'Order ID,Client,Phone,Service,Price,Paid,EditorBudget,Editor,Status,Month\n';
-  orders.forEach(o=>{
-    csv += [o.order_id,o.client,o.phone,o.service,o.price,o.paid_amount,o.editor_budget,o.editor,o.status,o.month].join(',')+'\n';
-  });
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='orders.csv'; a.click();
-  URL.revokeObjectURL(url);
-}
+        // Open team member modal for adding or editing
+        function openTeamMemberModal(memberId = null) {
+            const modalTitle = document.getElementById('teamMemberModalTitle');
+            const form = document.getElementById('teamMemberForm');
+            
+            if (memberId) {
+                // Edit mode
+                modalTitle.textContent = 'Edit Team Member';
+                currentEditingId = memberId;
+                
+                const member = teamMembers.find(m => m.id === memberId);
+                if (member) {
+                    document.getElementById('teamMemberId').value = member.id;
+                    document.getElementById('memberName').value = member.name || '';
+                    document.getElementById('memberRole').value = member.role || '';
+                    document.getElementById('memberWhatsApp').value = member.whatsapp || '';
+                    document.getElementById('memberEmail').value = member.email || '';
+                    document.getElementById('memberJoinDate').value = member.joinDate || '';
+                    document.getElementById('memberStatus').value = member.status || 'Active';
+                    document.getElementById('memberNotes').value = member.notes || '';
+                }
+            } else {
+                // Add mode
+                modalTitle.textContent = 'Add Team Member';
+                currentEditingId = null;
+                form.reset();
+                document.getElementById('memberJoinDate').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('memberStatus').value = 'Active';
+            }
+            
+            teamMemberModal.classList.add('active');
+        }
 
-// ---------- EVENT HANDLERS ----------
-document.getElementById('filterMonth').addEventListener('change', renderAll);
-document.getElementById('filterEditor').addEventListener('change', renderAll);
-document.getElementById('displayCurrency').addEventListener('change', renderAll);
+        // Open expense modal
+        function openExpenseModal() {
+            expenseForm.reset();
+            document.getElementById('expenseCurrency').value = 'USD';
+            document.getElementById('expenseDate').value = new Date().toISOString().slice(0, 10);
+            expenseModal.classList.add('active');
+        }
 
-</script>
+        // Close all modals
+        function closeModals() {
+            orderModal.classList.remove('active');
+            teamMemberModal.classList.remove('active');
+            expenseModal.classList.remove('active');
+            currentEditingId = null;
+        }
+
+        // Handle order form submission
+        async function handleOrderSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                clientName: document.getElementById('clientName').value,
+                projectName: document.getElementById('projectName').value,
+                projectPrice: parseFloat(document.getElementById('projectPrice').value).toFixed(2),
+                currency: document.getElementById('projectCurrency').value,
+                editorPayment: parseFloat(document.getElementById('editorPayment').value).toFixed(2),
+                editorPaymentCurrency: document.getElementById('editorPaymentCurrency').value,
+                paymentStatus: 'Pending',
+                whatsappNumber: document.getElementById('whatsappNumber').value,
+                assignedEditor: document.getElementById('assignedEditor').value,
+                projectStatus: document.getElementById('projectStatus').value,
+                projectDate: document.getElementById('projectDate').value,
+                notes: document.getElementById('projectNotes').value
+            };
+            
+            if (currentEditingId) {
+                // Update existing order
+                await updateOrder(currentEditingId, formData);
+            } else {
+                // Add new order
+                formData.id = generateId();
+                await addOrder(formData);
+            }
+            
+            closeModals();
+        }
+
+        // Handle team member form submission
+        async function handleTeamMemberSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('memberName').value,
+                role: document.getElementById('memberRole').value,
+                whatsapp: document.getElementById('memberWhatsApp').value,
+                email: document.getElementById('memberEmail').value,
+                joinDate: document.getElementById('memberJoinDate').value,
+                status: document.getElementById('memberStatus').value,
+                notes: document.getElementById('memberNotes').value
+            };
+            
+            if (currentEditingId) {
+                // Update existing team member
+                await updateTeamMember(currentEditingId, formData);
+            } else {
+                // Add new team member
+                formData.id = generateId();
+                await addTeamMember(formData);
+            }
+            
+            closeModals();
+        }
+
+        // Handle expense form submission
+        async function handleExpenseSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                id: generateId(),
+                expenseName: document.getElementById('expenseName').value,
+                expenseAmount: parseFloat(document.getElementById('expenseAmount').value).toFixed(2),
+                currency: document.getElementById('expenseCurrency').value,
+                expenseDate: document.getElementById('expenseDate').value
+            };
+            
+            await addExpense(formData);
+            closeModals();
+        }
+
+        // Add new order
+        async function addOrder(orderData) {
+            try {
+                const response = await fetch(`${ORDERS_BASE_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: [orderData] })
+                });
+                
+                if (response.ok) {
+                    orders.push(orderData);
+                    saveToLocalStorage('orders', orders);
+                    renderOrders();
+                    renderTeamStats();
+                    renderClients();
+                    updateFinance();
+                } else {
+                    throw new Error('Failed to add order');
+                }
+            } catch (error) {
+                console.error('Error adding order:', error);
+                alert('Error adding order. Data saved locally.');
+                
+                // Fallback: Save locally
+                orders.push(orderData);
+                saveToLocalStorage('orders', orders);
+                renderOrders();
+                renderTeamStats();
+                renderClients();
+                updateFinance();
+            }
+        }
+
+        // Update existing order
+        async function updateOrder(orderId, orderData) {
+            try {
+                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: orderData })
+                });
+                
+                if (response.ok) {
+                    const index = orders.findIndex(o => o.id === orderId);
+                    if (index !== -1) {
+                        orders[index] = { ...orders[index], ...orderData };
+                        saveToLocalStorage('orders', orders);
+                        renderOrders();
+                        renderTeamStats();
+                        renderClients();
+                        updateFinance();
+                    }
+                } else {
+                    throw new Error('Failed to update order');
+                }
+            } catch (error) {
+                console.error('Error updating order:', error);
+                alert('Error updating order. Data saved locally.');
+                
+                // Fallback: Save locally
+                const index = orders.findIndex(o => o.id === orderId);
+                if (index !== -1) {
+                    orders[index] = { ...orders[index], ...orderData };
+                    saveToLocalStorage('orders', orders);
+                    renderOrders();
+                    renderTeamStats();
+                    renderClients();
+                    updateFinance();
+                }
+            }
+        }
+
+        // Delete order
+        async function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+            
+            try {
+                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    orders = orders.filter(o => o.id !== orderId);
+                    saveToLocalStorage('orders', orders);
+                    renderOrders();
+                    renderTeamStats();
+                    renderClients();
+                    updateFinance();
+                } else {
+                    throw new Error('Failed to delete order');
+                }
+            } catch (error) {
+                console.error('Error deleting order:', error);
+                alert('Error deleting order. Data removed locally.');
+                
+                // Fallback: Remove locally
+                orders = orders.filter(o => o.id !== orderId);
+                saveToLocalStorage('orders', orders);
+                renderOrders();
+                renderTeamStats();
+                renderClients();
+                updateFinance();
+            }
+        }
+
+        // Add new team member
+        async function addTeamMember(memberData) {
+            try {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: [memberData] })
+                });
+                
+                if (response.ok) {
+                    teamMembers.push(memberData);
+                    saveToLocalStorage('team_members', teamMembers);
+                    renderTeamStats();
+                } else {
+                    throw new Error('Failed to add team member');
+                }
+            } catch (error) {
+                console.error('Error adding team member:', error);
+                alert('Error adding team member. Data saved locally.');
+                
+                // Fallback: Save locally
+                teamMembers.push(memberData);
+                saveToLocalStorage('team_members', teamMembers);
+                renderTeamStats();
+            }
+        }
+
+        // Update existing team member
+        async function updateTeamMember(memberId, memberData) {
+            try {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: memberData })
+                });
+                
+                if (response.ok) {
+                    const index = teamMembers.findIndex(m => m.id === memberId);
+                    if (index !== -1) {
+                        teamMembers[index] = { ...teamMembers[index], ...memberData };
+                        saveToLocalStorage('team_members', teamMembers);
+                        renderTeamStats();
+                    }
+                } else {
+                    throw new Error('Failed to update team member');
+                }
+            } catch (error) {
+                console.error('Error updating team member:', error);
+                alert('Error updating team member. Data saved locally.');
+                
+                // Fallback: Save locally
+                const index = teamMembers.findIndex(m => m.id === memberId);
+                if (index !== -1) {
+                    teamMembers[index] = { ...teamMembers[index], ...memberData };
+                    saveToLocalStorage('team_members', teamMembers);
+                    renderTeamStats();
+                }
+            }
+        }
+
+        // Delete team member
+        async function deleteTeamMember(memberId) {
+            if (!confirm('Are you sure you want to delete this team member?')) return;
+            
+            try {
+                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    teamMembers = teamMembers.filter(m => m.id !== memberId);
+                    saveToLocalStorage('team_members', teamMembers);
+                    renderTeamStats();
+                } else {
+                    throw new Error('Failed to delete team member');
+                }
+            } catch (error) {
+                console.error('Error deleting team member:', error);
+                alert('Error deleting team member. Data removed locally.');
+                
+                // Fallback: Remove locally
+                teamMembers = teamMembers.filter(m => m.id !== memberId);
+                saveToLocalStorage('team_members', teamMembers);
+                renderTeamStats();
+            }
+        }
+
+        // Add expense
+        async function addExpense(expenseData) {
+            try {
+                const response = await fetch(`${EXPENSES_BASE_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: [expenseData] })
+                });
+                
+                if (response.ok) {
+                    expenses.push(expenseData);
+                    saveToLocalStorage('expenses', expenses);
+                    updateFinance();
+                } else {
+                    throw new Error('Failed to add expense');
+                }
+            } catch (error) {
+                console.error('Error adding expense:', error);
+                alert('Error adding expense. Data saved locally.');
+                
+                // Fallback: Save locally
+                expenses.push(expenseData);
+                saveToLocalStorage('expenses', expenses);
+                updateFinance();
+            }
+        }
+
+        // Render team stats
+        function renderTeamStats() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            // Calculate team stats
+            const teamStats = teamMembers.map(member => {
+                const editorOrders = orders.filter(order => order.assignedEditor === member.name);
+                const thisMonthOrders = editorOrders.filter(order => {
+                    const orderDate = new Date(order.projectDate);
+                    return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear;
+                });
+                const pendingOrders = editorOrders.filter(order => order.projectStatus !== 'Final Delivery');
+                const completedOrders = editorOrders.filter(order => order.projectStatus === 'Final Delivery');
+                
+                // Calculate total earnings (editor payments)
+                const totalEarnings = editorOrders.reduce((sum, order) => {
+                    let amount = parseFloat(order.editorPayment || 0);
+                    if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
+                        amount = amount / EXCHANGE_RATE;
+                    } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
+                        amount = amount * EXCHANGE_RATE;
+                    }
+                    return sum + amount;
+                }, 0);
+                
+                // Calculate pending payments
+                const pendingPayments = editorOrders
+                    .filter(order => order.paymentStatus !== 'Paid')
+                    .reduce((sum, order) => {
+                        let amount = parseFloat(order.editorPayment || 0);
+                        if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
+                            amount = amount / EXCHANGE_RATE;
+                        } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
+                            amount = amount * EXCHANGE_RATE;
+                        }
+                        return sum + amount;
+                    }, 0);
+                
+                return {
+                    id: member.id,
+                    name: member.name,
+                    role: member.role,
+                    whatsapp: member.whatsapp,
+                    status: member.status,
+                    totalProjects: editorOrders.length,
+                    thisMonth: thisMonthOrders.length,
+                    pending: pendingOrders.length,
+                    completed: completedOrders.length,
+                    totalEarnings: totalEarnings,
+                    pendingPayments: pendingPayments
+                };
+            });
+            
+            // Update stats grid
+            const statsGrid = document.querySelector('#teamDashboard .stats-grid');
+            statsGrid.innerHTML = teamStats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-label">${stat.name}'s Projects</div>
+                    <div class="stat-value">${stat.totalProjects}</div>
+                    <div class="stat-label">Earnings: ${formatCurrency(stat.totalEarnings, currentCurrency)}</div>
+                    <div class="stat-label">Pending: ${formatCurrency(stat.pendingPayments, currentCurrency)}</div>
+                </div>
+            `).join('');
+            
+            // Update team table
+            if (teamStats.length === 0) {
+                teamTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <div>No team members found</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                teamTableBody.innerHTML = teamStats.map(stat => `
+                    <tr>
+                        <td>${stat.name}</td>
+                        <td>${stat.role}</td>
+                        <td>
+                            <a href="https://wa.me/${stat.whatsapp || ''}?text=Hello" 
+                               target="_blank" class="whatsapp-link">
+                                📱 Contact
+                            </a>
+                        </td>
+                        <td>${stat.totalProjects}</td>
+                        <td>${stat.thisMonth}</td>
+                        <td>${stat.pending}</td>
+                        <td>${stat.completed}</td>
+                        <td>${formatCurrency(stat.totalEarnings, currentCurrency)}</td>
+                        <td>${formatCurrency(stat.pendingPayments, currentCurrency)}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-small edit-team-member" data-id="${stat.id}">
+                                Edit
+                            </button>
+                            <button class="btn btn-danger btn-small delete-team-member" data-id="${stat.id}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Add event listeners to edit and delete buttons
+                document.querySelectorAll('.edit-team-member').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const memberId = e.target.dataset.id;
+                        openTeamMemberModal(memberId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-team-member').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const memberId = e.target.dataset.id;
+                        deleteTeamMember(memberId);
+                    });
+                });
+            }
+        }
+
+        // Update finance dashboard
+        function updateFinance() {
+            const selectedMonth = monthPicker.value;
+            if (!selectedMonth) return;
+            
+            const [year, month] = selectedMonth.split('-').map(Number);
+            
+            // Calculate income from orders
+            const monthOrders = orders.filter(order => {
+                const orderDate = new Date(order.projectDate);
+                return orderDate.getFullYear() === year && orderDate.getMonth() === month - 1;
+            });
+            
+            // Calculate income in current currency
+            const income = monthOrders.reduce((sum, order) => {
+                let amount = parseFloat(order.projectPrice || 0);
+                if (order.currency === 'BDT' && currentCurrency === 'USD') {
+                    amount = amount / EXCHANGE_RATE;
+                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
+                    amount = amount * EXCHANGE_RATE;
+                }
+                return sum + amount;
+            }, 0);
+            
+            // Calculate expenses
+            const monthExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.expenseDate);
+                return expenseDate.getFullYear() === year && expenseDate.getMonth() === month - 1;
+            });
+            
+            // Calculate expenses in current currency
+            const expenseTotal = monthExpenses.reduce((sum, expense) => {
+                let amount = parseFloat(expense.expenseAmount || 0);
+                if (expense.currency === 'BDT' && currentCurrency === 'USD') {
+                    amount = amount / EXCHANGE_RATE;
+                } else if (expense.currency === 'USD' && currentCurrency === 'BDT') {
+                    amount = amount * EXCHANGE_RATE;
+                }
+                return sum + amount;
+            }, 0);
+            
+            // Calculate editor payments (paid ones)
+            const editorPayments = monthOrders
+                .filter(order => order.paymentStatus === 'Paid')
+                .reduce((sum, order) => {
+                    let amount = parseFloat(order.editorPayment || 0);
+                    if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
+                        amount = amount / EXCHANGE_RATE;
+                    } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
+                        amount = amount * EXCHANGE_RATE;
+                    }
+                    return sum + amount;
+                }, 0);
+            
+            const totalExpense = expenseTotal + editorPayments;
+            const profit = income - totalExpense;
+            
+            // Update UI
+            totalIncomeEl.textContent = formatCurrency(income, currentCurrency);
+            totalExpenseEl.textContent = formatCurrency(totalExpense, currentCurrency);
+            editorPaymentsEl.textContent = formatCurrency(editorPayments, currentCurrency);
+            profitEl.textContent = formatCurrency(profit, currentCurrency);
+            profitEl.style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+            
+            // Update expenses table
+            if (monthExpenses.length === 0) {
+                expensesTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <div class="empty-state-icon">💰</div>
+                            <div>No expenses for this month</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                expensesTableBody.innerHTML = monthExpenses.map(expense => `
+                    <tr>
+                        <td>${expense.expenseName || 'N/A'}</td>
+                        <td>${formatCurrency(expense.expenseAmount || 0, expense.currency || 'USD')}</td>
+                        <td>${formatDate(expense.expenseDate)}</td>
+                        <td>
+                            <button class="btn btn-danger btn-small delete-expense" data-id="${expense.id}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-expense').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const expenseId = e.target.dataset.id;
+                        deleteExpense(expenseId);
+                    });
+                });
+            }
+            
+            // Update pending payments table
+            const pendingPayments = monthOrders.filter(order => order.paymentStatus !== 'Paid');
+            if (pendingPayments.length === 0) {
+                paymentsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">💳</div>
+                            <div>No pending payments for this month</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                paymentsTableBody.innerHTML = pendingPayments.map(order => `
+                    <tr>
+                        <td>${order.assignedEditor || 'N/A'}</td>
+                        <td>${order.projectName || 'N/A'}</td>
+                        <td>${formatCurrency(order.editorPayment || 0, order.editorPaymentCurrency || 'USD')}</td>
+                        <td>
+                            <span class="payment-status payment-pending">
+                                ${order.paymentStatus || 'Pending'}
+                            </span>
+                        </td>
+                        <td>${formatDate(order.projectDate)}</td>
+                        <td>
+                            <button class="btn btn-success btn-small mark-paid" data-id="${order.id}">
+                                Mark Paid
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Add event listeners to mark paid buttons
+                document.querySelectorAll('#paymentsTableBody .mark-paid').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const orderId = e.target.dataset.id;
+                        markPaymentAsPaid(orderId);
+                    });
+                });
+            }
+            
+            // Update charts
+            renderFinanceCharts(income, totalExpense, monthExpenses, editorPayments);
+        }
+
+        // Delete expense
+        async function deleteExpense(expenseId) {
+            if (!confirm('Are you sure you want to delete this expense?')) return;
+            
+            try {
+                const response = await fetch(`${EXPENSES_BASE_URL}/id/${expenseId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    expenses = expenses.filter(e => e.id !== expenseId);
+                    saveToLocalStorage('expenses', expenses);
+                    updateFinance();
+                } else {
+                    throw new Error('Failed to delete expense');
+                }
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+                alert('Error deleting expense. Data removed locally.');
+                
+                // Fallback: Remove locally
+                expenses = expenses.filter(e => e.id !== expenseId);
+                saveToLocalStorage('expenses', expenses);
+                updateFinance();
+            }
+        }
+
+        // Render finance charts
+        function renderFinanceCharts(income, expense, expenses, editorPayments) {
+            const financeCtx = document.getElementById('financeChart');
+            const expenseCtx = document.getElementById('expenseChart');
+            
+            if (!financeCtx || !expenseCtx) return;
+            
+            // Clear previous charts if they exist
+            if (window.financeChart instanceof Chart) {
+                window.financeChart.destroy();
+            }
+            if (window.expenseChart instanceof Chart) {
+                window.expenseChart.destroy();
+            }
+            
+            // Income vs Expense chart
+            window.financeChart = new Chart(financeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Income', 'Expense'],
+                    datasets: [{
+                        label: `Amount (${currentCurrency})`,
+                        data: [income, expense],
+                        backgroundColor: [
+                            'rgba(72, 187, 120, 0.7)',
+                            'rgba(245, 101, 101, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(72, 187, 120, 1)',
+                            'rgba(245, 101, 101, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Expense breakdown chart
+            if (expenses.length > 0 || editorPayments > 0) {
+                const expenseNames = [...expenses.map(e => e.expenseName), 'Editor Payments'];
+                const expenseAmounts = [
+                    ...expenses.map(e => {
+                        let amount = parseFloat(e.expenseAmount || 0);
+                        if (e.currency === 'BDT' && currentCurrency === 'USD') {
+                            amount = amount / EXCHANGE_RATE;
+                        } else if (e.currency === 'USD' && currentCurrency === 'BDT') {
+                            amount = amount * EXCHANGE_RATE;
+                        }
+                        return amount;
+                    }),
+                    editorPayments
+                ];
+                
+                window.expenseChart = new Chart(expenseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: expenseNames,
+                        datasets: [{
+                            data: expenseAmounts,
+                            backgroundColor: [
+                                'rgba(66, 153, 225, 0.7)',
+                                'rgba(237, 137, 54, 0.7)',
+                                'rgba(159, 122, 234, 0.7)',
+                                'rgba(72, 187, 120, 0.7)',
+                                'rgba(245, 101, 101, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            } else {
+                // Show message if no expenses
+                const ctx = expenseCtx.getContext('2d');
+                ctx.clearRect(0, 0, expenseCtx.width, expenseCtx.height);
+                ctx.font = '16px Inter';
+                ctx.fillStyle = 'var(--text-secondary)';
+                ctx.textAlign = 'center';
+                ctx.fillText('No expenses for this month', expenseCtx.width / 2, expenseCtx.height / 2);
+            }
+        }
+
+        // Render clients directory
+        function renderClients() {
+            // Group orders by client
+            const clientsMap = {};
+            
+            orders.forEach(order => {
+                if (!order.clientName) return;
+                
+                if (!clientsMap[order.clientName]) {
+                    clientsMap[order.clientName] = {
+                        name: order.clientName,
+                        whatsapp: order.whatsappNumber,
+                        totalOrders: 0,
+                        totalAmount: 0
+                    };
+                }
+                
+                clientsMap[order.clientName].totalOrders++;
+                
+                // Convert amount to current currency
+                let amount = parseFloat(order.projectPrice || 0);
+                if (order.currency === 'BDT' && currentCurrency === 'USD') {
+                    amount = amount / EXCHANGE_RATE;
+                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
+                    amount = amount * EXCHANGE_RATE;
+                }
+                clientsMap[order.clientName].totalAmount += amount;
+            });
+            
+            const clients = Object.values(clientsMap);
+            
+            // Calculate total revenue in current currency
+            const totalRevenue = orders.reduce((sum, order) => {
+                let amount = parseFloat(order.projectPrice || 0);
+                if (order.currency === 'BDT' && currentCurrency === 'USD') {
+                    amount = amount / EXCHANGE_RATE;
+                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
+                    amount = amount * EXCHANGE_RATE;
+                }
+                return sum + amount;
+            }, 0);
+            
+            // Update stats grid
+            const statsGrid = document.querySelector('#clientsDashboard .stats-grid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Clients</div>
+                    <div class="stat-value">${clients.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value">${orders.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value">${formatCurrency(totalRevenue, currentCurrency)}</div>
+                </div>
+            `;
+            
+            // Update clients table
+            if (clients.length === 0) {
+                clientsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <div>No clients found</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                clientsTableBody.innerHTML = clients.map(client => `
+                    <tr>
+                        <td>${client.name}</td>
+                        <td>
+                            <a href="https://wa.me/${client.whatsapp || ''}?text=Hello Motioncraft" 
+                               target="_blank" class="whatsapp-link">
+                                📱 Chat
+                            </a>
+                        </td>
+                        <td>${client.totalOrders}</td>
+                        <td>${formatCurrency(client.totalAmount, currentCurrency)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Export orders to CSV
+        function exportOrdersToCSV() {
+            if (orders.length === 0) {
+                alert('No orders to export');
+                return;
+            }
+            
+            const headers = ['Client Name', 'Project Name', 'Price', 'Currency', 'Editor Payment', 'Editor Payment Currency', 'Payment Status', 'WhatsApp', 'Editor', 'Status', 'Date', 'Notes'];
+            const csvContent = [
+                headers.join(','),
+                ...orders.map(order => [
+                    `"${order.clientName || ''}"`,
+                    `"${order.projectName || ''}"`,
+                    order.projectPrice || 0,
+                    order.currency || 'USD',
+                    order.editorPayment || 0,
+                    order.editorPaymentCurrency || 'USD',
+                    order.paymentStatus || 'Pending',
+                    order.whatsappNumber || '',
+                    order.assignedEditor || '',
+                    order.projectStatus || '',
+                    order.projectDate || '',
+                    `"${order.notes || ''}"`
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `motioncraft-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Utility function to generate unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Utility function to format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+    </script>
 </body>
 </html>
