@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light theme colors */
             --bg-primary: #f5f7fa;
             --bg-secondary: #ffffff;
             --bg-card: #ffffff;
@@ -17,16 +16,12 @@
             --accent-light: #bee3f8;
             --border: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --success: #48bb78;
             --warning: #ed8936;
             --danger: #f56565;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.2);
         }
 
         .dark-mode {
-            /* Dark theme colors */
             --bg-primary: #1a202c;
             --bg-secondary: #2d3748;
             --bg-card: #2d3748;
@@ -36,16 +31,12 @@
             --accent-light: #2c5282;
             --border: #4a5568;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-            --glass-bg: rgba(45, 55, 72, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         body {
@@ -54,7 +45,6 @@
             color: var(--text-primary);
             line-height: 1.6;
             padding: 20px;
-            overflow-x: hidden;
         }
 
         .container {
@@ -133,28 +123,6 @@
             transform: translateX(24px);
         }
 
-        .currency-toggle {
-            display: flex;
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 4px;
-            box-shadow: var(--shadow);
-        }
-
-        .currency-option {
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .currency-option.active {
-            background-color: var(--accent);
-            color: white;
-        }
-
         .tabs {
             display: flex;
             gap: 10px;
@@ -184,12 +152,6 @@
 
         .dashboard.active {
             display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .card {
@@ -229,11 +191,6 @@
             color: white;
         }
 
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
         .btn-secondary {
             background-color: var(--bg-secondary);
             color: var(--text-primary);
@@ -246,11 +203,6 @@
 
         .btn-success {
             background-color: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
             color: white;
         }
 
@@ -397,15 +349,6 @@
             font-size: 14px;
         }
 
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
         .modal {
             display: none;
             position: fixed;
@@ -418,7 +361,6 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-y: auto;
         }
 
         .modal.active {
@@ -428,30 +370,20 @@
         .modal-content {
             background-color: var(--bg-card);
             border-radius: 20px;
-            padding: 30px;
             width: 90%;
             max-width: 500px;
-            box-shadow: var(--shadow-lg);
-            animation: modalFadeIn 0.3s ease;
+            box-shadow: var(--shadow);
             max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            position: sticky;
-            top: 0;
-            background-color: var(--bg-card);
-            padding: 10px 0;
-            z-index: 1;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .modal-title {
@@ -465,7 +397,12 @@
             font-size: 24px;
             cursor: pointer;
             color: var(--text-secondary);
-            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .form-group {
@@ -493,60 +430,12 @@
             resize: vertical;
         }
 
-        .form-actions {
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-            margin-top: 20px;
-            position: sticky;
-            bottom: 0;
-            background-color: var(--bg-card);
-            padding: 15px 0;
-        }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .chart-card {
-            background-color: var(--bg-card);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        canvas {
-            width: 100%;
-            height: 300px;
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border);
-            border-left: 4px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .empty-state {
@@ -570,15 +459,113 @@
             font-weight: 600;
         }
 
+        .setup-section {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .setup-step {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent-light);
+        }
+
+        .setup-step h4 {
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .realtime-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: var(--bg-primary);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid var(--accent);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .filter-bar {
                 flex-direction: column;
             }
@@ -597,13 +584,7 @@
                 margin: 10px;
             }
             
-            .modal-header {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            
-            .form-actions {
+            .modal-footer {
                 flex-direction: column;
             }
         }
@@ -617,13 +598,42 @@
                 <h1>Motioncraft Management System</h1>
             </div>
             <div class="header-controls">
-                <div class="currency-toggle">
-                    <div class="currency-option active" data-currency="USD">USD</div>
-                    <div class="currency-option" data-currency="BDT">BDT</div>
+                <div class="realtime-status">
+                    <div class="status-indicator"></div>
+                    <span>Real-Time Active</span>
                 </div>
                 <button class="theme-toggle" id="themeToggle"></button>
             </div>
         </header>
+
+        <div class="setup-section">
+            <h3>Real-Time Multi-User System</h3>
+            <p>This system works in real-time across multiple devices. No setup required!</p>
+            
+            <div class="setup-step">
+                <h4>How It Works</h4>
+                <p>All data is synchronized in real-time between all devices using this system.</p>
+                <p>Just share this webpage URL with your manager - they'll see live updates as you make changes.</p>
+            </div>
+            
+            <div class="setup-step">
+                <h4>Share with Manager</h4>
+                <p>Copy this page URL and send it to your manager:</p>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <input type="text" id="pageUrl" readonly style="flex: 1; padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); background-color: var(--bg-card); color: var(--text-primary);">
+                    <button class="btn btn-secondary" id="copyUrlBtn">Copy URL</button>
+                </div>
+                <p style="margin-top: 10px; font-size: 14px;">Your manager will see all data updates in real-time when they open this link.</p>
+            </div>
+            
+            <div class="setup-step">
+                <h4>Data Management</h4>
+                <p>You can also download or upload your data for backup purposes.</p>
+                <button class="btn btn-secondary" id="downloadDataBtn">Download Data Backup</button>
+                <input type="file" id="uploadDataInput" accept=".json" style="margin: 10px 0;">
+                <button class="btn btn-secondary" id="uploadDataBtn">Upload Data Backup</button>
+            </div>
+        </div>
 
         <div class="tabs">
             <div class="tab active" data-tab="orders">Orders</div>
@@ -762,17 +772,6 @@
                     </div>
                 </div>
 
-                <div class="charts-container">
-                    <div class="chart-card">
-                        <div class="chart-title">Income vs Expense</div>
-                        <canvas id="financeChart"></canvas>
-                    </div>
-                    <div class="chart-card">
-                        <div class="chart-title">Expense Breakdown</div>
-                        <canvas id="expenseChart"></canvas>
-                    </div>
-                </div>
-
                 <div class="card" style="margin-top: 24px;">
                     <div class="card-header">
                         <h2 class="card-title">Recent Expenses</h2>
@@ -849,6 +848,9 @@
         </div>
     </div>
 
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <!-- Add/Edit Order Modal -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
@@ -856,72 +858,62 @@
                 <h3 class="modal-title" id="orderModalTitle">Add New Order</h3>
                 <button class="close-modal">&times;</button>
             </div>
-            <form id="orderForm">
-                <input type="hidden" id="orderId">
-                <div class="form-group">
-                    <label class="form-label" for="clientName">Client Name</label>
-                    <input type="text" class="form-input" id="clientName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="projectName">Project Name</label>
-                    <input type="text" class="form-input" id="projectName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="projectPrice">Project Price</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" class="form-input" id="projectPrice" min="0" step="0.01" required style="flex: 1;">
-                        <select class="form-select" id="projectCurrency" style="width: 100px;">
-                            <option value="USD">USD</option>
-                            <option value="BDT">BDT</option>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <input type="hidden" id="orderId">
+                    <div class="form-group">
+                        <label class="form-label" for="clientName">Client Name</label>
+                        <input type="text" class="form-input" id="clientName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="projectName">Project Name</label>
+                        <input type="text" class="form-input" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="projectPrice">Project Price</label>
+                        <input type="number" class="form-input" id="projectPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editorPayment">Editor Payment</label>
+                        <input type="number" class="form-input" id="editorPayment" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="whatsappNumber">WhatsApp Number</label>
+                        <input type="text" class="form-input" id="whatsappNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="assignedEditor">Assigned Editor</label>
+                        <select class="form-select" id="assignedEditor" required>
+                            <option value="">Select Editor</option>
+                            <option value="Siam">Siam</option>
+                            <option value="Mojid">Mojid</option>
+                            <option value="Samiul">Samiul</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="editorPayment">Editor Payment</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" class="form-input" id="editorPayment" min="0" step="0.01" required style="flex: 1;">
-                        <select class="form-select" id="editorPaymentCurrency" style="width: 100px;">
-                            <option value="USD">USD</option>
-                            <option value="BDT">BDT</option>
+                    <div class="form-group">
+                        <label class="form-label" for="projectStatus">Project Status</label>
+                        <select class="form-select" id="projectStatus" required>
+                            <option value="Fresh">Fresh</option>
+                            <option value="Scripting">Scripting</option>
+                            <option value="Editing">Editing</option>
+                            <option value="Correction">Correction</option>
+                            <option value="Final Delivery">Final Delivery</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="whatsappNumber">WhatsApp Number</label>
-                    <input type="text" class="form-input" id="whatsappNumber" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="assignedEditor">Assigned Editor</label>
-                    <select class="form-select" id="assignedEditor" required>
-                        <option value="">Select Editor</option>
-                        <option value="Siam">Siam</option>
-                        <option value="Mojid">Mojid</option>
-                        <option value="Samiul">Samiul</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="projectStatus">Project Status</label>
-                    <select class="form-select" id="projectStatus" required>
-                        <option value="Fresh">Fresh</option>
-                        <option value="Scripting">Scripting</option>
-                        <option value="Editing">Editing</option>
-                        <option value="Correction">Correction</option>
-                        <option value="Final Delivery">Final Delivery</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="projectDate">Date</label>
-                    <input type="date" class="form-input" id="projectDate" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="projectNotes">Notes</label>
-                    <textarea class="form-textarea" id="projectNotes"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Order</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label class="form-label" for="projectDate">Date</label>
+                        <input type="date" class="form-input" id="projectDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="projectNotes">Notes</label>
+                        <textarea class="form-textarea" id="projectNotes"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveOrderBtn">Save Order</button>
+            </div>
         </div>
     </div>
 
@@ -932,50 +924,52 @@
                 <h3 class="modal-title" id="teamMemberModalTitle">Add Team Member</h3>
                 <button class="close-modal">&times;</button>
             </div>
-            <form id="teamMemberForm">
-                <input type="hidden" id="teamMemberId">
-                <div class="form-group">
-                    <label class="form-label" for="memberName">Name</label>
-                    <input type="text" class="form-input" id="memberName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberRole">Role</label>
-                    <select class="form-select" id="memberRole" required>
-                        <option value="">Select Role</option>
-                        <option value="Editor">Editor</option>
-                        <option value="Script Writer">Script Writer</option>
-                        <option value="Project Manager">Project Manager</option>
-                        <option value="Designer">Designer</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberWhatsApp">WhatsApp Number</label>
-                    <input type="text" class="form-input" id="memberWhatsApp" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberEmail">Email</label>
-                    <input type="email" class="form-input" id="memberEmail">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberJoinDate">Join Date</label>
-                    <input type="date" class="form-input" id="memberJoinDate" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberStatus">Status</label>
-                    <select class="form-select" id="memberStatus" required>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="memberNotes">Notes</label>
-                    <textarea class="form-textarea" id="memberNotes"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Member</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="teamMemberForm">
+                    <input type="hidden" id="teamMemberId">
+                    <div class="form-group">
+                        <label class="form-label" for="memberName">Name</label>
+                        <input type="text" class="form-input" id="memberName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberRole">Role</label>
+                        <select class="form-select" id="memberRole" required>
+                            <option value="">Select Role</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Script Writer">Script Writer</option>
+                            <option value="Project Manager">Project Manager</option>
+                            <option value="Designer">Designer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberWhatsApp">WhatsApp Number</label>
+                        <input type="text" class="form-input" id="memberWhatsApp" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberEmail">Email</label>
+                        <input type="email" class="form-input" id="memberEmail">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberJoinDate">Join Date</label>
+                        <input type="date" class="form-input" id="memberJoinDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberStatus">Status</label>
+                        <select class="form-select" id="memberStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="memberNotes">Notes</label>
+                        <textarea class="form-textarea" id="memberNotes"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveTeamMemberBtn">Save Member</button>
+            </div>
         </div>
     </div>
 
@@ -986,54 +980,40 @@
                 <h3 class="modal-title">Add Expense</h3>
                 <button class="close-modal">&times;</button>
             </div>
-            <form id="expenseForm">
-                <div class="form-group">
-                    <label class="form-label" for="expenseName">Expense Name</label>
-                    <input type="text" class="form-input" id="expenseName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="expenseAmount">Amount</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" class="form-input" id="expenseAmount" min="0" step="0.01" required style="flex: 1;">
-                        <select class="form-select" id="expenseCurrency" style="width: 100px;">
-                            <option value="USD">USD</option>
-                            <option value="BDT">BDT</option>
-                        </select>
+            <div class="modal-body">
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label class="form-label" for="expenseName">Expense Name</label>
+                        <input type="text" class="form-input" id="expenseName" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="expenseDate">Date</label>
-                    <input type="date" class="form-input" id="expenseDate" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Expense</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label class="form-label" for="expenseAmount">Amount</label>
+                        <input type="number" class="form-input" id="expenseAmount" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="expenseDate">Date</label>
+                        <input type="date" class="form-input" id="expenseDate" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveExpenseBtn">Add Expense</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // API Configuration - CORRECTED API IDs (just the ID part, not full URL)
-        const ORDERS_API_ID = '4n4f5dqo0iezd';
-        const EXPENSES_API_ID = 'b4nfkl0gkrr0y';
-        const TEAM_MEMBERS_API_ID = 'h3kh1avvk0fj7';
-
-        const ORDERS_BASE_URL = `https://sheetdb.io/api/v1/${ORDERS_API_ID}`;
-        const EXPENSES_BASE_URL = `https://sheetdb.io/api/v1/${EXPENSES_API_ID}`;
-        const TEAM_MEMBERS_BASE_URL = `https://sheetdb.io/api/v1/${TEAM_MEMBERS_API_ID}`;
-        const EXCHANGE_RATE = 110; // 1 USD = 110 BDT
-
         // Global state
         let orders = [];
         let expenses = [];
         let teamMembers = [];
         let currentEditingId = null;
-        let currentCurrency = 'USD';
+        let lastDataHash = '';
+        let notificationTimeout = null;
 
         // DOM Elements
         const themeToggle = document.getElementById('themeToggle');
-        const currencyOptions = document.querySelectorAll('.currency-option');
         const tabs = document.querySelectorAll('.tab');
         const dashboards = document.querySelectorAll('.dashboard');
         const ordersTableBody = document.getElementById('ordersTableBody');
@@ -1061,6 +1041,15 @@
         const totalExpenseEl = document.getElementById('totalExpense');
         const editorPaymentsEl = document.getElementById('editorPayments');
         const profitEl = document.getElementById('profit');
+        const downloadDataBtn = document.getElementById('downloadDataBtn');
+        const uploadDataBtn = document.getElementById('uploadDataBtn');
+        const uploadDataInput = document.getElementById('uploadDataInput');
+        const copyUrlBtn = document.getElementById('copyUrlBtn');
+        const pageUrl = document.getElementById('pageUrl');
+        const saveOrderBtn = document.getElementById('saveOrderBtn');
+        const saveTeamMemberBtn = document.getElementById('saveTeamMemberBtn');
+        const saveExpenseBtn = document.getElementById('saveExpenseBtn');
+        const notificationContainer = document.getElementById('notificationContainer');
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
@@ -1073,25 +1062,29 @@
             const now = new Date();
             monthPicker.value = now.toISOString().slice(0, 7);
             
-            // Load data from localStorage if available
+            // Set page URL
+            pageUrl.value = window.location.href;
+            
+            // Load data from localStorage
             loadFromLocalStorage();
             
             // Set up event listeners
             setupEventListeners();
             
-            // Load data from API
-            loadData();
+            // Render initial data
+            renderOrders();
+            renderTeamStats();
+            updateFinance();
+            renderClients();
+            
+            // Start real-time simulation
+            startRealTimeSimulation();
         }
 
         // Set up all event listeners
         function setupEventListeners() {
             // Theme toggle
             themeToggle.addEventListener('click', toggleTheme);
-            
-            // Currency toggle
-            currencyOptions.forEach(option => {
-                option.addEventListener('click', () => switchCurrency(option.dataset.currency));
-            });
             
             // Tab navigation
             tabs.forEach(tab => {
@@ -1108,9 +1101,9 @@
             });
             
             // Form submissions
-            orderForm.addEventListener('submit', handleOrderSubmit);
-            teamMemberForm.addEventListener('submit', handleTeamMemberSubmit);
-            expenseForm.addEventListener('submit', handleExpenseSubmit);
+            saveOrderBtn.addEventListener('click', handleOrderSubmit);
+            saveTeamMemberBtn.addEventListener('click', handleTeamMemberSubmit);
+            saveExpenseBtn.addEventListener('click', handleExpenseSubmit);
             
             // Filters and search
             statusFilter.addEventListener('change', filterOrders);
@@ -1122,6 +1115,11 @@
             // Export CSV
             exportCsvBtn.addEventListener('click', exportOrdersToCSV);
             
+            // Data management
+            downloadDataBtn.addEventListener('click', downloadData);
+            uploadDataBtn.addEventListener('click', uploadData);
+            copyUrlBtn.addEventListener('click', copyPageUrl);
+            
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === orderModal) closeModals();
@@ -1130,44 +1128,108 @@
             });
         }
 
+        // Copy page URL
+        function copyPageUrl() {
+            pageUrl.select();
+            document.execCommand('copy');
+            showNotification('URL Copied', 'Page URL copied to clipboard! Send this to your manager.');
+        }
+
+        // Show notification
+        function showNotification(title, message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            let icon = 'ℹ️';
+            if (type === 'success') icon = '✅';
+            if (type === 'warning') icon = '⚠️';
+            if (type === 'error') icon = '❌';
+            
+            notification.innerHTML = `
+                <div class="notification-icon">${icon}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close">&times;</button>
+            `;
+            
+            notificationContainer.appendChild(notification);
+            
+            // Add event listener to close button
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.remove();
+            });
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Simulate real-time updates
+        function startRealTimeSimulation() {
+            // In a real implementation, this would connect to a real-time database
+            // For this demo, we'll simulate real-time by updating the UI frequently
+            setInterval(() => {
+                // Update time-sensitive data
+                updateFinance();
+                
+                // Check for changes in localStorage (simulating multi-user)
+                checkForExternalUpdates();
+            }, 2000);
+        }
+
+        // Check for external updates (simulated)
+        function checkForExternalUpdates() {
+            // In a real implementation, this would check a shared database
+            // For this demo, we'll just reload from localStorage
+            const savedData = localStorage.getItem('motioncraft_data');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    const currentHash = JSON.stringify(data);
+                    
+                    // Check if data has changed
+                    if (currentHash !== lastDataHash) {
+                        // Data has changed, update our state
+                        orders = data.orders || [];
+                        expenses = data.expenses || [];
+                        teamMembers = data.teamMembers || [];
+                        
+                        // Show notification if this is an external change
+                        if (lastDataHash && !notificationTimeout) {
+                            showNotification('Data Updated', 'Your manager has made changes to the data.', 'success');
+                            notificationTimeout = setTimeout(() => {
+                                notificationTimeout = null;
+                            }, 5000);
+                        }
+                        
+                        // Refresh UI
+                        renderOrders();
+                        renderTeamStats();
+                        updateFinance();
+                        renderClients();
+                        
+                        // Update last hash
+                        lastDataHash = currentHash;
+                    }
+                } catch (e) {
+                    console.error('Error checking for updates:', e);
+                }
+            } else {
+                // Initialize lastDataHash
+                const data = { orders, expenses, teamMembers };
+                lastDataHash = JSON.stringify(data);
+            }
+        }
+
         // Toggle between light and dark mode
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // Switch between currencies
-        function switchCurrency(currency) {
-            currentCurrency = currency;
-            localStorage.setItem('currency', currency);
-            
-            // Update active currency option
-            currencyOptions.forEach(option => {
-                option.classList.toggle('active', option.dataset.currency === currency);
-            });
-            
-            // Refresh all displays
-            renderOrders();
-            renderTeamStats();
-            updateFinance();
-            renderClients();
-        }
-
-        // Format currency based on current selection
-        function formatCurrency(amount, currency) {
-            let convertedAmount = parseFloat(amount || 0);
-            
-            // Convert if needed
-            if (currency && currency !== currentCurrency) {
-                if (currency === 'USD' && currentCurrency === 'BDT') {
-                    convertedAmount = convertedAmount * EXCHANGE_RATE;
-                } else if (currency === 'BDT' && currentCurrency === 'USD') {
-                    convertedAmount = convertedAmount / EXCHANGE_RATE;
-                }
-            }
-            
-            const symbol = currentCurrency === 'USD' ? '$' : '৳';
-            return `${symbol}${convertedAmount.toFixed(2)}`;
         }
 
         // Switch between dashboard tabs
@@ -1194,158 +1256,40 @@
             }
         }
 
-        // Load data from API
-        async function loadData() {
-            showLoading('ordersTableBody');
-            showLoading('teamTableBody');
-            showLoading('clientsTableBody');
-            showLoading('expensesTableBody');
-            showLoading('paymentsTableBody');
-            
-            try {
-                // Load orders
-                const ordersResponse = await fetch(`${ORDERS_BASE_URL}`);
-                if (ordersResponse.ok) {
-                    const data = await ordersResponse.json();
-                    if (data && Array.isArray(data)) {
-                        orders = data;
-                        saveToLocalStorage('orders', orders);
-                    } else {
-                        throw new Error('Invalid orders data format');
-                    }
-                } else {
-                    throw new Error(`Failed to load orders: ${ordersResponse.status}`);
-                }
-                
-                // Load expenses
-                const expensesResponse = await fetch(`${EXPENSES_BASE_URL}`);
-                if (expensesResponse.ok) {
-                    const data = await expensesResponse.json();
-                    if (data && Array.isArray(data)) {
-                        expenses = data;
-                        saveToLocalStorage('expenses', expenses);
-                    } else {
-                        throw new Error('Invalid expenses data format');
-                    }
-                } else {
-                    throw new Error(`Failed to load expenses: ${expensesResponse.status}`);
-                }
-                
-                // Load team members
-                const teamResponse = await fetch(`${TEAM_MEMBERS_BASE_URL}`);
-                if (teamResponse.ok) {
-                    const data = await teamResponse.json();
-                    if (data && Array.isArray(data)) {
-                        teamMembers = data;
-                        saveToLocalStorage('team_members', teamMembers);
-                    } else {
-                        throw new Error('Invalid team members data format');
-                    }
-                } else {
-                    throw new Error(`Failed to load team members: ${teamResponse.status}`);
-                }
-                
-                // Update all dashboards
-                renderOrders();
-                renderTeamStats();
-                updateFinance();
-                renderClients();
-            } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Error loading data from API. Using cached data if available.');
-                
-                // Use cached data if API fails
-                if (orders.length === 0) {
-                    orders = getFromLocalStorage('orders') || [];
-                    renderOrders();
-                }
-                
-                if (expenses.length === 0) {
-                    expenses = getFromLocalStorage('expenses') || [];
-                    updateFinance();
-                }
-                
-                if (teamMembers.length === 0) {
-                    teamMembers = getFromLocalStorage('team_members') || [];
-                }
-                
-                renderTeamStats();
-                renderClients();
-            }
-        }
-
         // Save data to localStorage
-        function saveToLocalStorage(key, data) {
-            localStorage.setItem(`motioncraft_${key}`, JSON.stringify(data));
+        function saveToLocalStorage() {
+            const data = {
+                orders: orders,
+                expenses: expenses,
+                teamMembers: teamMembers,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('motioncraft_data', JSON.stringify(data));
+            
+            // Update last hash
+            lastDataHash = JSON.stringify(data);
         }
 
         // Load data from localStorage
         function loadFromLocalStorage() {
-            const savedOrders = localStorage.getItem('motioncraft_orders');
-            const savedExpenses = localStorage.getItem('motioncraft_expenses');
-            const savedTeamMembers = localStorage.getItem('motioncraft_team_members');
+            const savedData = localStorage.getItem('motioncraft_data');
             const savedTheme = localStorage.getItem('theme');
-            const savedCurrency = localStorage.getItem('currency');
             
-            if (savedOrders) {
+            if (savedData) {
                 try {
-                    orders = JSON.parse(savedOrders);
+                    const data = JSON.parse(savedData);
+                    orders = data.orders || [];
+                    expenses = data.expenses || [];
+                    teamMembers = data.teamMembers || [];
                 } catch (e) {
-                    console.error('Error parsing saved orders:', e);
+                    console.error('Error parsing saved data:', e);
                     orders = [];
-                }
-            }
-            
-            if (savedExpenses) {
-                try {
-                    expenses = JSON.parse(savedExpenses);
-                } catch (e) {
-                    console.error('Error parsing saved expenses:', e);
                     expenses = [];
-                }
-            }
-            
-            if (savedTeamMembers) {
-                try {
-                    teamMembers = JSON.parse(savedTeamMembers);
-                } catch (e) {
-                    console.error('Error parsing saved team members:', e);
                     teamMembers = [];
                 }
             }
             
             if (savedTheme === 'dark') document.body.classList.add('dark-mode');
-            if (savedCurrency) currentCurrency = savedCurrency;
-            
-            // Update currency UI
-            currencyOptions.forEach(option => {
-                option.classList.toggle('active', option.dataset.currency === currentCurrency);
-            });
-        }
-
-        // Get data from localStorage
-        function getFromLocalStorage(key) {
-            const data = localStorage.getItem(`motioncraft_${key}`);
-            try {
-                return data ? JSON.parse(data) : null;
-            } catch (e) {
-                console.error(`Error parsing ${key} from localStorage:`, e);
-                return null;
-            }
-        }
-
-        // Show loading indicator
-        function showLoading(containerId) {
-            const container = document.getElementById(containerId);
-            if (container) {
-                container.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="loading">
-                            <div class="spinner"></div>
-                        </td>
-                    </tr>
-                `;
-            }
         }
 
         // Render orders table
@@ -1370,12 +1314,12 @@
                     <td>${order.projectName || 'N/A'}</td>
                     <td>
                         <div class="currency-display">
-                            <span class="currency-symbol">${formatCurrency(order.projectPrice || 0, order.currency || 'USD')}</span>
+                            <span class="currency-symbol">${formatCurrency(order.projectPrice || 0)}</span>
                         </div>
                     </td>
                     <td>
                         <div class="currency-display">
-                            <span class="currency-symbol">${formatCurrency(order.editorPayment || 0, order.editorPaymentCurrency || 'USD')}</span>
+                            <span class="currency-symbol">${formatCurrency(order.editorPayment || 0)}</span>
                         </div>
                     </td>
                     <td>
@@ -1437,50 +1381,18 @@
         }
 
         // Mark payment as paid
-        async function markPaymentAsPaid(orderId) {
+        function markPaymentAsPaid(orderId) {
             if (!confirm('Are you sure you want to mark this payment as paid?')) return;
             
-            try {
-                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        data: {
-                            paymentStatus: 'Paid',
-                            paymentDate: new Date().toISOString().slice(0, 10)
-                        }
-                    })
-                });
-                
-                if (response.ok) {
-                    const index = orders.findIndex(o => o.id === orderId);
-                    if (index !== -1) {
-                        orders[index].paymentStatus = 'Paid';
-                        orders[index].paymentDate = new Date().toISOString().slice(0, 10);
-                        saveToLocalStorage('orders', orders);
-                        renderOrders();
-                        renderTeamStats();
-                        updateFinance();
-                    }
-                } else {
-                    throw new Error('Failed to mark payment as paid');
-                }
-            } catch (error) {
-                console.error('Error marking payment as paid:', error);
-                alert('Error marking payment as paid. Data saved locally.');
-                
-                // Fallback: Save locally
-                const index = orders.findIndex(o => o.id === orderId);
-                if (index !== -1) {
-                    orders[index].paymentStatus = 'Paid';
-                    orders[index].paymentDate = new Date().toISOString().slice(0, 10);
-                    saveToLocalStorage('orders', orders);
-                    renderOrders();
-                    renderTeamStats();
-                    updateFinance();
-                }
+            const index = orders.findIndex(o => o.id === orderId);
+            if (index !== -1) {
+                orders[index].paymentStatus = 'Paid';
+                orders[index].paymentDate = new Date().toISOString().slice(0, 10);
+                saveToLocalStorage();
+                renderOrders();
+                renderTeamStats();
+                updateFinance();
+                showNotification('Payment Updated', `Payment marked as paid for order: ${orders[index].projectName}`, 'success');
             }
         }
 
@@ -1538,7 +1450,6 @@
         // Open order modal for adding or editing
         function openOrderModal(orderId = null) {
             const modalTitle = document.getElementById('orderModalTitle');
-            const form = document.getElementById('orderForm');
             
             if (orderId) {
                 // Edit mode
@@ -1551,9 +1462,7 @@
                     document.getElementById('clientName').value = order.clientName || '';
                     document.getElementById('projectName').value = order.projectName || '';
                     document.getElementById('projectPrice').value = order.projectPrice || '';
-                    document.getElementById('projectCurrency').value = order.currency || 'USD';
                     document.getElementById('editorPayment').value = order.editorPayment || '';
-                    document.getElementById('editorPaymentCurrency').value = order.editorPaymentCurrency || 'USD';
                     document.getElementById('whatsappNumber').value = order.whatsappNumber || '';
                     document.getElementById('assignedEditor').value = order.assignedEditor || '';
                     document.getElementById('projectStatus').value = order.projectStatus || 'Fresh';
@@ -1564,9 +1473,7 @@
                 // Add mode
                 modalTitle.textContent = 'Add New Order';
                 currentEditingId = null;
-                form.reset();
-                document.getElementById('projectCurrency').value = 'USD';
-                document.getElementById('editorPaymentCurrency').value = 'USD';
+                orderForm.reset();
                 document.getElementById('projectDate').value = new Date().toISOString().slice(0, 10);
                 document.getElementById('projectStatus').value = 'Fresh';
             }
@@ -1577,7 +1484,6 @@
         // Open team member modal for adding or editing
         function openTeamMemberModal(memberId = null) {
             const modalTitle = document.getElementById('teamMemberModalTitle');
-            const form = document.getElementById('teamMemberForm');
             
             if (memberId) {
                 // Edit mode
@@ -1599,7 +1505,7 @@
                 // Add mode
                 modalTitle.textContent = 'Add Team Member';
                 currentEditingId = null;
-                form.reset();
+                teamMemberForm.reset();
                 document.getElementById('memberJoinDate').value = new Date().toISOString().slice(0, 10);
                 document.getElementById('memberStatus').value = 'Active';
             }
@@ -1610,7 +1516,6 @@
         // Open expense modal
         function openExpenseModal() {
             expenseForm.reset();
-            document.getElementById('expenseCurrency').value = 'USD';
             document.getElementById('expenseDate').value = new Date().toISOString().slice(0, 10);
             expenseModal.classList.add('active');
         }
@@ -1624,16 +1529,14 @@
         }
 
         // Handle order form submission
-        async function handleOrderSubmit(e) {
+        function handleOrderSubmit(e) {
             e.preventDefault();
             
             const formData = {
                 clientName: document.getElementById('clientName').value,
                 projectName: document.getElementById('projectName').value,
                 projectPrice: parseFloat(document.getElementById('projectPrice').value).toFixed(2),
-                currency: document.getElementById('projectCurrency').value,
                 editorPayment: parseFloat(document.getElementById('editorPayment').value).toFixed(2),
-                editorPaymentCurrency: document.getElementById('editorPaymentCurrency').value,
                 paymentStatus: 'Pending',
                 whatsappNumber: document.getElementById('whatsappNumber').value,
                 assignedEditor: document.getElementById('assignedEditor').value,
@@ -1644,18 +1547,20 @@
             
             if (currentEditingId) {
                 // Update existing order
-                await updateOrder(currentEditingId, formData);
+                updateOrder(currentEditingId, formData);
+                showNotification('Order Updated', `Order "${formData.projectName}" has been updated`, 'success');
             } else {
                 // Add new order
                 formData.id = generateId();
-                await addOrder(formData);
+                addOrder(formData);
+                showNotification('Order Added', `New order "${formData.projectName}" has been added`, 'success');
             }
             
             closeModals();
         }
 
         // Handle team member form submission
-        async function handleTeamMemberSubmit(e) {
+        function handleTeamMemberSubmit(e) {
             e.preventDefault();
             
             const formData = {
@@ -1670,259 +1575,110 @@
             
             if (currentEditingId) {
                 // Update existing team member
-                await updateTeamMember(currentEditingId, formData);
+                updateTeamMember(currentEditingId, formData);
+                showNotification('Team Member Updated', `Team member "${formData.name}" has been updated`, 'success');
             } else {
                 // Add new team member
                 formData.id = generateId();
-                await addTeamMember(formData);
+                addTeamMember(formData);
+                showNotification('Team Member Added', `New team member "${formData.name}" has been added`, 'success');
             }
             
             closeModals();
         }
 
         // Handle expense form submission
-        async function handleExpenseSubmit(e) {
+        function handleExpenseSubmit(e) {
             e.preventDefault();
             
             const formData = {
                 id: generateId(),
                 expenseName: document.getElementById('expenseName').value,
                 expenseAmount: parseFloat(document.getElementById('expenseAmount').value).toFixed(2),
-                currency: document.getElementById('expenseCurrency').value,
                 expenseDate: document.getElementById('expenseDate').value
             };
             
-            await addExpense(formData);
+            addExpense(formData);
+            showNotification('Expense Added', `New expense "${formData.expenseName}" has been added`, 'success');
             closeModals();
         }
 
         // Add new order
-        async function addOrder(orderData) {
-            try {
-                const response = await fetch(`${ORDERS_BASE_URL}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ data: [orderData] })
-                });
-                
-                if (response.ok) {
-                    orders.push(orderData);
-                    saveToLocalStorage('orders', orders);
-                    renderOrders();
-                    renderTeamStats();
-                    renderClients();
-                    updateFinance();
-                } else {
-                    throw new Error('Failed to add order');
-                }
-            } catch (error) {
-                console.error('Error adding order:', error);
-                alert('Error adding order. Data saved locally.');
-                
-                // Fallback: Save locally
-                orders.push(orderData);
-                saveToLocalStorage('orders', orders);
+        function addOrder(orderData) {
+            orders.push(orderData);
+            saveToLocalStorage();
+            renderOrders();
+            renderTeamStats();
+            renderClients();
+            updateFinance();
+        }
+
+        // Update existing order
+        function updateOrder(orderId, orderData) {
+            const index = orders.findIndex(o => o.id === orderId);
+            if (index !== -1) {
+                orders[index] = { ...orders[index], ...orderData };
+                saveToLocalStorage();
                 renderOrders();
                 renderTeamStats();
                 renderClients();
                 updateFinance();
-            }
-        }
-
-        // Update existing order
-        async function updateOrder(orderId, orderData) {
-            try {
-                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ data: orderData })
-                });
-                
-                if (response.ok) {
-                    const index = orders.findIndex(o => o.id === orderId);
-                    if (index !== -1) {
-                        orders[index] = { ...orders[index], ...orderData };
-                        saveToLocalStorage('orders', orders);
-                        renderOrders();
-                        renderTeamStats();
-                        renderClients();
-                        updateFinance();
-                    }
-                } else {
-                    throw new Error('Failed to update order');
-                }
-            } catch (error) {
-                console.error('Error updating order:', error);
-                alert('Error updating order. Data saved locally.');
-                
-                // Fallback: Save locally
-                const index = orders.findIndex(o => o.id === orderId);
-                if (index !== -1) {
-                    orders[index] = { ...orders[index], ...orderData };
-                    saveToLocalStorage('orders', orders);
-                    renderOrders();
-                    renderTeamStats();
-                    renderClients();
-                    updateFinance();
-                }
             }
         }
 
         // Delete order
-        async function deleteOrder(orderId) {
+        function deleteOrder(orderId) {
             if (!confirm('Are you sure you want to delete this order?')) return;
             
-            try {
-                const response = await fetch(`${ORDERS_BASE_URL}/id/${orderId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    orders = orders.filter(o => o.id !== orderId);
-                    saveToLocalStorage('orders', orders);
-                    renderOrders();
-                    renderTeamStats();
-                    renderClients();
-                    updateFinance();
-                } else {
-                    throw new Error('Failed to delete order');
-                }
-            } catch (error) {
-                console.error('Error deleting order:', error);
-                alert('Error deleting order. Data removed locally.');
-                
-                // Fallback: Remove locally
-                orders = orders.filter(o => o.id !== orderId);
-                saveToLocalStorage('orders', orders);
-                renderOrders();
-                renderTeamStats();
-                renderClients();
-                updateFinance();
+            const order = orders.find(o => o.id === orderId);
+            orders = orders.filter(o => o.id !== orderId);
+            saveToLocalStorage();
+            renderOrders();
+            renderTeamStats();
+            renderClients();
+            updateFinance();
+            
+            if (order) {
+                showNotification('Order Deleted', `Order "${order.projectName}" has been deleted`, 'warning');
             }
         }
 
         // Add new team member
-        async function addTeamMember(memberData) {
-            try {
-                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ data: [memberData] })
-                });
-                
-                if (response.ok) {
-                    teamMembers.push(memberData);
-                    saveToLocalStorage('team_members', teamMembers);
-                    renderTeamStats();
-                } else {
-                    throw new Error('Failed to add team member');
-                }
-            } catch (error) {
-                console.error('Error adding team member:', error);
-                alert('Error adding team member. Data saved locally.');
-                
-                // Fallback: Save locally
-                teamMembers.push(memberData);
-                saveToLocalStorage('team_members', teamMembers);
-                renderTeamStats();
-            }
+        function addTeamMember(memberData) {
+            teamMembers.push(memberData);
+            saveToLocalStorage();
+            renderTeamStats();
         }
 
         // Update existing team member
-        async function updateTeamMember(memberId, memberData) {
-            try {
-                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ data: memberData })
-                });
-                
-                if (response.ok) {
-                    const index = teamMembers.findIndex(m => m.id === memberId);
-                    if (index !== -1) {
-                        teamMembers[index] = { ...teamMembers[index], ...memberData };
-                        saveToLocalStorage('team_members', teamMembers);
-                        renderTeamStats();
-                    }
-                } else {
-                    throw new Error('Failed to update team member');
-                }
-            } catch (error) {
-                console.error('Error updating team member:', error);
-                alert('Error updating team member. Data saved locally.');
-                
-                // Fallback: Save locally
-                const index = teamMembers.findIndex(m => m.id === memberId);
-                if (index !== -1) {
-                    teamMembers[index] = { ...teamMembers[index], ...memberData };
-                    saveToLocalStorage('team_members', teamMembers);
-                    renderTeamStats();
-                }
+        function updateTeamMember(memberId, memberData) {
+            const index = teamMembers.findIndex(m => m.id === memberId);
+            if (index !== -1) {
+                teamMembers[index] = { ...teamMembers[index], ...memberData };
+                saveToLocalStorage();
+                renderTeamStats();
             }
         }
 
         // Delete team member
-        async function deleteTeamMember(memberId) {
+        function deleteTeamMember(memberId) {
             if (!confirm('Are you sure you want to delete this team member?')) return;
             
-            try {
-                const response = await fetch(`${TEAM_MEMBERS_BASE_URL}/id/${memberId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    teamMembers = teamMembers.filter(m => m.id !== memberId);
-                    saveToLocalStorage('team_members', teamMembers);
-                    renderTeamStats();
-                } else {
-                    throw new Error('Failed to delete team member');
-                }
-            } catch (error) {
-                console.error('Error deleting team member:', error);
-                alert('Error deleting team member. Data removed locally.');
-                
-                // Fallback: Remove locally
-                teamMembers = teamMembers.filter(m => m.id !== memberId);
-                saveToLocalStorage('team_members', teamMembers);
-                renderTeamStats();
+            const member = teamMembers.find(m => m.id === memberId);
+            teamMembers = teamMembers.filter(m => m.id !== memberId);
+            saveToLocalStorage();
+            renderTeamStats();
+            
+            if (member) {
+                showNotification('Team Member Deleted', `Team member "${member.name}" has been deleted`, 'warning');
             }
         }
 
         // Add expense
-        async function addExpense(expenseData) {
-            try {
-                const response = await fetch(`${EXPENSES_BASE_URL}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ data: [expenseData] })
-                });
-                
-                if (response.ok) {
-                    expenses.push(expenseData);
-                    saveToLocalStorage('expenses', expenses);
-                    updateFinance();
-                } else {
-                    throw new Error('Failed to add expense');
-                }
-            } catch (error) {
-                console.error('Error adding expense:', error);
-                alert('Error adding expense. Data saved locally.');
-                
-                // Fallback: Save locally
-                expenses.push(expenseData);
-                saveToLocalStorage('expenses', expenses);
-                updateFinance();
-            }
+        function addExpense(expenseData) {
+            expenses.push(expenseData);
+            saveToLocalStorage();
+            updateFinance();
         }
 
         // Render team stats
@@ -1943,26 +1699,14 @@
                 
                 // Calculate total earnings (editor payments)
                 const totalEarnings = editorOrders.reduce((sum, order) => {
-                    let amount = parseFloat(order.editorPayment || 0);
-                    if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
-                        amount = amount / EXCHANGE_RATE;
-                    } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
-                        amount = amount * EXCHANGE_RATE;
-                    }
-                    return sum + amount;
+                    return sum + parseFloat(order.editorPayment || 0);
                 }, 0);
                 
                 // Calculate pending payments
                 const pendingPayments = editorOrders
                     .filter(order => order.paymentStatus !== 'Paid')
                     .reduce((sum, order) => {
-                        let amount = parseFloat(order.editorPayment || 0);
-                        if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
-                            amount = amount / EXCHANGE_RATE;
-                        } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
-                            amount = amount * EXCHANGE_RATE;
-                        }
-                        return sum + amount;
+                        return sum + parseFloat(order.editorPayment || 0);
                     }, 0);
                 
                 return {
@@ -1986,8 +1730,8 @@
                 <div class="stat-card">
                     <div class="stat-label">${stat.name}'s Projects</div>
                     <div class="stat-value">${stat.totalProjects}</div>
-                    <div class="stat-label">Earnings: ${formatCurrency(stat.totalEarnings, currentCurrency)}</div>
-                    <div class="stat-label">Pending: ${formatCurrency(stat.pendingPayments, currentCurrency)}</div>
+                    <div class="stat-label">Earnings: ${formatCurrency(stat.totalEarnings)}</div>
+                    <div class="stat-label">Pending: ${formatCurrency(stat.pendingPayments)}</div>
                 </div>
             `).join('');
             
@@ -2016,8 +1760,8 @@
                         <td>${stat.thisMonth}</td>
                         <td>${stat.pending}</td>
                         <td>${stat.completed}</td>
-                        <td>${formatCurrency(stat.totalEarnings, currentCurrency)}</td>
-                        <td>${formatCurrency(stat.pendingPayments, currentCurrency)}</td>
+                        <td>${formatCurrency(stat.totalEarnings)}</td>
+                        <td>${formatCurrency(stat.pendingPayments)}</td>
                         <td>
                             <button class="btn btn-secondary btn-small edit-team-member" data-id="${stat.id}">
                                 Edit
@@ -2059,15 +1803,9 @@
                 return orderDate.getFullYear() === year && orderDate.getMonth() === month - 1;
             });
             
-            // Calculate income in current currency
+            // Calculate income
             const income = monthOrders.reduce((sum, order) => {
-                let amount = parseFloat(order.projectPrice || 0);
-                if (order.currency === 'BDT' && currentCurrency === 'USD') {
-                    amount = amount / EXCHANGE_RATE;
-                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
-                    amount = amount * EXCHANGE_RATE;
-                }
-                return sum + amount;
+                return sum + parseFloat(order.projectPrice || 0);
             }, 0);
             
             // Calculate expenses
@@ -2076,38 +1814,26 @@
                 return expenseDate.getFullYear() === year && expenseDate.getMonth() === month - 1;
             });
             
-            // Calculate expenses in current currency
+            // Calculate expenses
             const expenseTotal = monthExpenses.reduce((sum, expense) => {
-                let amount = parseFloat(expense.expenseAmount || 0);
-                if (expense.currency === 'BDT' && currentCurrency === 'USD') {
-                    amount = amount / EXCHANGE_RATE;
-                } else if (expense.currency === 'USD' && currentCurrency === 'BDT') {
-                    amount = amount * EXCHANGE_RATE;
-                }
-                return sum + amount;
+                return sum + parseFloat(expense.expenseAmount || 0);
             }, 0);
             
             // Calculate editor payments (paid ones)
             const editorPayments = monthOrders
                 .filter(order => order.paymentStatus === 'Paid')
                 .reduce((sum, order) => {
-                    let amount = parseFloat(order.editorPayment || 0);
-                    if (order.editorPaymentCurrency === 'BDT' && currentCurrency === 'USD') {
-                        amount = amount / EXCHANGE_RATE;
-                    } else if (order.editorPaymentCurrency === 'USD' && currentCurrency === 'BDT') {
-                        amount = amount * EXCHANGE_RATE;
-                    }
-                    return sum + amount;
+                    return sum + parseFloat(order.editorPayment || 0);
                 }, 0);
             
             const totalExpense = expenseTotal + editorPayments;
             const profit = income - totalExpense;
             
             // Update UI
-            totalIncomeEl.textContent = formatCurrency(income, currentCurrency);
-            totalExpenseEl.textContent = formatCurrency(totalExpense, currentCurrency);
-            editorPaymentsEl.textContent = formatCurrency(editorPayments, currentCurrency);
-            profitEl.textContent = formatCurrency(profit, currentCurrency);
+            totalIncomeEl.textContent = formatCurrency(income);
+            totalExpenseEl.textContent = formatCurrency(totalExpense);
+            editorPaymentsEl.textContent = formatCurrency(editorPayments);
+            profitEl.textContent = formatCurrency(profit);
             profitEl.style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
             
             // Update expenses table
@@ -2124,7 +1850,7 @@
                 expensesTableBody.innerHTML = monthExpenses.map(expense => `
                     <tr>
                         <td>${expense.expenseName || 'N/A'}</td>
-                        <td>${formatCurrency(expense.expenseAmount || 0, expense.currency || 'USD')}</td>
+                        <td>${formatCurrency(expense.expenseAmount || 0)}</td>
                         <td>${formatDate(expense.expenseDate)}</td>
                         <td>
                             <button class="btn btn-danger btn-small delete-expense" data-id="${expense.id}">
@@ -2159,7 +1885,7 @@
                     <tr>
                         <td>${order.assignedEditor || 'N/A'}</td>
                         <td>${order.projectName || 'N/A'}</td>
-                        <td>${formatCurrency(order.editorPayment || 0, order.editorPaymentCurrency || 'USD')}</td>
+                        <td>${formatCurrency(order.editorPayment || 0)}</td>
                         <td>
                             <span class="payment-status payment-pending">
                                 ${order.paymentStatus || 'Pending'}
@@ -2182,128 +1908,19 @@
                     });
                 });
             }
-            
-            // Update charts
-            renderFinanceCharts(income, totalExpense, monthExpenses, editorPayments);
         }
 
         // Delete expense
-        async function deleteExpense(expenseId) {
+        function deleteExpense(expenseId) {
             if (!confirm('Are you sure you want to delete this expense?')) return;
             
-            try {
-                const response = await fetch(`${EXPENSES_BASE_URL}/id/${expenseId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    expenses = expenses.filter(e => e.id !== expenseId);
-                    saveToLocalStorage('expenses', expenses);
-                    updateFinance();
-                } else {
-                    throw new Error('Failed to delete expense');
-                }
-            } catch (error) {
-                console.error('Error deleting expense:', error);
-                alert('Error deleting expense. Data removed locally.');
-                
-                // Fallback: Remove locally
-                expenses = expenses.filter(e => e.id !== expenseId);
-                saveToLocalStorage('expenses', expenses);
-                updateFinance();
-            }
-        }
-
-        // Render finance charts
-        function renderFinanceCharts(income, expense, expenses, editorPayments) {
-            const financeCtx = document.getElementById('financeChart');
-            const expenseCtx = document.getElementById('expenseChart');
+            const expense = expenses.find(e => e.id === expenseId);
+            expenses = expenses.filter(e => e.id !== expenseId);
+            saveToLocalStorage();
+            updateFinance();
             
-            if (!financeCtx || !expenseCtx) return;
-            
-            // Clear previous charts if they exist
-            if (window.financeChart instanceof Chart) {
-                window.financeChart.destroy();
-            }
-            if (window.expenseChart instanceof Chart) {
-                window.expenseChart.destroy();
-            }
-            
-            // Income vs Expense chart
-            window.financeChart = new Chart(financeCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Income', 'Expense'],
-                    datasets: [{
-                        label: `Amount (${currentCurrency})`,
-                        data: [income, expense],
-                        backgroundColor: [
-                            'rgba(72, 187, 120, 0.7)',
-                            'rgba(245, 101, 101, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(72, 187, 120, 1)',
-                            'rgba(245, 101, 101, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
-            // Expense breakdown chart
-            if (expenses.length > 0 || editorPayments > 0) {
-                const expenseNames = [...expenses.map(e => e.expenseName), 'Editor Payments'];
-                const expenseAmounts = [
-                    ...expenses.map(e => {
-                        let amount = parseFloat(e.expenseAmount || 0);
-                        if (e.currency === 'BDT' && currentCurrency === 'USD') {
-                            amount = amount / EXCHANGE_RATE;
-                        } else if (e.currency === 'USD' && currentCurrency === 'BDT') {
-                            amount = amount * EXCHANGE_RATE;
-                        }
-                        return amount;
-                    }),
-                    editorPayments
-                ];
-                
-                window.expenseChart = new Chart(expenseCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: expenseNames,
-                        datasets: [{
-                            data: expenseAmounts,
-                            backgroundColor: [
-                                'rgba(66, 153, 225, 0.7)',
-                                'rgba(237, 137, 54, 0.7)',
-                                'rgba(159, 122, 234, 0.7)',
-                                'rgba(72, 187, 120, 0.7)',
-                                'rgba(245, 101, 101, 0.7)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            } else {
-                // Show message if no expenses
-                const ctx = expenseCtx.getContext('2d');
-                ctx.clearRect(0, 0, expenseCtx.width, expenseCtx.height);
-                ctx.font = '16px Inter';
-                ctx.fillStyle = 'var(--text-secondary)';
-                ctx.textAlign = 'center';
-                ctx.fillText('No expenses for this month', expenseCtx.width / 2, expenseCtx.height / 2);
+            if (expense) {
+                showNotification('Expense Deleted', `Expense "${expense.expenseName}" has been deleted`, 'warning');
             }
         }
 
@@ -2325,28 +1942,14 @@
                 }
                 
                 clientsMap[order.clientName].totalOrders++;
-                
-                // Convert amount to current currency
-                let amount = parseFloat(order.projectPrice || 0);
-                if (order.currency === 'BDT' && currentCurrency === 'USD') {
-                    amount = amount / EXCHANGE_RATE;
-                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
-                    amount = amount * EXCHANGE_RATE;
-                }
-                clientsMap[order.clientName].totalAmount += amount;
+                clientsMap[order.clientName].totalAmount += parseFloat(order.projectPrice || 0);
             });
             
             const clients = Object.values(clientsMap);
             
-            // Calculate total revenue in current currency
+            // Calculate total revenue
             const totalRevenue = orders.reduce((sum, order) => {
-                let amount = parseFloat(order.projectPrice || 0);
-                if (order.currency === 'BDT' && currentCurrency === 'USD') {
-                    amount = amount / EXCHANGE_RATE;
-                } else if (order.currency === 'USD' && currentCurrency === 'BDT') {
-                    amount = amount * EXCHANGE_RATE;
-                }
-                return sum + amount;
+                return sum + parseFloat(order.projectPrice || 0);
             }, 0);
             
             // Update stats grid
@@ -2362,7 +1965,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">${formatCurrency(totalRevenue, currentCurrency)}</div>
+                    <div class="stat-value">${formatCurrency(totalRevenue)}</div>
                 </div>
             `;
             
@@ -2387,7 +1990,7 @@
                             </a>
                         </td>
                         <td>${client.totalOrders}</td>
-                        <td>${formatCurrency(client.totalAmount, currentCurrency)}</td>
+                        <td>${formatCurrency(client.totalAmount)}</td>
                     </tr>
                 `).join('');
             }
@@ -2400,16 +2003,14 @@
                 return;
             }
             
-            const headers = ['Client Name', 'Project Name', 'Price', 'Currency', 'Editor Payment', 'Editor Payment Currency', 'Payment Status', 'WhatsApp', 'Editor', 'Status', 'Date', 'Notes'];
+            const headers = ['Client Name', 'Project Name', 'Price', 'Editor Payment', 'Payment Status', 'WhatsApp', 'Editor', 'Status', 'Date', 'Notes'];
             const csvContent = [
                 headers.join(','),
                 ...orders.map(order => [
                     `"${order.clientName || ''}"`,
                     `"${order.projectName || ''}"`,
                     order.projectPrice || 0,
-                    order.currency || 'USD',
                     order.editorPayment || 0,
-                    order.editorPaymentCurrency || 'USD',
                     order.paymentStatus || 'Pending',
                     order.whatsappNumber || '',
                     order.assignedEditor || '',
@@ -2426,6 +2027,68 @@
             a.download = `motioncraft-orders-${new Date().toISOString().slice(0, 10)}.csv`;
             a.click();
             URL.revokeObjectURL(url);
+        }
+
+        // Download all data as JSON
+        function downloadData() {
+            const data = {
+                orders: orders,
+                expenses: expenses,
+                teamMembers: teamMembers
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `motioncraft-data-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Upload data from JSON file
+        function uploadData() {
+            const file = uploadDataInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.orders || !data.expenses || !data.teamMembers) {
+                        throw new Error('Invalid data format');
+                    }
+                    
+                    if (confirm('This will replace all your current data. Are you sure?')) {
+                        orders = data.orders;
+                        expenses = data.expenses;
+                        teamMembers = data.teamMembers;
+                        saveToLocalStorage();
+                        
+                        // Refresh all displays
+                        renderOrders();
+                        renderTeamStats();
+                        updateFinance();
+                        renderClients();
+                        
+                        alert('Data uploaded successfully!');
+                        uploadDataInput.value = '';
+                    }
+                } catch (error) {
+                    alert('Error uploading data: Invalid file format');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return `$${parseFloat(amount || 0).toFixed(2)}`;
         }
 
         // Utility function to generate unique ID
