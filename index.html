@@ -607,28 +607,17 @@
         </header>
 
         <div class="setup-section">
-            <h3>Real-Time Multi-User System</h3>
-            <p>This system works in real-time across multiple devices. No setup required!</p>
+            <h3>Multi-Device System</h3>
+            <p>This system works across multiple devices using cloud storage.</p>
             
             <div class="setup-step">
                 <h4>How It Works</h4>
-                <p>All data is synchronized in real-time between all devices using this system.</p>
-                <p>Just share this webpage URL with your manager - they'll see live updates as you make changes.</p>
-            </div>
-            
-            <div class="setup-step">
-                <h4>Share with Manager</h4>
-                <p>Copy this page URL and send it to your manager:</p>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <input type="text" id="pageUrl" readonly style="flex: 1; padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); background-color: var(--bg-card); color: var(--text-primary);">
-                    <button class="btn btn-secondary" id="copyUrlBtn">Copy URL</button>
-                </div>
-                <p style="margin-top: 10px; font-size: 14px;">Your manager will see all data updates in real-time when they open this link.</p>
+                <p>All data is synchronized using cloud storage. Make sure you're using the same account on all devices.</p>
             </div>
             
             <div class="setup-step">
                 <h4>Data Management</h4>
-                <p>You can also download or upload your data for backup purposes.</p>
+                <p>You can download or upload your data for backup purposes.</p>
                 <button class="btn btn-secondary" id="downloadDataBtn">Download Data Backup</button>
                 <input type="file" id="uploadDataInput" accept=".json" style="margin: 10px 0;">
                 <button class="btn btn-secondary" id="uploadDataBtn">Upload Data Backup</button>
@@ -1044,8 +1033,6 @@
         const downloadDataBtn = document.getElementById('downloadDataBtn');
         const uploadDataBtn = document.getElementById('uploadDataBtn');
         const uploadDataInput = document.getElementById('uploadDataInput');
-        const copyUrlBtn = document.getElementById('copyUrlBtn');
-        const pageUrl = document.getElementById('pageUrl');
         const saveOrderBtn = document.getElementById('saveOrderBtn');
         const saveTeamMemberBtn = document.getElementById('saveTeamMemberBtn');
         const saveExpenseBtn = document.getElementById('saveExpenseBtn');
@@ -1062,10 +1049,7 @@
             const now = new Date();
             monthPicker.value = now.toISOString().slice(0, 7);
             
-            // Set page URL
-            pageUrl.value = window.location.href;
-            
-            // Load data from localStorage
+            // Load sample data if no data exists
             loadFromLocalStorage();
             
             // Set up event listeners
@@ -1118,7 +1102,6 @@
             // Data management
             downloadDataBtn.addEventListener('click', downloadData);
             uploadDataBtn.addEventListener('click', uploadData);
-            copyUrlBtn.addEventListener('click', copyPageUrl);
             
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {
@@ -1126,13 +1109,6 @@
                 if (e.target === teamMemberModal) closeModals();
                 if (e.target === expenseModal) closeModals();
             });
-        }
-
-        // Copy page URL
-        function copyPageUrl() {
-            pageUrl.select();
-            document.execCommand('copy');
-            showNotification('URL Copied', 'Page URL copied to clipboard! Send this to your manager.');
         }
 
         // Show notification
@@ -1283,13 +1259,100 @@
                     teamMembers = data.teamMembers || [];
                 } catch (e) {
                     console.error('Error parsing saved data:', e);
-                    orders = [];
-                    expenses = [];
-                    teamMembers = [];
+                    // If there's an error, initialize with sample data
+                    initializeSampleData();
                 }
+            } else {
+                // If no data exists, initialize with sample data
+                initializeSampleData();
             }
             
             if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+        }
+
+        // Initialize with sample data
+        function initializeSampleData() {
+            // Sample orders
+            orders = [
+                {
+                    id: generateId(),
+                    clientName: "John Smith",
+                    projectName: "Product Explainer Video",
+                    projectPrice: 500,
+                    editorPayment: 200,
+                    paymentStatus: "Pending",
+                    whatsappNumber: "1234567890",
+                    assignedEditor: "Siam",
+                    projectStatus: "Editing",
+                    projectDate: new Date().toISOString().slice(0, 10),
+                    notes: "Need to focus on product benefits"
+                },
+                {
+                    id: generateId(),
+                    clientName: "Sarah Johnson",
+                    projectName: "Corporate Training Module",
+                    projectPrice: 800,
+                    editorPayment: 350,
+                    paymentStatus: "Paid",
+                    whatsappNumber: "0987654321",
+                    assignedEditor: "Mojid",
+                    projectStatus: "Final Delivery",
+                    projectDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+                    notes: "Client requested minor corrections"
+                }
+            ];
+            
+            // Sample team members
+            teamMembers = [
+                {
+                    id: generateId(),
+                    name: "Siam",
+                    role: "Editor",
+                    whatsapp: "1234567890",
+                    email: "siam@motioncraft.com",
+                    joinDate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+                    status: "Active",
+                    notes: "Specializes in explainer videos"
+                },
+                {
+                    id: generateId(),
+                    name: "Mojid",
+                    role: "Editor",
+                    whatsapp: "0987654321",
+                    email: "mojid@motioncraft.com",
+                    joinDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+                    status: "Active",
+                    notes: "Expert in corporate videos"
+                },
+                {
+                    id: generateId(),
+                    name: "Samiul",
+                    role: "Script Writer",
+                    whatsapp: "1122334455",
+                    email: "samiul@motioncraft.com",
+                    joinDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+                    status: "Active",
+                    notes: "Creative script development"
+                }
+            ];
+            
+            // Sample expenses
+            expenses = [
+                {
+                    id: generateId(),
+                    expenseName: "Software Subscription",
+                    expenseAmount: 50,
+                    expenseDate: new Date().toISOString().slice(0, 10)
+                },
+                {
+                    id: generateId(),
+                    expenseName: "Hardware Upgrade",
+                    expenseAmount: 300,
+                    expenseDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+                }
+            ];
+            
+            saveToLocalStorage();
         }
 
         // Render orders table
