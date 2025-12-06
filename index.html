@@ -3,1046 +3,774 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Motioncraft Owner Dashboard — Demo</title>
+  <title>Motioncraft Owner Dashboard</title>
 
-  <!-- Tailwind CDN -->
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter-like font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Chart.js for dopamine-driven income chart -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
-      --bg: #f6f7fb;
+      --bg:#f5f7fb;
       --card: rgba(255,255,255,0.85);
-      --glass: rgba(255,255,255,0.6);
-      --accent1: linear-gradient(90deg,#6ee7b7,#60a5fa);
-      --accent2: linear-gradient(90deg,#ffd6a5,#ff9aa2);
       --muted:#6b7280;
+      --glass-shadow: 0 8px 30px rgba(13,38,76,0.06);
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     }
-    /* Apple-like card */
-    .glass-card{
-      background: var(--card);
-      backdrop-filter: blur(6px);
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(13,38,76,0.08);
-    }
-    .dopamine {
-      background: linear-gradient(90deg,#7C3AED 0%, #06B6D4 45%, #06D6A0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .btn {
-      @apply inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold shadow-sm;
-    }
-    /* small scroll style */
+    body{background:var(--bg); color:#0f172a;}
+    .glass { background: var(--card); backdrop-filter: blur(6px); border-radius:14px; box-shadow: var(--glass-shadow); }
+    .btn { @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold; }
+    .dop-text { background: linear-gradient(90deg,#7C3AED 0%, #06B6D4 45%, #06D6A0 100%); -webkit-background-clip: text; color: transparent; }
+    /* drag visuals */
+    .kanban-column { min-height: 120px; }
+    .kanban-card { transition: transform .12s ease, box-shadow .12s ease; }
+    .kanban-card:active { transform: translateY(2px); box-shadow: 0 6px 20px rgba(2,6,23,0.08); }
+    /* small scrollbar */
     ::-webkit-scrollbar{height:8px;width:8px}
     ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:10px}
+    /* modal animation */
+    .fade-in { animation: fadeIn .18s ease both; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to {opacity:1; transform:none} }
   </style>
+
+  <!--
+    IMPORTANT SETUP (paste your Apps Script Web App URL below):
+    1) Create Google Sheet with sheets: ORDERS, TEAM, FINANCE (headers as recommended in file comments).
+    2) Deploy the Google Apps Script (I provided earlier) as a Web App (Anyone).
+    3) Paste the Web App URL into APPS_SCRIPT_BASE_URL variable in the JS below.
+    4) Open index.html — the app will load live data and allow add/edit/delete operations.
+  -->
+
 </head>
-<body class="bg-[var(--bg)] min-h-screen text-gray-800">
+<body class="min-h-screen antialiased">
 
-  <script>
-    // =========== CONFIG =============
-    // Paste your Apps Script Web App base URL here (do not include trailing slash)
-    const APPS_SCRIPT_BASE_URL = ''; // e.g. https://script.google.com/macros/s/XXXX/exec
+<div class="max-w-7xl mx-auto p-6">
 
-    // Toggle demo mode automatically if no Apps Script URL provided
-    const USE_DEMO = !APPS_SCRIPT_BASE_URL;
-
-    // === Utility functions ===
-    function waLink(number, text){
-      const sanitized = String(number).replace(/\D/g,'');
-      const msg = encodeURIComponent(text || 'Assalamualaikum, Motioncraft theke apnar order niye.');
-      return `https://wa.me/${sanitized}?text=${msg}`;
-    }
-
-    function formatBDT(n){
-      return '৳' + (Number(n)||0).toLocaleString('en-US');
-    }
-
-    function dateYMD(d){
-      if(!d) return '';
-      const dt = new Date(d);
-      if(isNaN(dt)) return d;
-      return dt.toISOString().slice(0,10);
-    }
-
-    // ============ Sample demo data ============
-    const SAMPLE_ORDERS = [
-      {id:'1',order_no:'MC-2025-001',client_name:'Rahim Uddin',client_whatsapp:'8801712345689',project_title:'Furniture Promo Video',status:'fresh',assigned_editor:'Siam',price:18000,paid:'no',created_at:'2025-11-01',due_date:'2025-11-05',notes:'Urgent delivery required',internal_comments:'Script needed'},
-      {id:'2',order_no:'MC-2025-002',client_name:'Mehnaz Beauty Parlour',client_whatsapp:'8801902341123',project_title:'Salon Branding Reel',status:'editing',assigned_editor:'Mojid',price:12500,paid:'yes',created_at:'2025-11-03',due_date:'2025-11-08',notes:'Soft color grading',internal_comments:'Ref videos available'},
-      {id:'3',order_no:'MC-2025-003',client_name:'Hasan Mobile Shop',client_whatsapp:'8801817789044',project_title:'Smartphone Feature Ad',status:'scripting',assigned_editor:'Samiul',price:9000,paid:'no',created_at:'2025-11-02',due_date:'2025-11-06',notes:'Bangla subtitles',internal_comments:'Draft approved'},
-      {id:'4',order_no:'MC-2025-004',client_name:'GreenLeaf Organic',client_whatsapp:'8801789904321',project_title:'Organic Product Promo',status:'final_delivery',assigned_editor:'Hojayfa',price:14000,paid:'yes',created_at:'2025-10-29',due_date:'2025-11-02',notes:'Add logo animation',internal_comments:'Color correction pending'},
-      {id:'5',order_no:'MC-2025-005',client_name:'City Gym Dhaka',client_whatsapp:'8801911123456',project_title:'Fitness Motivation Reel',status:'correction',assigned_editor:'Siam',price:11000,paid:'no',created_at:'2025-11-04',due_date:'2025-11-07',notes:'Cut 5s end',internal_comments:'Client reviewing 2nd draft'}
-    ];
-
-    const SAMPLE_TEAM = [
-      {member_id:'1',name:'Siam',role:'Editor',whatsapp:'8801711111111',current_projects_count:2,monthly_earnings:30000},
-      {member_id:'2',name:'Mojid',role:'Editor',whatsapp:'8801712222222',current_projects_count:1,monthly_earnings:12000},
-      {member_id:'3',name:'Samiul',role:'Editor',whatsapp:'8801713333333',current_projects_count:1,monthly_earnings:9000},
-    ];
-
-    // ============ State ============
-    let ORDERS = [];
-    let TEAM = [];
-    let FINANCE = []; // optional
-    let selectedMonth = (new Date()).toISOString().slice(0,7); // YYYY-MM
-
-    // ============ API helpers (Apps Script) ============
-    async function apiGET(route){
-      if(USE_DEMO){
-        if(route === 'orders') return {ok:true, data: SAMPLE_ORDERS};
-        if(route === 'team') return {ok:true, data: SAMPLE_TEAM};
-        return {ok:true, data:[]};
-      }
-      try {
-        const url = `${APPS_SCRIPT_BASE_URL}?route=${route}`;
-        const res = await fetch(url);
-        return await res.json();
-      } catch(err){
-        return {ok:false, error:String(err)};
-      }
-    }
-
-    async function apiPOST(route, payload){
-      if(USE_DEMO){
-        // simulate success
-        return {ok:true, msg:'demo ok'};
-      }
-      try {
-        const url = `${APPS_SCRIPT_BASE_URL}?route=${route}`;
-        const res = await fetch(url, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
-        return await res.json();
-      } catch(err){
-        return {ok:false, error:String(err)};
-      }
-    }
-
-    // ============ Load data ============
-    async function loadAll(){
-      showLoader(true);
-      const [ordersRes, teamRes, financeRes] = await Promise.all([
-        apiGET('orders'),
-        apiGET('team'),
-        apiGET('finance')
-      ]);
-      ORDERS = (ordersRes && ordersRes.ok) ? ordersRes.data.slice() : [];
-      TEAM = (teamRes && teamRes.ok) ? teamRes.data.slice() : [];
-      FINANCE = (financeRes && financeRes.ok) ? financeRes.data.slice() : [];
-      // normalize types
-      ORDERS = ORDERS.map(o => ({...o, price: Number(o.price||0)}));
-      renderAll();
-      showLoader(false);
-    }
-
-    // ============ Render UI ============
-    function renderAll(){
-      renderSummary();
-      renderOrdersTable();
-      renderTeamPanel();
-      renderIncomeChart();
-      renderClients();
-    }
-
-    // Summary cards
-    function renderSummary(){
-      const totalOrders = ORDERS.length;
-      const monthOrders = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth)).length;
-      const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && (String(o.paid).toLowerCase()==='yes')).reduce((s,x)=>s+Number(x.price||0),0);
-      const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && (String(o.paid||'no').toLowerCase()!=='yes')).reduce((s,x)=>s+Number(x.price||0),0);
-
-      document.getElementById('summary-cards').innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Total Orders</div>
-            <div class="text-2xl font-bold">${totalOrders}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Orders (${selectedMonth})</div>
-            <div class="text-2xl font-bold">${monthOrders}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Paid (${selectedMonth})</div>
-            <div class="text-2xl font-bold dopamine">${formatBDT(paidThisMonth)}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Pending (${selectedMonth})</div>
-            <div class="text-2xl font-bold">${formatBDT(pendingThisMonth)}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Total Income</div>
-            <div class="text-2xl font-bold">${formatBDT(ORDERS.reduce((s,x)=>s+Number(x.price||0),0))}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Selected Month</div>
-            <div class="flex items-center gap-2">
-              <input id="monthPicker" type="month" value="${selectedMonth}" class="p-2 rounded-lg border bg-white"/>
-            </div>
-          </div>
-        </div>
-      `;
-      document.getElementById('monthPicker').addEventListener('change', e=>{
-        selectedMonth = e.target.value;
-        renderAll();
-      });
-    }
-
-    // Orders table
-    function renderOrdersTable(){
-      const rows = ORDERS.map(o=>`
-        <tr class="align-top border-b">
-          <td class="py-3 px-2 text-sm">${o.order_no||''}</td>
-          <td class="py-3 px-2 text-sm">${o.client_name||''}</td>
-          <td class="py-3 px-2 text-sm">${o.project_title||''}</td>
-          <td class="py-3 px-2 text-sm">${o.assigned_editor||''}</td>
-          <td class="py-3 px-2 text-sm">${o.status||''}</td>
-          <td class="py-3 px-2 text-sm">${formatBDT(o.price||0)}</td>
-          <td class="py-3 px-2 text-sm">${(String(o.paid||'no').toLowerCase()==='yes')?'<span class=\"text-green-600 font-semibold\">Paid</span>':'<span class=\"text-yellow-600 font-semibold\">Unpaid</span>'}</td>
-          <td class="py-3 px-2 text-sm">
-            <button class="btn bg-white border mr-1" onclick="openDetail('${o.id||''}')">Details</button>
-            <button class="btn bg-white border mr-1" onclick="openWhatsApp('${o.client_whatsapp||''}','${o.client_name||''}','${o.order_no||''}')">WhatsApp</button>
-          </td>
-        </tr>
-      `).join('');
-      document.getElementById('orders-table-body').innerHTML = rows;
-    }
-
-    window.openWhatsApp = function(number, name, order_no){
-      const url = waLink(number, `Assalamualaikum ${name}, Motioncraft theke apnar order ${order_no} niye.`);
-      window.open(url,'_blank');
-    }
-
-    // Order detail modal
-    window.openDetail = function(id){
-      const o = ORDERS.find(x=>String(x.id)===String(id));
-      if(!o) return alert('Order not found');
-      const modal = document.getElementById('detail-modal');
-      document.getElementById('detail-order-no').innerText = o.order_no||'';
-      document.getElementById('detail-client-name').value = o.client_name||'';
-      document.getElementById('detail-project-title').value = o.project_title||'';
-      document.getElementById('detail-price').value = o.price||'';
-      document.getElementById('detail-status').value = o.status||'fresh';
-      document.getElementById('detail-assigned').value = o.assigned_editor||'';
-      document.getElementById('detail-paid').checked = String(o.paid).toLowerCase()==='yes';
-      document.getElementById('detail-notes').value = o.notes||'';
-      document.getElementById('detail-internal').value = o.internal_comments||'';
-      document.getElementById('detail-save-btn').onclick = async function(){
-        const updated = {
-          id: o.id,
-          order_no: document.getElementById('detail-order-no').innerText,
-          client_name: document.getElementById('detail-client-name').value,
-          project_title: document.getElementById('detail-project-title').value,
-          price: Number(document.getElementById('detail-price').value||0),
-          status: document.getElementById('detail-status').value,
-          assigned_editor: document.getElementById('detail-assigned').value,
-          paid: document.getElementById('detail-paid').checked ? 'yes' : 'no',
-          notes: document.getElementById('detail-notes').value,
-          internal_comments: document.getElementById('detail-internal').value
-        };
-        showLoader(true);
-        const res = await apiPOST('orders_update', updated);
-        if(res && res.ok){
-          // update local demo or reload
-          if(USE_DEMO){
-            const idx = ORDERS.findIndex(x=>String(x.id)===String(o.id));
-            if(idx>-1) ORDERS[idx] = {...ORDERS[idx], ...updated};
-            renderAll();
-            showLoader(false);
-            closeModal();
-            toast('Saved (demo)');
-          } else {
-            await loadAll();
-            closeModal();
-            toast('Saved');
-          }
-        } else {
-          showLoader(false);
-          alert('Error: '+(res && res.error || JSON.stringify(res)));
-        }
-      };
-      modal.classList.remove('hidden');
-    }
-
-    function closeModal(){
-      document.getElementById('detail-modal').classList.add('hidden');
-    }
-
-    // Team panel
-    function renderTeamPanel(){
-      const html = TEAM.map(m=>`
-        <div class="glass-card p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-400 to-cyan-300 flex items-center justify-center text-white font-bold">${m.name.charAt(0)||'U'}</div>
-            <div>
-              <div class="font-semibold">${m.name}</div>
-              <div class="text-xs text-${'var(--muted)'}">${m.role}</div>
-            </div>
-          </div>
-          <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
-            <div><div class="text-xs text-${'var(--muted)'}">Projects</div><div class="font-bold">${m.current_projects_count||0}</div></div>
-            <div><div class="text-xs text-${'var(--muted)'}">Earnings</div><div class="font-bold">${formatBDT(m.monthly_earnings||0)}</div></div>
-            <div><div class="text-xs text-${'var(--muted)'}">Contact</div><div><button class="btn bg-white border text-sm" onclick="window.open('${waLink(m.whatsapp, 'Hello '+m.name)}','_blank')">WhatsApp</button></div></div>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('team-grid').innerHTML = html;
-    }
-
-    // Clients (aggregate)
-    function renderClients(){
-      const grouped = {};
-      ORDERS.forEach(o=>{
-        const key = o.client_name || 'Unknown';
-        if(!grouped[key]) grouped[key] = {name:key,whatsapp:o.client_whatsapp,orders:[],paid:0,pending:0,total:0};
-        grouped[key].orders.push(o);
-        grouped[key].total += Number(o.price||0);
-        if(String(o.paid).toLowerCase()==='yes') grouped[key].paid += Number(o.price||0);
-        else grouped[key].pending += Number(o.price||0);
-      });
-      const html = Object.values(grouped).map(c=>`
-        <div class="glass-card p-3 flex justify-between items-center">
-          <div>
-            <div class="font-semibold">${c.name}</div>
-            <div class="text-sm text-${'var(--muted)'}">${c.orders.length} projects • ${formatBDT(c.total)}</div>
-          </div>
-          <div class="flex gap-2">
-            <button class="btn bg-white border" onclick="window.open('${waLink(c.whatsapp, 'Assalamualaikum '+c.name)}','_blank')">WhatsApp</button>
-            <button class="btn bg-white border" onclick="openClientOrders('${c.name.replace(/'/g, "\\'")}')">View</button>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('clients-list').innerHTML = html;
-    }
-
-    window.openClientOrders = function(name){
-      const list = ORDERS.filter(o=>o.client_name===name);
-      const rows = list.map(o=>`<li class="py-1">${o.order_no} — ${o.project_title} — ${formatBDT(o.price)}</li>`).join('');
-      alert(`Orders for ${name}:\n\n` + list.map(x=>`${x.order_no} — ${x.project_title} — ${formatBDT(x.price)} — ${x.status}`).join('\n'));
-    }
-
-    // Income chart (dopamine-driven)
-    let incomeChart = null;
-    function renderIncomeChart(){
-      const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && String(o.paid).toLowerCase()==='yes').reduce((s,x)=>s+Number(x.price||0),0);
-      const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && String(o.paid||'no').toLowerCase()!=='yes').reduce((s,x)=>s+Number(x.price||0),0);
-      const total = paidThisMonth + pendingThisMonth;
-      document.getElementById('income-numbers').innerHTML = `
-        <div class="text-sm text-${'var(--muted)'}">Paid</div>
-        <div class="text-2xl font-bold dopamine">${formatBDT(paidThisMonth)}</div>
-        <div class="text-sm text-${'var(--muted)'}">Pending</div>
-        <div class="text-2xl font-bold">${formatBDT(pendingThisMonth)}</div>
-      `;
-      const ctx = document.getElementById('incomeChart').getContext('2d');
-      if(incomeChart) incomeChart.destroy();
-      incomeChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Paid','Pending'],
-          datasets: [{
-            data: [paidThisMonth || 0, pendingThisMonth || 0],
-            backgroundColor: [
-              'rgba(124,58,237,0.95)', // vivid purple
-              'rgba(6,182,212,0.95)'   // cyan
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          cutout: '70%',
-          plugins: {
-            legend: { display: false},
-            tooltip: {
-              callbacks: {
-                label: function(context){
-                  const v = context.parsed || 0;
-                  return `${context.label}: ${formatBDT(v)}`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    // Loader & Toast
-    function showLoader(show){
-      document.getElementById('loader').style.display = show ? 'flex' : 'none';
-    }
-    function toast(msg){
-      const el = document.createElement('div');
-      el.className = 'fixed bottom-6 right-6 glass-card p-3 shadow-lg animate-slide-in';
-      el.innerText = msg;
-      document.body.appendChild(el);
-      setTimeout(()=> el.remove(), 3000);
-    }
-
-    // Initial load
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      if(USE_DEMO) {
-        ORDERS = SAMPLE_ORDERS.slice();
-        TEAM = SAMPLE_TEAM.slice();
-        renderAll();
-      } else {
-        await loadAll();
-      }
-    });
-  </script>
-
-  <!-- ========== UI ========== -->
-  <div class="max-w-7xl mx-auto p-6">
-    <header class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-white shadow flex items-center justify-center text-2xl font-bold">M</div>
-        <div>
-          <div class="text-sm text-gray-500">Motioncraft</div>
-          <div class="text-xl font-semibold">Owner Dashboard</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="text-sm text-gray-600">Demo: <span class="font-medium">${USE_DEMO ? 'ON' : 'OFF'}</span></div>
-        <div class="glass-card p-2 rounded-lg"> <button class="btn" onclick="location.reload()">Refresh</button></div>
-      </div>
-    </header>
-
-    <!-- Summary -->
-    <section id="summary-cards" class="mb-6"></section>
-
-    <div class="grid md:grid-cols-3 gap-4">
-      <!-- Left: Orders -->
-      <div class="md:col-span-2 space-y-4">
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between mb-3">
-            <div class="font-semibold">Orders</div>
-            <div class="flex gap-2">
-              <button class="btn bg-white border" onclick="alert('Add order flow not implemented in demo')">+ Add Order</button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead class="text-sm text-gray-500">
-                <tr>
-                  <th class="py-2 px-2">Order</th>
-                  <th class="py-2 px-2">Client</th>
-                  <th class="py-2 px-2">Project</th>
-                  <th class="py-2 px-2">Editor</th>
-                  <th class="py-2 px-2">Status</th>
-                  <th class="py-2 px-2">Price</th>
-                  <th class="py-2 px-2">Paid</th>
-                  <th class="py-2 px-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="orders-table-body" class="text-sm"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Clients -->
-        <div class="glass-card p-4">
-          <div class="font-semibold mb-3">Clients</div>
-          <div id="clients-list" class="grid gap-3"></div>
-        </div>
-      </div>
-
-      <!-- Right: Team + Income -->
-      <aside class="space-y-4">
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">Team</div>
-            <div class="text-sm text-gray-500">Overview</div>
-          </div>
-          <div id="team-grid" class="mt-3 grid gap-3"></div>
-        </div>
-
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">Income (Dopamine Chart)</div>
-            <div class="text-sm text-gray-500">${selectedMonth}</div>
-          </div>
-          <div class="mt-3 flex items-center gap-4">
-            <canvas id="incomeChart" width="180" height="180"></canvas>
-            <div id="income-numbers"></div>
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <!-- Loader -->
-    <div id="loader" style="display:none" class="fixed inset-0 bg-black/10 backdrop-blur z-50 flex items-center justify-center">
-      <div class="glass-card p-4 flex items-center gap-3">
-        <div class="loader w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"></div>
-        <div>Loading...</div>
+  <header class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-white glass flex items-center justify-center text-2xl font-bold">M</div>
+      <div>
+        <div class="text-sm text-gray-500">Motioncraft</div>
+        <div class="text-2xl font-semibold">Owner Dashboard</div>
       </div>
     </div>
 
-    <!-- Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-50 p-4">
-      <div class="w-full max-w-2xl glass-card p-6 relative">
-        <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-600">✕</button>
-        <div class="text-lg font-semibold mb-3">Order Detail — <span id="detail-order-no"></span></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <input id="detail-client-name" class="p-2 rounded border" placeholder="Client name"/>
-          <input id="detail-project-title" class="p-2 rounded border" placeholder="Project title"/>
-          <input id="detail-price" class="p-2 rounded border" placeholder="Price"/>
-          <select id="detail-status" class="p-2 rounded border">
-            <option value="fresh">Fresh</option>
-            <option value="scripting">Scripting</option>
-            <option value="editing">Editing</option>
-            <option value="correction">Correction</option>
-            <option value="final_delivery">Final Delivery</option>
-            <option value="completed">Completed</option>
-          </select>
-          <select id="detail-assigned" class="p-2 rounded border">
-            <option>Siam</option><option>Mojid</option><option>Samiul</option><option>Hojayfa</option>
-          </select>
-          <label class="flex items-center gap-2"><input id="detail-paid" type="checkbox"/> Paid</label>
-          <textarea id="detail-notes" class="p-2 rounded border col-span-2" placeholder="Notes"></textarea>
-          <textarea id="detail-internal" class="p-2 rounded border col-span-2" placeholder="Internal comments"></textarea>
+    <div class="flex items-center gap-3">
+      <button id="refreshBtn" class="btn bg-white glass border">Refresh</button>
+      <button id="addOrderBtn" class="btn bg-indigo-600 text-white">+ Add Order</button>
+      <div class="glass p-2 rounded-lg">
+        <label class="text-xs text-gray-500 mr-2">View month</label>
+        <input id="monthPicker" type="month" class="p-2 rounded" />
+      </div>
+    </div>
+  </header>
+
+  <!-- SUMMARY -->
+  <section id="summary" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6"></section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- LEFT: Kanban + Table -->
+    <div class="lg:col-span-2 space-y-4">
+      <!-- Kanban -->
+      <div class="glass p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-semibold">Kanban — Workflow</div>
+          <div class="text-sm text-gray-500">Drag to change status</div>
         </div>
-        <div class="mt-4 text-right">
-          <button id="detail-save-btn" class="btn bg-indigo-600 text-white px-4 py-2 rounded">Save</button>
+
+        <div id="kanban" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- columns will render here -->
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="glass p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-semibold">Orders</div>
+          <div class="flex items-center gap-2">
+            <input id="searchInput" placeholder="Search order, client, project..." class="p-2 rounded border" />
+            <select id="filterEditor" class="p-2 rounded border">
+              <option value="">All editors</option>
+            </select>
+            <select id="filterPaid" class="p-2 rounded border">
+              <option value="">All</option>
+              <option value="yes">Paid</option>
+              <option value="no">Unpaid</option>
+            </select>
+            <button id="exportCsvBtn" class="btn bg-white border">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="text-sm text-gray-500">
+              <tr>
+                <th class="py-2 px-2">Order</th>
+                <th class="py-2 px-2">Client</th>
+                <th class="py-2 px-2">Project</th>
+                <th class="py-2 px-2">Editor</th>
+                <th class="py-2 px-2">Status</th>
+                <th class="py-2 px-2">Price</th>
+                <th class="py-2 px-2">Paid</th>
+                <th class="py-2 px-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTbody" class="text-sm"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-8 text-sm text-gray-500">
-      Built for Motioncraft — demo mode: <strong>${USE_DEMO ? 'ON' : 'OFF'}</strong>. Replace APPS_SCRIPT_BASE_URL in the top of the file with your Apps Script Web App URL to connect real Google Sheet data.
-    </footer>
+    <!-- RIGHT: Team + Finance -->
+    <aside class="space-y-4">
+      <div class="glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold">Team</div>
+          <div><button id="addTeamBtn" class="btn bg-white border">+ Add</button></div>
+        </div>
+        <div id="teamList" class="mt-3 grid gap-3"></div>
+      </div>
+
+      <div class="glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold">Finance</div>
+          <div class="text-sm text-gray-500">Summary</div>
+        </div>
+        <div class="mt-3">
+          <canvas id="financeChart" width="300" height="200"></canvas>
+          <div id="financeNumbers" class="mt-3 grid grid-cols-2 gap-3"></div>
+
+          <div class="mt-4">
+            <div class="text-sm font-semibold mb-2">Add Expense</div>
+            <div class="grid grid-cols-1 gap-2">
+              <input id="expenseCategory" placeholder="Category (e.g., Ad spend)" class="p-2 rounded border" />
+              <input id="expenseAmount" placeholder="Amount (BDT)" type="number" class="p-2 rounded border" />
+              <input id="expenseDate" type="date" class="p-2 rounded border" />
+              <button id="saveExpenseBtn" class="btn bg-white border">Save Expense</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold">Clients</div>
+        </div>
+        <div id="clientsList" class="mt-3 grid gap-2"></div>
+      </div>
+    </aside>
+
   </div>
 
-</body>
-</html>
-<!doctype html>
-<html lang="bn">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Motioncraft Owner Dashboard — Demo</title>
+  <footer class="mt-8 text-sm text-gray-500">Motioncraft — owner dashboard. Make sure APPS_SCRIPT_BASE_URL is set in the file header to connect Google Sheet.</footer>
+</div>
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter-like font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Chart.js for dopamine-driven income chart -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    :root{
-      --bg: #f6f7fb;
-      --card: rgba(255,255,255,0.85);
-      --glass: rgba(255,255,255,0.6);
-      --accent1: linear-gradient(90deg,#6ee7b7,#60a5fa);
-      --accent2: linear-gradient(90deg,#ffd6a5,#ff9aa2);
-      --muted:#6b7280;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    }
-    /* Apple-like card */
-    .glass-card{
-      background: var(--card);
-      backdrop-filter: blur(6px);
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(13,38,76,0.08);
-    }
-    .dopamine {
-      background: linear-gradient(90deg,#7C3AED 0%, #06B6D4 45%, #06D6A0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .btn {
-      @apply inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold shadow-sm;
-    }
-    /* small scroll style */
-    ::-webkit-scrollbar{height:8px;width:8px}
-    ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:10px}
-  </style>
-</head>
-<body class="bg-[var(--bg)] min-h-screen text-gray-800">
-
-  <script>
-    // =========== CONFIG =============
-    // Paste your Apps Script Web App base URL here (do not include trailing slash)
-    const APPS_SCRIPT_BASE_URL = ''; // e.g. https://script.google.com/macros/s/XXXX/exec
-
-    // Toggle demo mode automatically if no Apps Script URL provided
-    const USE_DEMO = !APPS_SCRIPT_BASE_URL;
-
-    // === Utility functions ===
-    function waLink(number, text){
-      const sanitized = String(number).replace(/\D/g,'');
-      const msg = encodeURIComponent(text || 'Assalamualaikum, Motioncraft theke apnar order niye.');
-      return `https://wa.me/${sanitized}?text=${msg}`;
-    }
-
-    function formatBDT(n){
-      return '৳' + (Number(n)||0).toLocaleString('en-US');
-    }
-
-    function dateYMD(d){
-      if(!d) return '';
-      const dt = new Date(d);
-      if(isNaN(dt)) return d;
-      return dt.toISOString().slice(0,10);
-    }
-
-    // ============ Sample demo data ============
-    const SAMPLE_ORDERS = [
-      {id:'1',order_no:'MC-2025-001',client_name:'Rahim Uddin',client_whatsapp:'8801712345689',project_title:'Furniture Promo Video',status:'fresh',assigned_editor:'Siam',price:18000,paid:'no',created_at:'2025-11-01',due_date:'2025-11-05',notes:'Urgent delivery required',internal_comments:'Script needed'},
-      {id:'2',order_no:'MC-2025-002',client_name:'Mehnaz Beauty Parlour',client_whatsapp:'8801902341123',project_title:'Salon Branding Reel',status:'editing',assigned_editor:'Mojid',price:12500,paid:'yes',created_at:'2025-11-03',due_date:'2025-11-08',notes:'Soft color grading',internal_comments:'Ref videos available'},
-      {id:'3',order_no:'MC-2025-003',client_name:'Hasan Mobile Shop',client_whatsapp:'8801817789044',project_title:'Smartphone Feature Ad',status:'scripting',assigned_editor:'Samiul',price:9000,paid:'no',created_at:'2025-11-02',due_date:'2025-11-06',notes:'Bangla subtitles',internal_comments:'Draft approved'},
-      {id:'4',order_no:'MC-2025-004',client_name:'GreenLeaf Organic',client_whatsapp:'8801789904321',project_title:'Organic Product Promo',status:'final_delivery',assigned_editor:'Hojayfa',price:14000,paid:'yes',created_at:'2025-10-29',due_date:'2025-11-02',notes:'Add logo animation',internal_comments:'Color correction pending'},
-      {id:'5',order_no:'MC-2025-005',client_name:'City Gym Dhaka',client_whatsapp:'8801911123456',project_title:'Fitness Motivation Reel',status:'correction',assigned_editor:'Siam',price:11000,paid:'no',created_at:'2025-11-04',due_date:'2025-11-07',notes:'Cut 5s end',internal_comments:'Client reviewing 2nd draft'}
-    ];
-
-    const SAMPLE_TEAM = [
-      {member_id:'1',name:'Siam',role:'Editor',whatsapp:'8801711111111',current_projects_count:2,monthly_earnings:30000},
-      {member_id:'2',name:'Mojid',role:'Editor',whatsapp:'8801712222222',current_projects_count:1,monthly_earnings:12000},
-      {member_id:'3',name:'Samiul',role:'Editor',whatsapp:'8801713333333',current_projects_count:1,monthly_earnings:9000},
-    ];
-
-    // ============ State ============
-    let ORDERS = [];
-    let TEAM = [];
-    let FINANCE = []; // optional
-    let selectedMonth = (new Date()).toISOString().slice(0,7); // YYYY-MM
-
-    // ============ API helpers (Apps Script) ============
-    async function apiGET(route){
-      if(USE_DEMO){
-        if(route === 'orders') return {ok:true, data: SAMPLE_ORDERS};
-        if(route === 'team') return {ok:true, data: SAMPLE_TEAM};
-        return {ok:true, data:[]};
-      }
-      try {
-        const url = `${APPS_SCRIPT_BASE_URL}?route=${route}`;
-        const res = await fetch(url);
-        return await res.json();
-      } catch(err){
-        return {ok:false, error:String(err)};
-      }
-    }
-
-    async function apiPOST(route, payload){
-      if(USE_DEMO){
-        // simulate success
-        return {ok:true, msg:'demo ok'};
-      }
-      try {
-        const url = `${APPS_SCRIPT_BASE_URL}?route=${route}`;
-        const res = await fetch(url, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
-        return await res.json();
-      } catch(err){
-        return {ok:false, error:String(err)};
-      }
-    }
-
-    // ============ Load data ============
-    async function loadAll(){
-      showLoader(true);
-      const [ordersRes, teamRes, financeRes] = await Promise.all([
-        apiGET('orders'),
-        apiGET('team'),
-        apiGET('finance')
-      ]);
-      ORDERS = (ordersRes && ordersRes.ok) ? ordersRes.data.slice() : [];
-      TEAM = (teamRes && teamRes.ok) ? teamRes.data.slice() : [];
-      FINANCE = (financeRes && financeRes.ok) ? financeRes.data.slice() : [];
-      // normalize types
-      ORDERS = ORDERS.map(o => ({...o, price: Number(o.price||0)}));
-      renderAll();
-      showLoader(false);
-    }
-
-    // ============ Render UI ============
-    function renderAll(){
-      renderSummary();
-      renderOrdersTable();
-      renderTeamPanel();
-      renderIncomeChart();
-      renderClients();
-    }
-
-    // Summary cards
-    function renderSummary(){
-      const totalOrders = ORDERS.length;
-      const monthOrders = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth)).length;
-      const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && (String(o.paid).toLowerCase()==='yes')).reduce((s,x)=>s+Number(x.price||0),0);
-      const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && (String(o.paid||'no').toLowerCase()!=='yes')).reduce((s,x)=>s+Number(x.price||0),0);
-
-      document.getElementById('summary-cards').innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Total Orders</div>
-            <div class="text-2xl font-bold">${totalOrders}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Orders (${selectedMonth})</div>
-            <div class="text-2xl font-bold">${monthOrders}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Paid (${selectedMonth})</div>
-            <div class="text-2xl font-bold dopamine">${formatBDT(paidThisMonth)}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Pending (${selectedMonth})</div>
-            <div class="text-2xl font-bold">${formatBDT(pendingThisMonth)}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Total Income</div>
-            <div class="text-2xl font-bold">${formatBDT(ORDERS.reduce((s,x)=>s+Number(x.price||0),0))}</div>
-          </div>
-          <div class="glass-card p-4">
-            <div class="text-xs text-${'var(--muted)'}">Selected Month</div>
-            <div class="flex items-center gap-2">
-              <input id="monthPicker" type="month" value="${selectedMonth}" class="p-2 rounded-lg border bg-white"/>
-            </div>
-          </div>
-        </div>
-      `;
-      document.getElementById('monthPicker').addEventListener('change', e=>{
-        selectedMonth = e.target.value;
-        renderAll();
-      });
-    }
-
-    // Orders table
-    function renderOrdersTable(){
-      const rows = ORDERS.map(o=>`
-        <tr class="align-top border-b">
-          <td class="py-3 px-2 text-sm">${o.order_no||''}</td>
-          <td class="py-3 px-2 text-sm">${o.client_name||''}</td>
-          <td class="py-3 px-2 text-sm">${o.project_title||''}</td>
-          <td class="py-3 px-2 text-sm">${o.assigned_editor||''}</td>
-          <td class="py-3 px-2 text-sm">${o.status||''}</td>
-          <td class="py-3 px-2 text-sm">${formatBDT(o.price||0)}</td>
-          <td class="py-3 px-2 text-sm">${(String(o.paid||'no').toLowerCase()==='yes')?'<span class=\"text-green-600 font-semibold\">Paid</span>':'<span class=\"text-yellow-600 font-semibold\">Unpaid</span>'}</td>
-          <td class="py-3 px-2 text-sm">
-            <button class="btn bg-white border mr-1" onclick="openDetail('${o.id||''}')">Details</button>
-            <button class="btn bg-white border mr-1" onclick="openWhatsApp('${o.client_whatsapp||''}','${o.client_name||''}','${o.order_no||''}')">WhatsApp</button>
-          </td>
-        </tr>
-      `).join('');
-      document.getElementById('orders-table-body').innerHTML = rows;
-    }
-
-    window.openWhatsApp = function(number, name, order_no){
-      const url = waLink(number, `Assalamualaikum ${name}, Motioncraft theke apnar order ${order_no} niye.`);
-      window.open(url,'_blank');
-    }
-
-    // Order detail modal
-    window.openDetail = function(id){
-      const o = ORDERS.find(x=>String(x.id)===String(id));
-      if(!o) return alert('Order not found');
-      const modal = document.getElementById('detail-modal');
-      document.getElementById('detail-order-no').innerText = o.order_no||'';
-      document.getElementById('detail-client-name').value = o.client_name||'';
-      document.getElementById('detail-project-title').value = o.project_title||'';
-      document.getElementById('detail-price').value = o.price||'';
-      document.getElementById('detail-status').value = o.status||'fresh';
-      document.getElementById('detail-assigned').value = o.assigned_editor||'';
-      document.getElementById('detail-paid').checked = String(o.paid).toLowerCase()==='yes';
-      document.getElementById('detail-notes').value = o.notes||'';
-      document.getElementById('detail-internal').value = o.internal_comments||'';
-      document.getElementById('detail-save-btn').onclick = async function(){
-        const updated = {
-          id: o.id,
-          order_no: document.getElementById('detail-order-no').innerText,
-          client_name: document.getElementById('detail-client-name').value,
-          project_title: document.getElementById('detail-project-title').value,
-          price: Number(document.getElementById('detail-price').value||0),
-          status: document.getElementById('detail-status').value,
-          assigned_editor: document.getElementById('detail-assigned').value,
-          paid: document.getElementById('detail-paid').checked ? 'yes' : 'no',
-          notes: document.getElementById('detail-notes').value,
-          internal_comments: document.getElementById('detail-internal').value
-        };
-        showLoader(true);
-        const res = await apiPOST('orders_update', updated);
-        if(res && res.ok){
-          // update local demo or reload
-          if(USE_DEMO){
-            const idx = ORDERS.findIndex(x=>String(x.id)===String(o.id));
-            if(idx>-1) ORDERS[idx] = {...ORDERS[idx], ...updated};
-            renderAll();
-            showLoader(false);
-            closeModal();
-            toast('Saved (demo)');
-          } else {
-            await loadAll();
-            closeModal();
-            toast('Saved');
-          }
-        } else {
-          showLoader(false);
-          alert('Error: '+(res && res.error || JSON.stringify(res)));
-        }
-      };
-      modal.classList.remove('hidden');
-    }
-
-    function closeModal(){
-      document.getElementById('detail-modal').classList.add('hidden');
-    }
-
-    // Team panel
-    function renderTeamPanel(){
-      const html = TEAM.map(m=>`
-        <div class="glass-card p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-400 to-cyan-300 flex items-center justify-center text-white font-bold">${m.name.charAt(0)||'U'}</div>
-            <div>
-              <div class="font-semibold">${m.name}</div>
-              <div class="text-xs text-${'var(--muted)'}">${m.role}</div>
-            </div>
-          </div>
-          <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
-            <div><div class="text-xs text-${'var(--muted)'}">Projects</div><div class="font-bold">${m.current_projects_count||0}</div></div>
-            <div><div class="text-xs text-${'var(--muted)'}">Earnings</div><div class="font-bold">${formatBDT(m.monthly_earnings||0)}</div></div>
-            <div><div class="text-xs text-${'var(--muted)'}">Contact</div><div><button class="btn bg-white border text-sm" onclick="window.open('${waLink(m.whatsapp, 'Hello '+m.name)}','_blank')">WhatsApp</button></div></div>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('team-grid').innerHTML = html;
-    }
-
-    // Clients (aggregate)
-    function renderClients(){
-      const grouped = {};
-      ORDERS.forEach(o=>{
-        const key = o.client_name || 'Unknown';
-        if(!grouped[key]) grouped[key] = {name:key,whatsapp:o.client_whatsapp,orders:[],paid:0,pending:0,total:0};
-        grouped[key].orders.push(o);
-        grouped[key].total += Number(o.price||0);
-        if(String(o.paid).toLowerCase()==='yes') grouped[key].paid += Number(o.price||0);
-        else grouped[key].pending += Number(o.price||0);
-      });
-      const html = Object.values(grouped).map(c=>`
-        <div class="glass-card p-3 flex justify-between items-center">
-          <div>
-            <div class="font-semibold">${c.name}</div>
-            <div class="text-sm text-${'var(--muted)'}">${c.orders.length} projects • ${formatBDT(c.total)}</div>
-          </div>
-          <div class="flex gap-2">
-            <button class="btn bg-white border" onclick="window.open('${waLink(c.whatsapp, 'Assalamualaikum '+c.name)}','_blank')">WhatsApp</button>
-            <button class="btn bg-white border" onclick="openClientOrders('${c.name.replace(/'/g, "\\'")}')">View</button>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('clients-list').innerHTML = html;
-    }
-
-    window.openClientOrders = function(name){
-      const list = ORDERS.filter(o=>o.client_name===name);
-      const rows = list.map(o=>`<li class="py-1">${o.order_no} — ${o.project_title} — ${formatBDT(o.price)}</li>`).join('');
-      alert(`Orders for ${name}:\n\n` + list.map(x=>`${x.order_no} — ${x.project_title} — ${formatBDT(x.price)} — ${x.status}`).join('\n'));
-    }
-
-    // Income chart (dopamine-driven)
-    let incomeChart = null;
-    function renderIncomeChart(){
-      const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && String(o.paid).toLowerCase()==='yes').reduce((s,x)=>s+Number(x.price||0),0);
-      const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && String(o.paid||'no').toLowerCase()!=='yes').reduce((s,x)=>s+Number(x.price||0),0);
-      const total = paidThisMonth + pendingThisMonth;
-      document.getElementById('income-numbers').innerHTML = `
-        <div class="text-sm text-${'var(--muted)'}">Paid</div>
-        <div class="text-2xl font-bold dopamine">${formatBDT(paidThisMonth)}</div>
-        <div class="text-sm text-${'var(--muted)'}">Pending</div>
-        <div class="text-2xl font-bold">${formatBDT(pendingThisMonth)}</div>
-      `;
-      const ctx = document.getElementById('incomeChart').getContext('2d');
-      if(incomeChart) incomeChart.destroy();
-      incomeChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Paid','Pending'],
-          datasets: [{
-            data: [paidThisMonth || 0, pendingThisMonth || 0],
-            backgroundColor: [
-              'rgba(124,58,237,0.95)', // vivid purple
-              'rgba(6,182,212,0.95)'   // cyan
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          cutout: '70%',
-          plugins: {
-            legend: { display: false},
-            tooltip: {
-              callbacks: {
-                label: function(context){
-                  const v = context.parsed || 0;
-                  return `${context.label}: ${formatBDT(v)}`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    // Loader & Toast
-    function showLoader(show){
-      document.getElementById('loader').style.display = show ? 'flex' : 'none';
-    }
-    function toast(msg){
-      const el = document.createElement('div');
-      el.className = 'fixed bottom-6 right-6 glass-card p-3 shadow-lg animate-slide-in';
-      el.innerText = msg;
-      document.body.appendChild(el);
-      setTimeout(()=> el.remove(), 3000);
-    }
-
-    // Initial load
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      if(USE_DEMO) {
-        ORDERS = SAMPLE_ORDERS.slice();
-        TEAM = SAMPLE_TEAM.slice();
-        renderAll();
-      } else {
-        await loadAll();
-      }
-    });
-  </script>
-
-  <!-- ========== UI ========== -->
-  <div class="max-w-7xl mx-auto p-6">
-    <header class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-white shadow flex items-center justify-center text-2xl font-bold">M</div>
-        <div>
-          <div class="text-sm text-gray-500">Motioncraft</div>
-          <div class="text-xl font-semibold">Owner Dashboard</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="text-sm text-gray-600">Demo: <span class="font-medium">${USE_DEMO ? 'ON' : 'OFF'}</span></div>
-        <div class="glass-card p-2 rounded-lg"> <button class="btn" onclick="location.reload()">Refresh</button></div>
-      </div>
-    </header>
-
-    <!-- Summary -->
-    <section id="summary-cards" class="mb-6"></section>
-
-    <div class="grid md:grid-cols-3 gap-4">
-      <!-- Left: Orders -->
-      <div class="md:col-span-2 space-y-4">
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between mb-3">
-            <div class="font-semibold">Orders</div>
-            <div class="flex gap-2">
-              <button class="btn bg-white border" onclick="alert('Add order flow not implemented in demo')">+ Add Order</button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead class="text-sm text-gray-500">
-                <tr>
-                  <th class="py-2 px-2">Order</th>
-                  <th class="py-2 px-2">Client</th>
-                  <th class="py-2 px-2">Project</th>
-                  <th class="py-2 px-2">Editor</th>
-                  <th class="py-2 px-2">Status</th>
-                  <th class="py-2 px-2">Price</th>
-                  <th class="py-2 px-2">Paid</th>
-                  <th class="py-2 px-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="orders-table-body" class="text-sm"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Clients -->
-        <div class="glass-card p-4">
-          <div class="font-semibold mb-3">Clients</div>
-          <div id="clients-list" class="grid gap-3"></div>
-        </div>
-      </div>
-
-      <!-- Right: Team + Income -->
-      <aside class="space-y-4">
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">Team</div>
-            <div class="text-sm text-gray-500">Overview</div>
-          </div>
-          <div id="team-grid" class="mt-3 grid gap-3"></div>
-        </div>
-
-        <div class="glass-card p-4">
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">Income (Dopamine Chart)</div>
-            <div class="text-sm text-gray-500">${selectedMonth}</div>
-          </div>
-          <div class="mt-3 flex items-center gap-4">
-            <canvas id="incomeChart" width="180" height="180"></canvas>
-            <div id="income-numbers"></div>
-          </div>
-        </div>
-      </aside>
+<!-- Detail / Add Order Modal -->
+<div id="orderModal" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-50 p-4">
+  <div class="w-full max-w-2xl glass p-6 fade-in relative">
+    <button onclick="closeOrderModal()" class="absolute right-4 top-4 text-gray-600">✕</button>
+    <h3 id="orderModalTitle" class="text-lg font-semibold mb-3">Add Order</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <input id="o_order_no" class="p-2 rounded border" placeholder="Order No (e.g., MC-2025-010)" />
+      <input id="o_client_name" class="p-2 rounded border" placeholder="Client name" />
+      <input id="o_client_whatsapp" class="p-2 rounded border" placeholder="Whatsapp (8801...)" />
+      <input id="o_project_title" class="p-2 rounded border" placeholder="Project title" />
+      <select id="o_assigned_editor" class="p-2 rounded border">
+        <option value="">Unassigned</option><option>Siam</option><option>Mojid</option><option>Samiul</option><option>Hojayfa</option>
+      </select>
+      <select id="o_status" class="p-2 rounded border">
+        <option value="fresh">Fresh</option><option value="scripting">Scripting</option><option value="editing">Editing</option>
+        <option value="correction">Correction</option><option value="final_delivery">Final Delivery</option><option value="completed">Completed</option>
+      </select>
+      <input id="o_price" type="number" class="p-2 rounded border" placeholder="Price (BDT)" />
+      <input id="o_due_date" type="date" class="p-2 rounded border" />
+      <label class="flex items-center gap-2"><input id="o_paid" type="checkbox" /> Paid</label>
+      <textarea id="o_notes" class="p-2 rounded border md:col-span-2" placeholder="Notes"></textarea>
+      <textarea id="o_internal" class="p-2 rounded border md:col-span-2" placeholder="Internal comments"></textarea>
     </div>
-
-    <!-- Loader -->
-    <div id="loader" style="display:none" class="fixed inset-0 bg-black/10 backdrop-blur z-50 flex items-center justify-center">
-      <div class="glass-card p-4 flex items-center gap-3">
-        <div class="loader w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"></div>
-        <div>Loading...</div>
-      </div>
+    <div class="mt-4 text-right">
+      <button id="saveOrderBtn" class="btn bg-indigo-600 text-white">Save</button>
     </div>
-
-    <!-- Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-50 p-4">
-      <div class="w-full max-w-2xl glass-card p-6 relative">
-        <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-600">✕</button>
-        <div class="text-lg font-semibold mb-3">Order Detail — <span id="detail-order-no"></span></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <input id="detail-client-name" class="p-2 rounded border" placeholder="Client name"/>
-          <input id="detail-project-title" class="p-2 rounded border" placeholder="Project title"/>
-          <input id="detail-price" class="p-2 rounded border" placeholder="Price"/>
-          <select id="detail-status" class="p-2 rounded border">
-            <option value="fresh">Fresh</option>
-            <option value="scripting">Scripting</option>
-            <option value="editing">Editing</option>
-            <option value="correction">Correction</option>
-            <option value="final_delivery">Final Delivery</option>
-            <option value="completed">Completed</option>
-          </select>
-          <select id="detail-assigned" class="p-2 rounded border">
-            <option>Siam</option><option>Mojid</option><option>Samiul</option><option>Hojayfa</option>
-          </select>
-          <label class="flex items-center gap-2"><input id="detail-paid" type="checkbox"/> Paid</label>
-          <textarea id="detail-notes" class="p-2 rounded border col-span-2" placeholder="Notes"></textarea>
-          <textarea id="detail-internal" class="p-2 rounded border col-span-2" placeholder="Internal comments"></textarea>
-        </div>
-        <div class="mt-4 text-right">
-          <button id="detail-save-btn" class="btn bg-indigo-600 text-white px-4 py-2 rounded">Save</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="mt-8 text-sm text-gray-500">
-      Built for Motioncraft — demo mode: <strong>${USE_DEMO ? 'ON' : 'OFF'}</strong>. Replace APPS_SCRIPT_BASE_URL in the top of the file with your Apps Script Web App URL to connect real Google Sheet data.
-    </footer>
   </div>
+</div>
+
+<!-- Team Modal -->
+<div id="teamModal" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-50 p-4">
+  <div class="w-full max-w-md glass p-6 fade-in relative">
+    <button onclick="closeTeamModal()" class="absolute right-4 top-4 text-gray-600">✕</button>
+    <h3 id="teamModalTitle" class="text-lg font-semibold mb-3">Add Team Member</h3>
+    <div class="grid grid-cols-1 gap-3">
+      <input id="t_name" class="p-2 rounded border" placeholder="Name" />
+      <input id="t_role" class="p-2 rounded border" placeholder="Role" />
+      <input id="t_whatsapp" class="p-2 rounded border" placeholder="Whatsapp (8801...)" />
+      <input id="t_earnings" type="number" class="p-2 rounded border" placeholder="Monthly earnings" />
+    </div>
+    <div class="mt-4 text-right">
+      <button id="saveTeamBtn" class="btn bg-indigo-600 text-white">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loader Toast -->
+<div id="loader" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-60">
+  <div class="glass p-4 flex items-center gap-3"><div class="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"></div><div>Loading...</div></div>
+</div>
+
+<script>
+/* ================== CONFIG ==================
+   Paste your Apps Script Web App URL (deployed earlier)
+   Example: https://script.google.com/macros/s/AKfycbxxx/exec
+================================================= */
+const APPS_SCRIPT_BASE_URL = ""; // <<< PASTE YOUR WEB APP URL HERE
+
+// If left blank, app will show a warning and will not perform network calls.
+// Make sure your Apps Script supports routes: orders, team, finance, orders_create, orders_update, orders_delete, finance_add, team_update
+const USE_OFFLINE = !APPS_SCRIPT_BASE_URL; // if true functions will not call API
+
+/* ================== Utilities ================== */
+function $(id){ return document.getElementById(id); }
+function waLink(number, text='Hello'){ const n=String(number||'').replace(/\D/g,''); return `https://wa.me/${n}?text=${encodeURIComponent(text)}`; }
+function fmtBDT(n){ return '৳' + (Number(n)||0).toLocaleString(); }
+function todayYMD(){ return new Date().toISOString().slice(0,10); }
+function showLoader(show){ $('loader').style.display = show ? 'flex' : 'none'; }
+
+/* ================== API helpers ================== */
+async function apiGET(route){
+  if(USE_OFFLINE) return {ok:false, error:'No APPS_SCRIPT_BASE_URL set'};
+  try {
+    const res = await fetch(`${APPS_SCRIPT_BASE_URL}?route=${route}`);
+    return await res.json();
+  } catch(e){ return {ok:false, error: String(e)}; }
+}
+async function apiPOST(route, payload){
+  if(USE_OFFLINE) return {ok:false, error:'No APPS_SCRIPT_BASE_URL set'};
+  try {
+    const res = await fetch(`${APPS_SCRIPT_BASE_URL}?route=${route}`, {
+      method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch(e){ return {ok:false, error: String(e)}; }
+}
+
+/* ================== State ================== */
+let ORDERS = [];
+let TEAM = [];
+let FINANCE = [];
+let selectedMonth = new Date().toISOString().slice(0,7); // YYYY-MM
+$('monthPicker').value = selectedMonth;
+
+/* ================== Init ================== */
+document.addEventListener('DOMContentLoaded', async ()=> {
+  attachUI();
+  await loadData();
+});
+
+/* ================== Load Data ================== */
+async function loadData(){
+  showLoader(true);
+  if(USE_OFFLINE){
+    // if no backend provided, seed empty arrays — but we expect you to set APPS_SCRIPT_BASE_URL
+    ORDERS = [];
+    TEAM = [];
+    FINANCE = [];
+    renderAll();
+    showLoader(false);
+    alert('APPS_SCRIPT_BASE_URL not set. Set it at top of file to connect Google Sheet via Apps Script.');
+    return;
+  }
+
+  const [oRes, tRes, fRes] = await Promise.all([apiGET('orders'), apiGET('team'), apiGET('finance')]);
+  if(oRes && oRes.ok) ORDERS = oRes.data.map(x=>normalizeOrder(x));
+  else ORDERS = [];
+  if(tRes && tRes.ok) TEAM = tRes.data.map(x=>normalizeTeam(x));
+  else TEAM = [];
+  if(fRes && fRes.ok) FINANCE = fRes.data || [];
+  else FINANCE = [];
+  renderAll();
+  showLoader(false);
+}
+
+/* normalize shapes */
+function normalizeOrder(o){
+  return {
+    id: String(o.id||o.order_no || Math.random().toString(36).slice(2,9)),
+    order_no: o.order_no||'MC-'+Math.random().toString(36).slice(2,6).toUpperCase(),
+    client_name: o.client_name||'Unknown',
+    client_whatsapp: o.client_whatsapp||'',
+    project_title: o.project_title||'Untitled',
+    status: (o.status||'fresh').toString(),
+    assigned_editor: o.assigned_editor||'',
+    price: Number(o.price||0),
+    paid: (String(o.paid||'no').toLowerCase()==='yes') ? 'yes' : 'no',
+    created_at: o.created_at || o.date || todayYMD(),
+    due_date: o.due_date || '',
+    notes: o.notes||'',
+    internal_comments: o.internal_comments||''
+  };
+}
+function normalizeTeam(t){
+  return {
+    member_id: String(t.member_id||Math.random().toString(36).slice(2,9)),
+    name: t.name||'Unnamed',
+    role: t.role||'Editor',
+    whatsapp: t.whatsapp||'',
+    current_projects_count: Number(t.current_projects_count||0),
+    monthly_earnings: Number(t.monthly_earnings||0)
+  };
+}
+
+/* ================== RENDER ================== */
+function renderAll(){
+  renderSummary();
+  renderKanban();
+  renderOrdersTable();
+  renderTeam();
+  renderFinance();
+  renderClients();
+  populateFilters();
+}
+
+/* SUMMARY */
+function renderSummary(){
+  const totalOrders = ORDERS.length;
+  const monthOrders = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth)).length;
+  const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && o.paid==='yes').reduce((s,x)=>s+x.price,0);
+  const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && o.paid!=='yes').reduce((s,x)=>s+x.price,0);
+  const incomeAll = ORDERS.reduce((s,x)=>s+x.price,0);
+
+  $('summary').innerHTML = `
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Total Orders</div>
+      <div class="text-2xl font-bold">${totalOrders}</div>
+    </div>
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Orders (${selectedMonth})</div>
+      <div class="text-2xl font-bold">${monthOrders}</div>
+    </div>
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Paid (${selectedMonth})</div>
+      <div class="text-2xl font-bold dop-text">${fmtBDT(paidThisMonth)}</div>
+    </div>
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Pending (${selectedMonth})</div>
+      <div class="text-2xl font-bold">${fmtBDT(pendingThisMonth)}</div>
+    </div>
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Total Income</div>
+      <div class="text-2xl font-bold">${fmtBDT(incomeAll)}</div>
+    </div>
+    <div class="glass p-4">
+      <div class="text-xs text-${'var(--muted)'}">Selected Month</div>
+      <input id="monthPickSmall" type="month" value="${selectedMonth}" class="p-2 rounded border mt-2 w-full" />
+    </div>
+  `;
+  $('monthPickSmall').addEventListener('change', (e)=>{ selectedMonth = e.target.value; $('monthPicker').value = selectedMonth; renderAll(); });
+  $('monthPicker').addEventListener('change', (e)=>{ selectedMonth = e.target.value; $('monthPickSmall').value = selectedMonth; renderAll(); });
+}
+
+/* KANBAN */
+const KANBAN_STATUSES = [
+  {key:'fresh', label:'Fresh'},
+  {key:'scripting', label:'Scripting'},
+  {key:'editing', label:'Editing'},
+  {key:'correction', label:'Correction'},
+  {key:'final_delivery', label:'Final Delivery'},
+  {key:'completed', label:'Completed'}
+];
+
+function renderKanban(){
+  const container = $('kanban');
+  container.innerHTML = '';
+  KANBAN_STATUSES.forEach(col=>{
+    const colEl = document.createElement('div');
+    colEl.className = 'glass p-3 kanban-column';
+    colEl.dataset.status = col.key;
+    colEl.innerHTML = `<div class="font-semibold mb-2">${col.label}</div><div class="space-y-2" id="col-${col.key}"></div>`;
+    // drag events for drop
+    colEl.addEventListener('dragover', e => e.preventDefault());
+    colEl.addEventListener('drop', async e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      if(!id) return;
+      await changeOrderStatus(id, col.key);
+    });
+    container.appendChild(colEl);
+  });
+
+  // place cards
+  KANBAN_STATUSES.forEach(col=>{
+    const listEl = $('col-'+col.key);
+    listEl.innerHTML = '';
+    ORDERS.filter(o=>o.status===col.key).sort((a,b)=> a.due_date > b.due_date ? 1 : -1).forEach(o=>{
+      const card = document.createElement('div');
+      card.className = 'kanban-card glass p-3 rounded-md cursor-grab';
+      card.draggable = true;
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="text-sm font-semibold">${o.order_no} — ${o.project_title}</div>
+            <div class="text-xs text-${'var(--muted)'}">${o.client_name} • ${o.assigned_editor || '—'}</div>
+            <div class="text-xs mt-2">${fmtBDT(o.price)} • Due: ${o.due_date||'—'}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs">${o.paid==='yes'?'<span class="text-green-600 font-semibold">Paid</span>':'<span class="text-yellow-600 font-semibold">Unpaid</span>'}</div>
+            <div class="mt-2">
+              <button class="btn bg-white border text-xs" onclick="openOrder('${o.id}')">Open</button>
+            </div>
+          </div>
+        </div>
+      `;
+      card.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', o.id);
+      });
+      listEl.appendChild(card);
+    });
+  });
+}
+
+/* change order status from kanban drop */
+async function changeOrderStatus(id, newStatus){
+  showLoader(true);
+  const order = ORDERS.find(x=>x.id===id);
+  if(!order){ showLoader(false); return; }
+  const payload = { id: order.id, status: newStatus };
+  const res = await apiPOST('orders_update', payload);
+  if(res && res.ok){
+    // reflect locally
+    order.status = newStatus;
+    await loadData(); // reload to keep in sync
+  } else {
+    alert('Update failed: ' + (res && res.error || JSON.stringify(res)));
+    showLoader(false);
+  }
+}
+
+/* ORDERS TABLE */
+function renderOrdersTable(){
+  const tbody = $('ordersTbody');
+  const q = $('searchInput').value.trim().toLowerCase();
+  const editorFilter = $('filterEditor').value;
+  const paidFilter = $('filterPaid').value;
+  const rows = ORDERS.filter(o=>{
+    if(q){
+      if(!(`${o.order_no} ${o.client_name} ${o.project_title}`.toLowerCase().includes(q))) return false;
+    }
+    if(editorFilter && o.assigned_editor !== editorFilter) return false;
+    if(paidFilter && o.paid !== paidFilter) return false;
+    return true;
+  }).sort((a,b)=> a.created_at < b.created_at ? 1 : -1);
+
+  tbody.innerHTML = rows.map(o=>`
+    <tr class="align-top border-b">
+      <td class="py-3 px-2 text-sm">${o.order_no}</td>
+      <td class="py-3 px-2 text-sm">${o.client_name}</td>
+      <td class="py-3 px-2 text-sm">${o.project_title}</td>
+      <td class="py-3 px-2 text-sm">${o.assigned_editor}</td>
+      <td class="py-3 px-2 text-sm">${o.status}</td>
+      <td class="py-3 px-2 text-sm">${fmtBDT(o.price)}</td>
+      <td class="py-3 px-2 text-sm">${o.paid==='yes'?'<span class="text-green-600 font-semibold">Paid</span>':'<span class="text-yellow-600 font-semibold">Unpaid</span>'}</td>
+      <td class="py-3 px-2 text-sm">
+        <button class="btn bg-white border" onclick="openOrder('${o.id}')">Open</button>
+        <button class="btn bg-white border" onclick="window.open('${waLink(o.client_whatsapp, 'Assalamualaikum '+o.client_name+' regarding order '+o.order_no)}','_blank')">WhatsApp</button>
+        <button class="btn bg-red-600 text-white" onclick="deleteOrderConfirm('${o.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* TEAM */
+function renderTeam(){
+  const container = $('teamList');
+  container.innerHTML = TEAM.map(t=>`
+    <div class="glass p-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-400 to-cyan-300 flex items-center justify-center text-white font-bold">${(t.name||'U').charAt(0)}</div>
+        <div>
+          <div class="font-semibold">${t.name}</div>
+          <div class="text-xs text-${'var(--muted)'}">${t.role} • Projects: ${t.current_projects_count||0}</div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a class="btn bg-white border text-sm" href="${waLink(t.whatsapp,'Hello '+t.name)}" target="_blank">WhatsApp</a>
+        <button class="btn bg-white border text-sm" onclick="openTeamEdit('${t.member_id}')">Edit</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* FINANCE chart & numbers */
+let financeChart = null;
+function renderFinance(){
+  const paidThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && o.paid==='yes').reduce((s,x)=>s+x.price,0);
+  const pendingThisMonth = ORDERS.filter(o => (o.created_at||'').startsWith(selectedMonth) && o.paid!=='yes').reduce((s,x)=>s+x.price,0);
+  const expenses = FINANCE.filter(f => (f.month||'').startsWith(selectedMonth)).reduce((s,x)=>s+Number(x.amount||0),0);
+  const profit = paidThisMonth - expenses;
+
+  $('financeNumbers').innerHTML = `
+    <div class="glass p-3">
+      <div class="text-xs text-${'var(--muted)'}">Paid</div>
+      <div class="text-xl font-bold dop-text">${fmtBDT(paidThisMonth)}</div>
+    </div>
+    <div class="glass p-3">
+      <div class="text-xs text-${'var(--muted)'}">Pending</div>
+      <div class="text-xl font-bold">${fmtBDT(pendingThisMonth)}</div>
+    </div>
+    <div class="glass p-3">
+      <div class="text-xs text-${'var(--muted)'}">Expenses</div>
+      <div class="text-xl font-bold text-red-600">${fmtBDT(expenses)}</div>
+    </div>
+    <div class="glass p-3">
+      <div class="text-xs text-${'var(--muted)'}">Profit</div>
+      <div class="text-xl font-bold">${fmtBDT(profit)}</div>
+    </div>
+  `;
+
+  const ctx = $('financeChart').getContext('2d');
+  if(financeChart) financeChart.destroy();
+  financeChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Paid','Pending','Expenses'],
+      datasets:[{
+        data: [paidThisMonth || 0, pendingThisMonth || 0, expenses || 0],
+        backgroundColor:['rgba(124,58,237,0.9)','rgba(6,182,212,0.9)','rgba(239,68,68,0.9)'],
+        borderWidth:0
+      }]
+    },
+    options:{ plugins:{legend:{display:true}} }
+  });
+}
+
+/* CLIENTS */
+function renderClients(){
+  const grouped = {};
+  ORDERS.forEach(o=>{
+    const key = o.client_name || 'Unknown';
+    if(!grouped[key]) grouped[key] = {name:key,whatsapp:o.client_whatsapp,orders:[],total:0,paid:0,pending:0};
+    grouped[key].orders.push(o);
+    grouped[key].total += o.price;
+    if(o.paid==='yes') grouped[key].paid += o.price; else grouped[key].pending += o.price;
+  });
+  $('clientsList').innerHTML = Object.values(grouped).map(c=>`
+    <div class="glass p-3 flex items-center justify-between">
+      <div>
+        <div class="font-semibold">${c.name}</div>
+        <div class="text-xs text-${'var(--muted)'}">${c.orders.length} projects • ${fmtBDT(c.total)}</div>
+      </div>
+      <div class="flex gap-2">
+        <a class="btn bg-white border" href="${waLink(c.whatsapp, 'Assalamualaikum '+c.name)}" target="_blank">WhatsApp</a>
+        <button class="btn bg-white border" onclick="viewClient('${c.name.replace(/'/g,'\\\'')}')">View</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ================== UI interactions ================== */
+function attachUI(){
+  $('refreshBtn').addEventListener('click', ()=> loadData());
+  $('addOrderBtn').addEventListener('click', ()=> openAddOrderModal());
+  $('addTeamBtn').addEventListener('click', ()=> openTeamModal());
+  $('searchInput').addEventListener('input', ()=> renderOrdersTable());
+  $('filterEditor').addEventListener('change', ()=> renderOrdersTable());
+  $('filterPaid').addEventListener('change', ()=> renderOrdersTable());
+  $('exportCsvBtn').addEventListener('click', exportCSV);
+  $('saveExpenseBtn').addEventListener('click', saveExpense);
+  // set month picker
+  $('monthPicker').addEventListener('change', (e)=>{ selectedMonth = e.target.value; renderAll(); });
+}
+
+/* populate editor filter */
+function populateFilters(){
+  const sel = $('filterEditor');
+  sel.innerHTML = '<option value="">All editors</option>';
+  const editors = Array.from(new Set(TEAM.map(t=>t.name).filter(Boolean)));
+  editors.forEach(e=> sel.insertAdjacentHTML('beforeend', `<option value="${e}">${e}</option>`));
+}
+
+/* ================== Order Add/Edit ================== */
+function openAddOrderModal(){
+  $('orderModalTitle').innerText = 'Add Order';
+  clearOrderModal();
+  $('orderModal').classList.remove('hidden');
+  $('saveOrderBtn').onclick = saveNewOrder;
+}
+function openOrder(id){
+  const o = ORDERS.find(x=>x.id===id); if(!o) return alert('Not found');
+  $('orderModalTitle').innerText = 'Edit Order';
+  $('o_order_no').value = o.order_no;
+  $('o_client_name').value = o.client_name;
+  $('o_client_whatsapp').value = o.client_whatsapp;
+  $('o_project_title').value = o.project_title;
+  $('o_assigned_editor').value = o.assigned_editor;
+  $('o_status').value = o.status;
+  $('o_price').value = o.price;
+  $('o_due_date').value = o.due_date;
+  $('o_paid').checked = o.paid==='yes';
+  $('o_notes').value = o.notes;
+  $('o_internal').value = o.internal_comments;
+  $('orderModal').classList.remove('hidden');
+  $('saveOrderBtn').onclick = async function(){ await saveEditedOrder(o.id); };
+}
+function closeOrderModal(){ $('orderModal').classList.add('hidden'); }
+function clearOrderModal(){
+  ['o_order_no','o_client_name','o_client_whatsapp','o_project_title','o_assigned_editor','o_status','o_price','o_due_date','o_paid','o_notes','o_internal'].forEach(id=> {
+    if($(id).type === 'checkbox') $(id).checked = false; else $(id).value = '';
+  });
+  $('o_status').value='fresh';
+}
+
+/* save new order */
+async function saveNewOrder(){
+  const payload = {
+    order_no: $('o_order_no').value || ('MC-'+Math.random().toString(36).slice(2,6).toUpperCase()),
+    client_name: $('o_client_name').value,
+    client_whatsapp: $('o_client_whatsapp').value,
+    project_title: $('o_project_title').value,
+    assigned_editor: $('o_assigned_editor').value,
+    status: $('o_status').value,
+    price: Number($('o_price').value||0),
+    paid: $('o_paid').checked ? 'yes' : 'no',
+    created_at: todayYMD(),
+    due_date: $('o_due_date').value,
+    notes: $('o_notes').value,
+    internal_comments: $('o_internal').value
+  };
+  showLoader(true);
+  const res = await apiPOST('orders_create', payload);
+  if(res && res.ok){
+    await loadData();
+    closeOrderModal();
+  } else {
+    alert('Create failed: '+(res && res.error || JSON.stringify(res)));
+    showLoader(false);
+  }
+}
+
+/* save edited order */
+async function saveEditedOrder(id){
+  const payload = {
+    id: id,
+    order_no: $('o_order_no').value,
+    client_name: $('o_client_name').value,
+    client_whatsapp: $('o_client_whatsapp').value,
+    project_title: $('o_project_title').value,
+    assigned_editor: $('o_assigned_editor').value,
+    status: $('o_status').value,
+    price: Number($('o_price').value||0),
+    paid: $('o_paid').checked ? 'yes' : 'no',
+    due_date: $('o_due_date').value,
+    notes: $('o_notes').value,
+    internal_comments: $('o_internal').value
+  };
+  showLoader(true);
+  const res = await apiPOST('orders_update', payload);
+  if(res && res.ok){
+    await loadData(); closeOrderModal();
+  } else {
+    alert('Update failed: '+(res && res.error || JSON.stringify(res)));
+    showLoader(false);
+  }
+}
+
+/* delete order */
+function deleteOrderConfirm(id){
+  if(!confirm('Delete this order?')) return;
+  deleteOrder(id);
+}
+async function deleteOrder(id){
+  showLoader(true);
+  const res = await apiPOST('orders_delete', {id});
+  if(res && res.ok){ await loadData(); } else { alert('Delete failed: '+(res && res.error||JSON.stringify(res))); showLoader(false); }
+}
+
+/* ================== Team add/edit ================== */
+function openTeamModal(){
+  $('teamModalTitle').innerText = 'Add Team Member';
+  $('t_name').value=''; $('t_role').value=''; $('t_whatsapp').value=''; $('t_earnings').value='';
+  $('teamModal').classList.remove('hidden');
+  $('saveTeamBtn').onclick = saveNewTeam;
+}
+function closeTeamModal(){ $('teamModal').classList.add('hidden'); }
+function openTeamEdit(id){
+  const t = TEAM.find(x=>x.member_id===id); if(!t) return;
+  $('teamModalTitle').innerText = 'Edit Team Member';
+  $('t_name').value = t.name; $('t_role').value = t.role; $('t_whatsapp').value = t.whatsapp; $('t_earnings').value = t.monthly_earnings || 0;
+  $('teamModal').classList.remove('hidden');
+  $('saveTeamBtn').onclick = async function(){ await saveEditedTeam(t.member_id); };
+}
+async function saveNewTeam(){
+  const payload = {
+    member_id: 'm_'+Math.random().toString(36).slice(2,8),
+    name: $('t_name').value,
+    role: $('t_role').value,
+    whatsapp: $('t_whatsapp').value,
+    current_projects_count: 0,
+    monthly_earnings: Number($('t_earnings').value||0)
+  };
+  // Using team_update route for both create/update in Apps Script is possible, but to keep it simple let's POST to team_update which will attempt to update existing or just append via server logic. If your Apps Script uses dedicated create route, adjust accordingly.
+  showLoader(true);
+  const res = await apiPOST('team_update', payload); // adjust server side if needed
+  if(res && res.ok){ await loadData(); closeTeamModal(); } else { alert('Team save failed: '+(res&&res.error)); showLoader(false); }
+}
+async function saveEditedTeam(member_id){
+  const payload = {
+    member_id: member_id,
+    name: $('t_name').value,
+    role: $('t_role').value,
+    whatsapp: $('t_whatsapp').value,
+    monthly_earnings: Number($('t_earnings').value||0)
+  };
+  showLoader(true);
+  const res = await apiPOST('team_update', payload);
+  if(res && res.ok){ await loadData(); closeTeamModal(); } else { alert('Team update failed: '+(res&&res.error)); showLoader(false); }
+}
+
+/* ================== Expenses ================== */
+async function saveExpense(){
+  const amount = Number($('expenseAmount').value||0);
+  if(!amount) return alert('Enter amount');
+  const payload = {
+    entry_id: 'f_'+Math.random().toString(36).slice(2,8),
+    month: selectedMonth,
+    category: $('expenseCategory').value || 'Misc',
+    amount: amount,
+    notes: '',
+    date: $('expenseDate').value || todayYMD()
+  };
+  showLoader(true);
+  const res = await apiPOST('finance_add', payload);
+  if(res && res.ok){ await loadData(); $('expenseAmount').value=''; $('expenseCategory').value=''; $('expenseDate').value=''; } else { alert('Expense save failed'); showLoader(false); }
+}
+
+/* ================== CSV Export ================== */
+function exportCSV(){
+  const rows = [['order_no','client_name','project_title','assigned_editor','status','price','paid','created_at','due_date','notes']];
+  ORDERS.forEach(o=> rows.push([o.order_no,o.client_name,o.project_title,o.assigned_editor,o.status,o.price,o.paid,o.created_at,o.due_date,(o.notes||'').replace(/\n/g,' ')]));
+  const csv = rows.map(r=> r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `motioncraft_orders_${selectedMonth || 'all'}.csv`; a.click(); URL.revokeObjectURL(url);
+}
+
+/* ================== Client view ================== */
+function viewClient(name){
+  const list = ORDERS.filter(o => o.client_name === name);
+  const lines = list.map(o=>`${o.order_no} — ${o.project_title} — ${fmtBDT(o.price)} — ${o.status}`).join('\n');
+  alert(`Orders for ${name}:\n\n${lines}`);
+}
+
+/* ================== Helpers for UI actions ================== */
+function openOrderModalForCreate(){ openAddOrderModal(); }
+function openTeamModalForCreate(){ openTeamModal(); }
+function openOrderById(id){ openOrder(id); }
+
+/* ================== End ================== */
+
+</script>
 
 </body>
 </html>
